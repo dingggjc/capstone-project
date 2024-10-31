@@ -14,11 +14,9 @@ class Profit extends Model
         'total',
     ];
 
-    /**
-     * Define the relationship to the Transaction model.
-     */
+ 
     public function profits()
     {
-        return $this->hasMany(Profit::class, 'transaction_id'); // Ensure foreign key is specified here
+        return $this->hasMany(Profit::class, 'transaction_id'); 
     }
 }

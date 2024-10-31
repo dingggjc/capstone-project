@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('status')->default('Pending');
             $table->timestamps();
 
-            // Foreign key constraint
+
             $table->foreign('cashier_id')->references('id')->on('users')->onDelete('cascade');
         });
     }

@@ -21,25 +21,19 @@ class TransactionDetail extends Model
         'package_price',
     ];
 
-    /**
-     * Relationship to the Transaction model
-     */
+
     public function transaction()
     {
         return $this->belongsTo(Transactions::class, 'transaction_id');
     }
 
-    /**
-     * Relationship to the Product model
-     */
+
     public function product()
     {
         return $this->belongsTo(Products::class, 'product_inventory_id');
     }
 
-    /**
-     * Relationship to the Package model
-     */
+
     public function package()
     {
         return $this->belongsTo(PackageModel::class, 'package_id');

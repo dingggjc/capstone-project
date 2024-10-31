@@ -4,17 +4,17 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use Illuminate\Http\Request;
-use App\Models\Products; // Import the Products model
+use App\Models\Products;
 
 class ProductsController extends Controller
 {
-    // Method to show the index page with the product list
+
     public function index()
     {
-        // Fetch all products from the database
+
         $products = Products::all();
 
-        // Pass the products data to the productIndex Vue component
+
         return Inertia::render('products/productIndex', [
             'products' => $products
         ]);
@@ -23,19 +23,19 @@ class ProductsController extends Controller
 
     public function dashboard()
     {
-        // Fetch all products from the database
+
         $products = Products::all();
 
-        // Pass the products data to the Dashboard Vue component
+
         return Inertia::render('Dashboard', [
             'products' => $products
         ]);
     }
 
-    // Method to store a new product
+
     public function store(Request $request)
     {
-        // Validate the request data
+
         $validated = $request->validate([
             'product_name' => 'nullable|string|max:255',
             'product_price' => 'nullable|numeric',
@@ -44,7 +44,7 @@ class ProductsController extends Controller
 
         ]);
 
-        // Create a new product using the validated data
+
         Products::create([
             'product_name' => $validated['product_name'],
             'product_price' => $validated['product_price'],
@@ -52,11 +52,10 @@ class ProductsController extends Controller
             'product_quantity' => $validated['product_quantity'],
         ]);
 
-        // Redirect back with a success message
+
         return redirect()->back()->with('success', 'Product added successfully!');
     }
 
-    // Method to delete a product
     public function destroy($id)
     {
         $product = Products::find($id);
@@ -67,7 +66,7 @@ class ProductsController extends Controller
         return redirect()->back()->with('error', 'Product not found.');
     }
 
-    // Method to update a product
+
     public function update(Request $request, $id)
     {
         $product = Products::findOrFail($id);

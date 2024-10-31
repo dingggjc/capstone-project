@@ -9,9 +9,9 @@ class Products extends Model
 {
     use HasFactory;
 
-    protected $table = 'product_inventory';  // Table name
-    protected $primaryKey = 'product_inventory_id';  // Primary key column
-    public $timestamps = true;  // Assuming your table has timestamps
+    protected $table = 'product_inventory';
+    protected $primaryKey = 'product_inventory_id';
+    public $timestamps = true;
 
     protected $fillable = [
         'product_name',
@@ -20,7 +20,7 @@ class Products extends Model
         'product_quantity',
     ];
 
-    // Cast product_price to float
+
     protected $casts = [
         'product_price' => 'float',
     ];

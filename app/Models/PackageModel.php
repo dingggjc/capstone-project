@@ -23,7 +23,7 @@ class PackageModel extends Model
     public function products()
     {
         return $this->belongsToMany(Products::class, 'package_product', 'package_id', 'product_inventory_id')
-            ->withPivot('quantity')  // Include the quantity on the pivot
-            ->withTimestamps();      // Track timestamps in the pivot
+            ->withPivot('quantity')
+            ->withTimestamps();
     }
 }
