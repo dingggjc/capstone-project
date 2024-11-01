@@ -354,6 +354,18 @@ const clearTransaction = () => {
                                     </th>
                                     <th
                                         class="px-6 py-3 border-b-2 border-indigo-300 dark:border-indigo-700 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
+                                        Package
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 border-b-2 border-indigo-300 dark:border-indigo-700 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
+                                        Product
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 border-b-2 border-indigo-300 dark:border-indigo-700 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
+                                        Quantity
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 border-b-2 border-indigo-300 dark:border-indigo-700 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
                                         Total
                                     </th>
                                     <th
@@ -375,11 +387,15 @@ const clearTransaction = () => {
                                     <td class="font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         {{ transaction.customer_name }}
                                     </td>
+                                    <td v-for="detail in transaction.details" :key="detail.id"> {{
+                                        detail.package?.package_name || 'No Package' }}</td>
+                                    <td v-for="detail in transaction.details" :key="detail.id"> {{
+                                        detail.product?.product_name || 'No Product' }}</td>
+                                    <td v-for="detail in transaction.details" :key="detail.id"> {{ detail.qty }}</td>
                                     <td>{{ transaction.grand_total }}</td>
                                     <td>{{ new Date(transaction.created_at).toLocaleDateString('en-US', {
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: 'numeric'
+                                        year:
+                                            'numeric', month: 'long', day: 'numeric'
                                     }) }}</td>
                                     <td>
                                         <span
@@ -392,17 +408,12 @@ const clearTransaction = () => {
                                             {{ transaction.status }}
                                         </span>
                                     </td>
-
-
-
-                                    <td v-if="transaction.status === 'Pending'">
+                                    <td>
                                         <button @click="updateTransactionStatus(transaction.id, 'Paid')"
-                                            class="rounded-full bg-green-300 p-2 text-green-800 hover:bg-green-400">
+                                            class="rounded-full bg-green-300 p-2 text-green-800 hover:bg-green-400"
+                                            v-if="transaction.status === 'Pending'">
                                             Mark as Paid
                                         </button>
-                                    </td>
-
-                                    <td class="flex justify-start items-center space-x-2">
                                         <button class="rounded-full bg-indigo-300 p-2"
                                             @click="$inertia.get(route('transactions.print'), { invoice: transaction.invoice })">
                                             <svg class="w-6 h-6 text-indigo-800 dark:indigo-white" aria-hidden="true"
@@ -411,12 +422,11 @@ const clearTransaction = () => {
                                                 <path stroke="currentColor" stroke-linejoin="round" stroke-width="2"
                                                     d="M16.444 18H19a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h2.556M17 11V5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v6h10ZM7 15h10v4a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-4Z" />
                                             </svg>
-
                                         </button>
-
                                     </td>
                                 </tr>
                             </tbody>
+
                         </table>
                     </div>
 

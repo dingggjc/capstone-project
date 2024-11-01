@@ -28,7 +28,9 @@ class TransactionController extends Controller
             $transactions = Transactions::with('cashier')->latest()->get();
         } else {
 
-            $transactions = Transactions::with('cashier')->where('cashier_id', Auth::user()->id)->latest()->get();
+            $transactions = Transactions::with(['cashier', 'details.product', 'details.package'])
+                ->where('cashier_id', Auth::user()->id)
+                ->latest()->get();
         }
         return Inertia::render('Transaction/Index', [
             'carts' => $carts,
