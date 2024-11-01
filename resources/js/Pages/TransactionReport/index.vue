@@ -5,18 +5,11 @@ import { onMounted, defineProps, } from 'vue';
 import { initFlowbite } from 'flowbite';
 import { DataTable } from 'simple-datatables';
 
-
-
-
-// Initialize Flowbite and DataTable on mount
 onMounted(() => {
     initFlowbite();
     const dataTable = new DataTable("#search-table");
 
 });
-
-
-
 
 const props = defineProps({
     products: Array,
@@ -25,13 +18,6 @@ const props = defineProps({
     carts: Array,
     transactions: Array
 });
-
-
-
-
-
-
-
 
 </script>
 
@@ -142,6 +128,8 @@ const props = defineProps({
 
                     </table>
                 </div>
+
+
             </div>
 
 

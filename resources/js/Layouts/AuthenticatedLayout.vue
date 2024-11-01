@@ -21,7 +21,7 @@ const showingNavigationDropdown = ref(false);
 
     <div class="antialiased bg-gray-50 dark:bg-gray-900">
         <nav
-            class="bg-white border-b border-gray-200 px-4 py-2.5 shadow-md dark:bg-gray-800  dark:border-gray-700 fixed left-0 right-0 top-0 z-50">
+            class="bg-white border-b border-gray-200 px-4 py-2.5  dark:bg-gray-800  dark:border-gray-700 fixed left-0 right-0 top-0 z-50">
             <div class="flex flex-wrap justify-between items-center">
                 <div class="flex justify-start items-center">
                     <button data-drawer-target="drawer-navigation" data-drawer-toggle="drawer-navigation"
@@ -44,7 +44,7 @@ const showingNavigationDropdown = ref(false);
                     <div class="shrink-0 flex items-center space-x-2">
                         <Link :href="route('dashboard')" class="flex items-center">
                         <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800" />
-                        <span class=" text-3xl">Gardenside</span>
+                        <span class="text-3xl font-bold">Gardenside</span>
                         </Link>
                     </div>
 
@@ -125,133 +125,144 @@ const showingNavigationDropdown = ref(false);
         </nav>
 
 
-        <!-- Page Content -->
-        <main class="p-4 sm:ml-64 mt-5">
+
+        <main class="p-4 sm:ml-60 mt-5">
             <slot />
         </main>
-        <!-- Sidebar -->
+
 
         <aside
-            class="fixed top-0 left-0 z-40 w-64 h-screen pt-14 transition-transform -translate-x-full shadow-xl mt-6 bg-white border-r border-gray-200 md:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
+            class="fixed top-0 left-0 z-40 w-64 h-screen pt-14 px-2 transition-transform -translate-x-full  mt-6 bg-white border-r border-gray-200 md:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
             aria-label="Sidenav" id="drawer-navigation">
             <div class="overflow-y-auto pb-2 pt-6 px-3 h-full bg-white dark:bg-gray-800">
 
                 <ul class="space-y-2">
                     <li>
-                        <NavLink :href="route('dashboard')" :active="route().current('dashboard')"
+                        <NavLink :href="route('dashboard')"
                             class="flex items-center w-full text-base font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:indigo:bg-gray-700">
-                            <svg class="w-5 ml-2 h-5 text-indigo-500 transition duration-75 dark:text-indigo-400 group-hover:text-indigo-900 dark:group-hover:text-white"
-                                aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                viewBox="0 0 22 21">
-                                <path
-                                    d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z" />
-                                <path
-                                    d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z" />
+                            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1" d="M10 6.025A7.5 7.5 0 1 0 17.975 14H10V6.025Z" />
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1"
+                                    d="M13.5 3c-.169 0-.334.014-.5.025V11h7.975c.011-.166.025-.331.025-.5A7.5 7.5 0 0 0 13.5 3Z" />
                             </svg>
-                            <span class="ms-3 pt-2 pb-2 text-lg">Dashboard</span>
+
+                            <span class="ms-3 pt-2 pb-2 text-sm">Dashboard</span>
                         </NavLink>
                     </li>
                     <hr class="my-20 border-gray-300 dark:border-gray-600" />
-                    <!-- Pages Section (No Dropdown) -->
-                    <li>
-                        <div
-                            class="flex items-center p-2 w-full text-base font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:hover:bg-indigo-700">
-                            <svg aria-hidden="true"
-                                class="flex-shrink-0 w-6 h-6 text-indigo-500 transition duration-75 group-hover:text-indigo-900 dark:text-indigo-400 dark:group-hover:text-white"
-                                fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                    d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
-                                    clip-rule="evenodd"></path>
-                            </svg>
-                            <span class="flex-1 ml-3 text-left whitespace-nowrap text-lg">Pages</span>
-                        </div>
-                        <ul class="py-2 space-y-2 block">
-                            <li>
-                                <NavLink :href="route('transaction.index')"
-                                    :active="route().current('transaction.index')"
-                                    class="flex items-center w-full text-base font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:hover:bg-indigo-700">
-                                    <span class="ms-10 pt-2 pb-2 text-base">Transaction</span>
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink :href="route('productIndex')" :active="route().current('productIndex')"
-                                    class="flex items-center w-full text-base font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:hover:bg-indigo-700">
-                                    <span class="ms-10 pt-2 pb-2 text-base">Products</span>
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink :href="route('package.index')" :active="route().current('package.index')"
-                                    class="flex items-center w-full text-base font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:hover:bg-indigo-700">
-                                    <span class="ms-10 pt-2 pb-2 text-base">Packages</span>
-                                </NavLink>
-                            </li>
-                            <!-- <li>
-                                <NavLink :href="route('customer.index')"
-                                    class="flex items-center w-full text-base font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:hover:bg-indigo-700">
-                                    <span class="ms-10 pt-2 pb-2">Customer</span>
-                                </NavLink>
-                            </li> -->
-                        </ul>
-                    </li>
+
+                    <ul>
+
+                        <li class="my-3">
+                            <NavLink :href="route('transaction.index')"
+                                class="flex items-center w-full text-base font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:indigo:bg-gray-700">
+                                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="1"
+                                        d="M5 18h14M5 18v3h14v-3M5 18l1-9h12l1 9M16 6v3m-4-3v3m-2-6h8v3h-8V3Zm-1 9h.01v.01H9V12Zm3 0h.01v.01H12V12Zm3 0h.01v.01H15V12Zm-6 3h.01v.01H9V15Zm3 0h.01v.01H12V15Zm3 0h.01v.01H15V15Z" />
+                                </svg>
+
+
+
+                                <span class="ms-3 pt-2 pb-2 text-sm">Transactions</span>
+                            </NavLink>
+                        </li>
+
+                        <li class="my-3">
+                            <NavLink :href="route('productIndex')"
+                                class="flex items-center w-full text-base font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:indigo:bg-gray-700">
+                                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="1"
+                                        d="M5 4h1.5L9 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-8.5-3h9.25L19 7H7.312" />
+                                </svg>
+
+
+
+                                <span class="ms-3 pt-2 pb-2 text-sm">Manage Products</span>
+                            </NavLink>
+                        </li>
+                        <li class="my-3">
+                            <NavLink :href="route('package.index')"
+                                class="flex items-center w-full text-base font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:indigo:bg-gray-700">
+                                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="1"
+                                        d="M8 7H5a2 2 0 0 0-2 2v4m5-6h8M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m0 0h3a2 2 0 0 1 2 2v4m0 0v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6m18 0s-4 2-9 2-9-2-9-2m9-2h.01" />
+                                </svg>
+
+
+
+
+                                <span class="ms-3 pt-2 pb-2 text-sm">Manage Packages</span>
+                            </NavLink>
+                        </li>
+                    </ul>
+
                     <hr class="my-20 border-gray-300 dark:border-gray-600" />
-                    <!-- Reports Section (No Dropdown) -->
-                    <li>
-                        <div
-                            class="flex items-center p-2 w-full text-base font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:hover:bg-indigo-700">
-                            <svg class="w-6 h-6 text-indigo-500 dark:text-white" aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
-                                viewBox="0 0 24 24">
-                                <path fill-rule="evenodd"
-                                    d="M10 2a3 3 0 0 0-3 3v1H5a3 3 0 0 0-3 3v2.382l1.447.723.005.003.027.013.12.056c.108.05.272.123.486.212.429.177 1.056.416 1.834.655C7.481 13.524 9.63 14 12 14c2.372 0 4.52-.475 6.08-.956.78-.24 1.406-.478 1.835-.655a14.028 14.028 0 0 0 .606-.268l.027-.013.005-.002L22 11.381V9a3 3 0 0 0-3-3h-2V5a3 3 0 0 0-3-3h-4Zm5 4V5a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v1h6Zm6.447 7.894.553-.276V19a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-5.382l.553.276.002.002.004.002.013.006.041.02.151.07c.13.06.318.144.557.242.478.198 1.163.46 2.01.72C7.019 15.476 9.37 16 12 16c2.628 0 4.98-.525 6.67-1.044a22.95 22.95 0 0 0 2.01-.72 15.994 15.994 0 0 0 .707-.312l.041-.02.013-.006.004-.002.001-.001-.431-.866.432.865ZM12 10a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H12Z"
-                                    clip-rule="evenodd" />
-                            </svg>
+
+                    <ul>
+                        <li class="my-3">
+                            <NavLink :href="route('sales.report')"
+                                class="flex items-center w-full text-base font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:indigo:bg-gray-700">
+                                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-width="1"
+                                        d="M8 7V6a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-1M3 18v-7a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
+                                </svg>
 
 
-                            <span class="flex-1 ml-3 text-left whitespace-nowrap text-lg">Reports</span>
-                        </div>
-                        <ul class="py-2 space-y-2 block">
-                            <li>
-                                <NavLink :href="route('sales.report')" :active="route().current('sales.report')"
-                                    class="flex items-center p-2 pl-11 text-lg w-full font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:hover:bg-indigo-700">
-                                    Sales Report
-                                </NavLink>
 
-                            </li>
-                            <li>
-                                <NavLink :href="route('transaction.report')"
-                                    :active="route().current('transaction.report')"
-                                    class="flex items-center p-2 pl-11 w-full text-lg font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:hover:bg-indigo-700">
-                                    Transaction
-                                    Report
-                                </NavLink>
-                            </li>
-                        </ul>
-                    </li>
+                                <span class="ms-3 pt-2 pb-2 text-sm">Sales Report</span>
+                            </NavLink>
+                        </li>
+                        <li class="my-3">
+                            <NavLink :href="route('transaction.report')"
+                                class="flex items-center w-full text-base font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:indigo:bg-gray-700">
+                                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="1"
+                                        d="M11 9h6m-6 3h6m-6 3h6M6.996 9h.01m-.01 3h.01m-.01 3h.01M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" />
+                                </svg>
+
+                                <span class="ms-3 pt-2 pb-2 text-sm">Transaction Report</span>
+                            </NavLink>
+                        </li>
+
+                    </ul>
                     <hr class="my-20 border-gray-300 dark:border-gray-600" />
-                    <!-- User Management Section (No Dropdown) -->
-                    <li>
-                        <div
-                            class="flex items-center p-2 w-full text-base font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:hover:bg-indigo-700">
-                            <svg class="w-6 h-6 text-indigo-500 dark:text-white" aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+
+
+                    <li class="my-3">
+                        <NavLink :href="route('users.index')"
+                            class="flex items-center w-full text-base font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:indigo:bg-gray-700">
+                            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
                                 viewBox="0 0 24 24">
-                                <path fill-rule="evenodd"
-                                    d="M8 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4H6Zm7.25-2.095c.478-.86.75-1.85.75-2.905a5.973 5.973 0 0 0-.75-2.906 4 4 0 1 1 0 5.811ZM15.466 20c.34-.588.535-1.271.535-2v-1a5.978 5.978 0 0 0-1.528-4H18a4 4 0 0 1 4 4v1a2 2 0 0 1-2 2h-4.535Z"
-                                    clip-rule="evenodd" />
+                                <path stroke="currentColor" stroke-linecap="square" stroke-linejoin="round"
+                                    stroke-width="1"
+                                    d="M10 19H5a1 1 0 0 1-1-1v-1a3 3 0 0 1 3-3h2m10 1a3 3 0 0 1-3 3m3-3a3 3 0 0 0-3-3m3 3h1m-4 3a3 3 0 0 1-3-3m3 3v1m-3-4a3 3 0 0 1 3-3m-3 3h-1m4-3v-1m-2.121 1.879-.707-.707m5.656 5.656-.707-.707m-4.242 0-.707.707m5.656-5.656-.707.707M12 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                             </svg>
-                            <span class="flex-1 ml-3 text-left whitespace-nowrap">User Management</span>
-                        </div>
-                        <ul class="py-2 space-y-2 block">
-                            <li>
-                                <NavLink :href="route('users.index')" :active="route().current('users.index')"
-                                    class="flex items-center w-full text-base font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:hover:bg-indigo-700">
-                                    <span class="ms-10 pt-2 pb-2">Users</span>
-                                </NavLink>
-                            </li>
+                            <!-- :active="route().current('users.index')" -->
 
-
-                        </ul>
+                            <span class="ms-3 pt-2 pb-2 text-sm">User Management</span>
+                        </NavLink>
                     </li>
+
+
                 </ul>
             </div>
         </aside>

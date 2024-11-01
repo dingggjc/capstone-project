@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, usePage } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import { ref, onMounted, watch, defineProps } from 'vue';
 import { initFlowbite } from 'flowbite';
 import { DataTable } from 'simple-datatables';
@@ -10,36 +10,12 @@ import Swal from 'sweetalert2';
 
 
 
-// Initialize Flowbite and DataTable on mount
+
 onMounted(() => {
     initFlowbite();
     const dataTable = new DataTable("#search-table");
 
 });
-
-
-const page = usePage();
-watch(() => page.props.flash, (flash) => {
-    console.log("Flash message:", flash); // Add this line
-    if (flash.success) {
-        Swal.fire({
-            icon: 'success',
-            title: 'Success',
-            text: flash.success,
-            confirmButtonText: 'OK',
-            timer: 3000,
-        });
-    }
-    if (flash.error) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: flash.error,
-            confirmButtonText: 'OK',
-        });
-    }
-});
-
 
 const props = defineProps({
     products: {
@@ -64,13 +40,11 @@ const props = defineProps({
     }
 });
 
-
-
 const payAmount = ref(0);
 const changeAmount = ref(0);
 
 watch(payAmount, (newPayAmount) => {
-    changeAmount.value = newPayAmount - props.carts_total; // Reference carts_total from props directly
+    changeAmount.value = newPayAmount - props.carts_total;
 });
 
 
@@ -81,11 +55,7 @@ const openPaymentModal = () => {
     showPaymentModal.value = true;
 };
 
-const closePaymentModal = () => {
-    showPaymentModal.value = false;
-};
 
-// Form data and function for adding items to cart
 const form = ref({
 
     type: 'product',
@@ -96,16 +66,13 @@ const form = ref({
 
 const addToCart = () => {
     const data = {
-
         qty: form.value.qty,
-        product_inventory_id: form.value.product_inventory_id, // Send product ID if selected
-        package_id: form.value.package_id // Send package ID if selected
+        product_inventory_id: form.value.product_inventory_id,
+        package_id: form.value.package_id
     };
-    console.log("Data being sent to the server:", data);
-    // Post data to the add-to-cart route
     Inertia.post(route('transaction.addToCart'), data, {
         onSuccess: () => {
-            // Reset the form after submission
+
             form.value = {
 
                 type: 'product',
@@ -127,36 +94,25 @@ const destroyCart = (cartId) => {
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
+        confirmButtonText: 'Yes, delete it!',
     }).then((result) => {
         if (result.isConfirmed) {
             Inertia.delete(route('transaction.destroyCart'), {
                 data: { cart_id: cartId },
                 preserveState: true,
+                preserveScroll: true,
                 onSuccess: () => {
-                    // Display success popup
-                    Swal.fire(
-                        'Deleted!',
-                        'The item has been removed from the cart.',
-                        'success'
-                    ).then(() => {
-                        // Add a slight delay before reloading to ensure the popup shows first
-                        setTimeout(() => {
-                            Inertia.reload({ only: ['carts'] });
-                        }, 500);
-                    });
+                    Swal.fire('Deleted!', 'The item has been removed from the cart.', 'success');
                 },
                 onError: () => {
-                    Swal.fire(
-                        'Error!',
-                        'The item could not be found or removed.',
-                        'error'
-                    );
-                }
+                    Swal.fire('Error!', 'The item could not be removed.', 'error');
+                },
             });
         }
     });
 };
+
+
 const submitTransaction = (transactionStatus) => {
     Inertia.post(route('transaction.store'), {
         cash: payAmount.value,
@@ -473,118 +429,122 @@ const clearTransaction = () => {
 
 
         <el-dialog v-model="showPaymentModal" width="70%">
-            <section class="bg-white pb-10 antialiased dark:bg-gray-900 md:py-">
-                <div class="mx-auto w-auto px-10 2xl:px-0">
-                    <section class="bg-white antialiased dark:bg-gray-900">
-                        <!-- Change form submission to use a method -->
-                        <form @submit.prevent="submitTransaction" class="mx-auto max-w-screen-xl px-4 2xl:px-0">
-                            <div class="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12 xl:gap-16">
-                                <div class="min-w-0 flex-1 space-y-8">
-                                    <div class="space-y-4">
-                                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Customer Details
-                                        </h2>
-                                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                            <div>
-                                                <label for="your_name"
-                                                    class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Name</label>
-                                                <input type="text" v-model="form.customer_name"
-                                                    class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
-                                                    placeholder="Name" required />
-                                            </div>
-                                            <div>
-                                                <label for="phone-input-3"
-                                                    class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Phone
-                                                    Number*</label>
-                                                <div class="flex items-center">
-                                                    <button id="dropdown-phone-button-3"
-                                                        data-dropdown-toggle="dropdown-phone-3"
-                                                        class="z-10 inline-flex shrink-0 items-center rounded-s-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-center text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-700"
-                                                        type="button">+63</button>
-                                                    <div class="relative w-full">
-                                                        <input type="text" v-model="form.customer_phone"
-                                                            class="z-20 block w-full rounded-e-lg border border-s-0 border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:border-s-gray-700 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500"
-                                                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                                                            placeholder="123-456-7890" required />
+            <template #header>
+                <section class="bg-white pb-10 antialiased dark:bg-gray-900 md:py-">
+                    <div class="mx-auto w-auto px-10 2xl:px-0">
+                        <section class="bg-white antialiased dark:bg-gray-900">
+
+                            <form @submit.prevent="submitTransaction" class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+                                <div class="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12 xl:gap-16">
+                                    <div class="min-w-0 flex-1 space-y-8">
+                                        <div class="space-y-4">
+                                            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Customer
+                                                Details
+                                            </h2>
+                                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                                <div>
+                                                    <label for="your_name"
+                                                        class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Name</label>
+                                                    <input type="text" v-model="form.customer_name"
+                                                        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                                                        placeholder="Name" required />
+                                                </div>
+                                                <div>
+                                                    <label for="phone-input-3"
+                                                        class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Phone
+                                                        Number*</label>
+                                                    <div class="flex items-center">
+                                                        <button id="dropdown-phone-button-3"
+                                                            data-dropdown-toggle="dropdown-phone-3"
+                                                            class="z-10 inline-flex shrink-0 items-center rounded-s-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-center text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-700"
+                                                            type="button">+63</button>
+                                                        <div class="relative w-full">
+                                                            <input type="text" v-model="form.customer_phone"
+                                                                class="z-20 block w-full rounded-e-lg border border-s-0 border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:border-s-gray-700 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500"
+                                                                pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                                                                placeholder="123-456-7890" required />
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div>
-                                                <label for="Vehicle_type"
-                                                    class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Vehicle
-                                                    Type</label>
-                                                <input type="text" v-model="form.vehicle_type"
-                                                    class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
-                                                    placeholder="Vehicle Type" required />
-                                            </div>
-                                            <div>
-                                                <label for="vehicle_plate"
-                                                    class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Vehicle
-                                                    Plate</label>
-                                                <input type="text" v-model="form.vehicle_plate"
-                                                    class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
-                                                    placeholder="Vehicle Plate" required />
+                                                <div>
+                                                    <label for="Vehicle_type"
+                                                        class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Vehicle
+                                                        Type</label>
+                                                    <input type="text" v-model="form.vehicle_type"
+                                                        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                                                        placeholder="Vehicle Type" required />
+                                                </div>
+                                                <div>
+                                                    <label for="vehicle_plate"
+                                                        class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Vehicle
+                                                        Plate</label>
+                                                    <input type="text" v-model="form.vehicle_plate"
+                                                        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                                                        placeholder="Vehicle Plate" required />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="mt-6 w-full space-y-6 sm:mt-8 lg:mt-10 lg:max-w-xs xl:max-w-md">
-                                    <div class="flow-root">
-                                        <div class="-my-3 divide-y divide-gray-200 dark:divide-gray-800">
-                                            <dl class="flex items-center justify-between gap-4 py-3">
-                                                <dt class="text-base font-normal text-gray-500 dark:text-gray-400">
-                                                    Subtotal</dt>
-                                                <dd class="text-base font-medium text-gray-900 dark:text-white">₱ {{
-                                                    props.carts_total }}</dd>
-                                            </dl>
-                                            <dl class="flex items-center justify-between gap-4 py-3">
-                                                <dt class="text-base font-normal text-gray-500 dark:text-gray-400">
-                                                    Payment Amount</dt>
-                                                <dd class="text-base font-medium text-gray-900 dark:text-white">₱ {{
-                                                    payAmount }}</dd>
-                                            </dl>
-                                            <dl class="flex items-center justify-between gap-4 py-3">
-                                                <dt class="text-base font-normal text-gray-500 dark:text-gray-400">
-                                                    Change</dt>
-                                                <dd class="text-base font-medium text-green-500">₱ {{ changeAmount }}
-                                                </dd>
-                                            </dl>
+                                    <div class="mt-6 w-full space-y-6 sm:mt-8 lg:mt-10 lg:max-w-xs xl:max-w-md">
+                                        <div class="flow-root">
+                                            <div class="-my-3 divide-y divide-gray-200 dark:divide-gray-800">
+                                                <dl class="flex items-center justify-between gap-4 py-3">
+                                                    <dt class="text-base font-normal text-gray-500 dark:text-gray-400">
+                                                        Subtotal</dt>
+                                                    <dd class="text-base font-medium text-gray-900 dark:text-white">₱ {{
+                                                        props.carts_total }}</dd>
+                                                </dl>
+                                                <dl class="flex items-center justify-between gap-4 py-3">
+                                                    <dt class="text-base font-normal text-gray-500 dark:text-gray-400">
+                                                        Payment Amount</dt>
+                                                    <dd class="text-base font-medium text-gray-900 dark:text-white">₱ {{
+                                                        payAmount }}</dd>
+                                                </dl>
+                                                <dl class="flex items-center justify-between gap-4 py-3">
+                                                    <dt class="text-base font-normal text-gray-500 dark:text-gray-400">
+                                                        Change</dt>
+                                                    <dd class="text-base font-medium text-green-500">₱ {{ changeAmount
+                                                        }}
+                                                    </dd>
+                                                </dl>
 
-                                            <div class="">
-                                                <label for="Pay"
-                                                    class="block mb-2 mt-4 text-sm font-medium text-gray-500 dark:text-white">
-                                                    Pay</label>
-                                                <input type="number" id="Enter Amount" v-model="payAmount"
-                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                                    placeholder="Enter Amount" />
-                                                <label for="Pay"
-                                                    class="block mb-2 mt-4 text-sm font-medium text-gray-500 dark:text-white">
-                                                    Change</label>
-                                                <input type="text" id="Change" v-model="changeAmount"
-                                                    class="bg-gray-50 border  mb-5 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                                    placeholder="Change" disabled />
+                                                <div class="">
+                                                    <label for="Pay"
+                                                        class="block mb-2 mt-4 text-sm font-medium text-gray-500 dark:text-white">
+                                                        Pay</label>
+                                                    <input type="number" id="Enter Amount" v-model="payAmount"
+                                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                        placeholder="Enter Amount" />
+                                                    <label for="Pay"
+                                                        class="block mb-2 mt-4 text-sm font-medium text-gray-500 dark:text-white">
+                                                        Change</label>
+                                                    <input type="text" id="Change" v-model="changeAmount"
+                                                        class="bg-gray-50 border  mb-5 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                        placeholder="Change" disabled />
+
+                                                </div>
 
                                             </div>
+                                        </div>
 
+                                        <div class="space-y-3">
+                                            <button type="button" @click="submitTransaction('Paid')"
+                                                class="flex w-full items-center justify-center rounded-lg bg-indigo-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-indigo-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">Pay
+                                                Now</button>
+                                        </div>
+                                        <div class="space-y-3">
+                                            <button type="button" @click="submitTransaction('Pending')"
+                                                class="flex w-full items-center justify-center py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Pay
+                                                Later</button>
                                         </div>
                                     </div>
-
-                                    <div class="space-y-3">
-                                        <button type="button" @click="submitTransaction('Paid')"
-                                            class="flex w-full items-center justify-center rounded-lg bg-indigo-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-indigo-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">Pay
-                                            Now</button>
-                                    </div>
-                                    <div class="space-y-3">
-                                        <button type="button" @click="submitTransaction('Pending')"
-                                            class="flex w-full items-center justify-center py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Pay
-                                            Later</button>
-                                    </div>
                                 </div>
-                            </div>
-                        </form>
-                    </section>
-                </div>
-            </section>
+                            </form>
+                        </section>
+                    </div>
+                </section>
+            </template>
         </el-dialog>
     </AuthenticatedLayout>
 </template>

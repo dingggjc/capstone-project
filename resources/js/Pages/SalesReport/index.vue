@@ -6,15 +6,13 @@ import { initFlowbite } from 'flowbite';
 import { DataTable } from 'simple-datatables';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
-
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-// Initialize Flowbite and DataTable on mount
+
 onMounted(() => {
     initFlowbite();
     const dataTable = new DataTable("#search-table");
 });
-
 const props = defineProps({
 
 
@@ -128,12 +126,15 @@ function generatePDF() {
             <!-- Table Section -->
             <div id="pdf-content">
 
-
+                <div class="w-full md:w-1/2">
+                    <p class="text-2xl pt-5 ml-14  text-gray-900 dark:text-white">Manage Packages</p>
+                </div>
                 <div class="space-y-4 mx-10 2xl:px-0 mt-8 px-5 py-5 bg-white
                     dark:bg-indigo-800">
 
                     <div
                         class="w-full lg:w-full px-5 py-5 shadow-lg rounded-lg overflow-hidden bg-white dark:bg-gray-800">
+
 
                         <table id="search-table" class="min-w-full bg-white dark:bg-indigo-800">
 

@@ -199,10 +199,10 @@ const resetFormData = () => {
     <Head title="Dashboard" />
     <AuthenticatedLayout>
 
-        <section class="bg-gray-50 dark:bg-gray-900 p-3 sm:p-5 mt-20  antialiased">
+        <section class=" p-3 sm:p-5 mt-20  antialiased">
 
             <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
-                <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
+                <div class="bg-white  relative shadow-md sm:rounded-lg overflow-hidden">
                     <div
                         class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
                         <div class="w-full md:w-1/2">
@@ -242,7 +242,7 @@ const resetFormData = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Loop through Packages -->
+
                                 <tr v-for="pkg in package" :key="package.id"
                                     class="border-b cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 dark:border-gray-700">
                                     <th scope="row"
@@ -265,7 +265,7 @@ const resetFormData = () => {
                                         month: 'long', day: 'numeric'
                                     }) }}</td>
                                     <td class=" py-3 flex items-center justify-center space-x-2">
-                                        <!-- Edit Button -->
+
                                         <button type="button" @click="openEditPackageModal(pkg)"
                                             class="inline-flex items-center px-4 py-2 text-xs font-medium text-indigo-700 bg-white border rounded-lg border-indigo-700 hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-indigo-800 dark:bg-indigo-600 dark:hover:bg-indigo-700">
                                             <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg"
@@ -277,7 +277,7 @@ const resetFormData = () => {
                                             </svg>
                                             Edit
                                         </button>
-                                        <!-- Preview Button -->
+
                                         <button type="button" @click="openPreviewPackageModal(pkg)"
                                             class="inline-flex items-center px-4 py-2 text-xs font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-indigo-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
                                             <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -290,7 +290,7 @@ const resetFormData = () => {
                                             </svg>
                                             Preview
                                         </button>
-                                        <!-- Delete Button -->
+
                                         <button type="button" @click="deletePackage(pkg)"
                                             class="inline-flex items-center px-4 py-2 text-xs font-medium text-red-600 bg-white border border-red-600 rounded-lg hover:bg-red-600 hover:text-white focus:outline-none focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900 dark:bg-gray-800 dark:text-red-500 dark:border-red-500 dark:hover:bg-red-600 dark:hover:text-white">
                                             <svg class="w-4 h-4 mr-2" viewBox="0 0 14 15" fill="none"
@@ -309,17 +309,16 @@ const resetFormData = () => {
             </div>
 
 
-            <!-- Add Package Modal -->
             <el-dialog v-model="showCreatePackageModal" title="Add Package" width="30%">
                 <form @submit.prevent="handleAddPackage">
-                    <!-- Package Name -->
+
                     <div class="mb-4">
                         <label for="PackageName" class="block text-sm font-medium text-gray-700">Package Name</label>
                         <input v-model="packageForm.package_name" type="text" id="PackageName" required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                             placeholder="Enter Package name" />
                     </div>
-                    <!-- Package Description -->
+
                     <div class="mb-4">
                         <label for="PackageDescription"
                             class="block text-sm font-medium text-gray-700">Description</label>
@@ -328,7 +327,6 @@ const resetFormData = () => {
                             placeholder="Enter Package description" rows="4"></textarea>
                     </div>
 
-                    <!-- Dynamic Product Selection -->
                     <div class="mb-4">
                         <label class="block text-sm font-medium">Products</label>
                         <div v-for="(product, index) in packageForm.products" :key="index"
@@ -352,7 +350,7 @@ const resetFormData = () => {
                         </div>
                         <button type="button" @click="addProductToPackage" class="text-indigo-600">Add Product</button>
                     </div>
-                    <!-- Package Price -->
+
                     <div class="mb-4">
                         <label for="PackagePrice" class="block text-sm font-medium text-gray-700">Price</label>
                         <input v-model="packageForm.package_price" type="number" id="PackagePrice" min="0" step="0.01"
@@ -361,7 +359,7 @@ const resetFormData = () => {
                             placeholder="Enter Package price" />
                     </div>
 
-                    <!-- Action Buttons -->
+
                     <div class="flex justify-end">
                         <button type="button" @click="closeCreatePackageModal"
                             class="text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2">
@@ -375,9 +373,6 @@ const resetFormData = () => {
                 </form>
             </el-dialog>
 
-
-
-            <!-- Preview Package Modal -->
             <el-dialog v-model="showPreviewPackageModal" title="Package Preview"
                 class="relative p-4 w-full max-w-xl h-full md:h-auto">
                 <div class="flex justify-between mb-4 rounded-t sm:mb-5">
@@ -416,7 +411,6 @@ const resetFormData = () => {
             </el-dialog>
 
 
-            <!-- Edit Package Modal -->
             <el-dialog v-model="showEditPackageModal" title="Edit Package" width="30%">
                 <form @submit.prevent="handleEditPackage" class="w-full">
                     <div class="mb-4 w-full">
@@ -435,7 +429,7 @@ const resetFormData = () => {
                             placeholder="Enter Package description" rows="4"></textarea>
                     </div>
 
-                    <!-- Dynamic Product Selection for Editing -->
+
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700">Products</label>
                         <div v-for="(product, index) in packageForm.products" :key="index"
@@ -483,7 +477,6 @@ const resetFormData = () => {
 
 
 
-            <!-- End Edit Package Modal -->
 
         </section>
     </AuthenticatedLayout>

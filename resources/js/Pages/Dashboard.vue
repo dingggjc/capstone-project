@@ -74,11 +74,11 @@ onMounted(() => {
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                 <!-- Card 1 -->
 
-                <div class="rounded-lg border-gray-300 dark:border-gray-600 p-4 h-full">
+                <div class="rounded-lg  border-gray-300  dark:border-gray-600 p-4 h-full">
                     <div
-                        class="block bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 cursor-pointer dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 h-full p-4">
+                        class="block bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100  cursor-pointer dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 h-full p-4">
                         <div class="flex items-center justify-between mb-2">
-                            <h4 class="text-2xl  tracking-tight font-semibold text-gray-700 dark:text-white">
+                            <h4 class="text-2xl  tracking-tight   text-gray-700 dark:text-white">
                                 Sales Today
                             </h4>
                             <div class="rounded-full bg-indigo-200 p-3 inline-flex items-center justify-center">
@@ -93,9 +93,8 @@ onMounted(() => {
 
                         <p class="text-4xl text-indigo-900 dark:text-white">₱ {{ today_sales }}</p>
                         <div class="mt-auto text-right">
-                            <hr class="my-2 border-gray-300 dark:border-gray-600" />
                             <NavLink :href="route('sales.report')">
-                                <a class="cursor-pointer underline text-sm text-indigo-700 dark:text-gray-400">See
+                                <a class="cursor-pointer underline text-sm text-indigo-700 pt-5 dark:text-gray-400">See
                                     details</a>
                             </NavLink>
                         </div>
@@ -107,7 +106,7 @@ onMounted(() => {
                     <div
                         class="block bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 cursor-pointer dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 h-full p-4">
                         <div class="flex items-center justify-between mb-2">
-                            <h4 class="text-2xl  font-semibold tracking-tight text-gray-700 dark:text-white">
+                            <h4 class="text-2xl    tracking-tight text-gray-700 dark:text-white">
                                 Transaction
                             </h4>
                             <div class="rounded-full bg-indigo-200 p-3 inline-flex items-center justify-center">
@@ -122,9 +121,9 @@ onMounted(() => {
 
                         <p class="text-4xl text-indigo-900 dark:text-white">{{ transactions_count }}</p>
                         <div class="mt-auto text-right">
-                            <hr class="my-2 border-gray-300 dark:border-gray-600" />
+
                             <NavLink :href="route('transaction.report')">
-                                <a class="cursor-pointer underline text-sm text-indigo-700 dark:text-gray-400">See
+                                <a class="cursor-pointer underline text-sm pt-5 text-indigo-700 dark:text-gray-400">See
                                     details</a>
                             </NavLink>
                         </div>
@@ -138,7 +137,7 @@ onMounted(() => {
                     <div
                         class="block bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 cursor-pointer dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 h-full p-4">
                         <div class="flex items-center justify-between mb-2">
-                            <h4 class="text-2xl  font-semibold tracking-tight text-gray-700 dark:text-white">
+                            <h4 class="text-2xl    tracking-tight text-gray-700 dark:text-white">
                                 Product Stock
                             </h4>
                             <div class="rounded-full bg-indigo-200 p-3 inline-flex items-center justify-center">
@@ -155,9 +154,9 @@ onMounted(() => {
                         <p class="text-4xl text-indigo-900 dark:text-white">{{ total_product_stock }}</p>
 
                         <div class="mt-auto text-right">
-                            <hr class="my-2 border-gray-300 dark:border-gray-600" />
+
                             <NavLink :href="route('productIndex')">
-                                <a class="cursor-pointer underline text-sm text-indigo-700 dark:text-gray-400">See
+                                <a class="cursor-pointer underline text-sm pt-5 text-indigo-700 dark:text-gray-400">See
                                     details</a>
                             </NavLink>
                         </div>
@@ -168,7 +167,7 @@ onMounted(() => {
                     <div
                         class="block bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 cursor-pointer dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 h-full p-4">
                         <div class="flex items-center justify-between mb-2">
-                            <h4 class="text-2xl  font-semibold tracking-tight text-gray-700 dark:text-white">
+                            <h4 class="text-2xl    tracking-tight text-gray-700 dark:text-white">
                                 Customers
                             </h4>
                             <div class="rounded-full bg-indigo-200 p-3 inline-flex items-center justify-center">
@@ -182,7 +181,7 @@ onMounted(() => {
                         </div>
 
                         <p class="text-4xl text-indigo-900 dark:text-white">{{ transactions_count }}</p>
-                        <hr class="my-2 border-gray-300 dark:border-gray-600" />
+
                         <div class="mt-auto text-right">
 
                         </div>
@@ -197,7 +196,7 @@ onMounted(() => {
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg mx-5 ">
                     <table class="w-full text-sm text-left rtl:text-right text-gray-500  dark:text-gray-400">
                         <caption
-                            class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+                            class="p-5 text-lg   text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
                             Top selling products weekly
 
                         </caption>
@@ -241,7 +240,7 @@ onMounted(() => {
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg mx-5 ">
                     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <caption
-                            class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+                            class="p-5 text-lg   text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
                             Top selling packages weekly
 
                         </caption>
