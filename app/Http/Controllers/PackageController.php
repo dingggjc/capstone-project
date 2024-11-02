@@ -10,16 +10,36 @@ use Inertia\Inertia;
 class PackageController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $packages = PackageModel::with('products')->get();
-        $products = Products::all(); // Fetch all available products
+        $query = $request->input('query');
+
+        $packages = PackageModel::with('products')
+            ->when($query, function ($queryBuilder) use ($query) {
+                $queryBuilder->where('package_name', 'LIKE', "%{$query}%")
+                    ->orWhere('package_description', 'LIKE', "%{$query}%")
+                    ->orWhere('package_price', 'LIKE', "%{$query}%")
+                    ->orWhere('created_at', 'LIKE', "%{$query}%")
+                    ->orWhereHas('products', function ($productQuery) use ($query) {
+                        $productQuery->where('product_name', 'LIKE', "%{$query}%")
+                            ->orWhere('quantity', 'LIKE', "%{$query}%");
+                    });
+            })
+            ->get();
+
+        $products = Products::when($query, function ($queryBuilder) use ($query) {
+            $queryBuilder->where('product_name', 'LIKE', "%{$query}%")
+                ->orWhere('product_description', 'LIKE', "%{$query}%");
+        })
+            ->get();
 
         return Inertia::render('package/index', [
             'package' => $packages,
-            'products' => $products
+            'products' => $products,
+            'searchQuery' => $query
         ]);
     }
+
 
 
     public function store(Request $request)

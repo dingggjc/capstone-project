@@ -38,7 +38,7 @@ const props = defineProps({
             <div class="space-y-4 mx-10 2xl:px-0 mt-4 px-5 py-5 bg-white dark:bg-gray-800">
 
                 <div class="w-full lg:w-full px-5 py-5 shadow-lg rounded-lg overflow-hidden bg-white dark:bg-gray-800">
-                    <table id="search-table" class="min-w-full bg-white dark:bg-indigo-800">
+                    <table id="search-table" class="min-w-full  bg-white dark:bg-indigo-800">
                         <thead>
                             <tr>
                                 <th

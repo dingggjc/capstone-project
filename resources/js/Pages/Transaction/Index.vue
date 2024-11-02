@@ -352,18 +352,7 @@ const clearTransaction = () => {
                                         class="px-6 py-3 border-b-2 border-indigo-300 dark:border-indigo-700 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
                                         Customer Name
                                     </th>
-                                    <th
-                                        class="px-6 py-3 border-b-2 border-indigo-300 dark:border-indigo-700 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
-                                        Package
-                                    </th>
-                                    <th
-                                        class="px-6 py-3 border-b-2 border-indigo-300 dark:border-indigo-700 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
-                                        Product
-                                    </th>
-                                    <th
-                                        class="px-6 py-3 border-b-2 border-indigo-300 dark:border-indigo-700 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
-                                        Quantity
-                                    </th>
+
                                     <th
                                         class="px-6 py-3 border-b-2 border-indigo-300 dark:border-indigo-700 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
                                         Total
@@ -387,11 +376,7 @@ const clearTransaction = () => {
                                     <td class="font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         {{ transaction.customer_name }}
                                     </td>
-                                    <td v-for="detail in transaction.details" :key="detail.id"> {{
-                                        detail.package?.package_name || 'No Package' }}</td>
-                                    <td v-for="detail in transaction.details" :key="detail.id"> {{
-                                        detail.product?.product_name || 'No Product' }}</td>
-                                    <td v-for="detail in transaction.details" :key="detail.id"> {{ detail.qty }}</td>
+
                                     <td>{{ transaction.grand_total }}</td>
                                     <td>{{ new Date(transaction.created_at).toLocaleDateString('en-US', {
                                         year:

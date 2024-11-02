@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, router } from '@inertiajs/vue3';
 import { onMounted, ref } from "vue";
 import { initFlowbite } from "flowbite";
 import { ElDialog } from 'element-plus';
@@ -16,8 +16,14 @@ defineProps({
 
 onMounted(() => {
     initFlowbite();
+
 });
 
+
+const searchQuery = ref('');
+const search = () => {
+    router.get(route('package.index'), { query: searchQuery.value }, { preserveState: true });
+};
 
 const showCreatePackageModal = ref(false);
 const showPreviewPackageModal = ref(false);
@@ -37,10 +43,10 @@ const openEditPackageModal = (pkg) => {
     packageForm.package_description = pkg.package_description
     packageForm.package_price = pkg.package_price;
 
-    // Populate products array in packageForm with the package's current products
+
     packageForm.products = pkg.products.map(product => ({
-        product_id: product.product_inventory_id, // Assuming the relationship fetches the product_inventory_id
-        quantity: product.pivot.quantity // Use the pivot to get the quantity of the product in the package
+        product_id: product.product_inventory_id,
+        quantity: product.pivot.quantity
     }));
     showEditPackageModal.value = true;
 
@@ -78,7 +84,7 @@ const removeProductFromPackage = (index) => {
 };
 
 const openPreviewPackageModal = (pkg) => {
-    previewPackage.value = { ...pkg }; // Set the preview data
+    previewPackage.value = { ...pkg };
 
     showPreviewPackageModal.value = true;
 };
@@ -87,12 +93,12 @@ const packageForm = useForm({
     package_name: '',
     package_description: '',
     package_price: '0',
-    products: [ // Array to store selected products and their quantities
+    products: [
         { product_id: null, quantity: 1 }
     ]
 })
 
-// Method to check if product stock is exceeded
+
 const checkProductStock = (product, index) => {
     const selectedProduct = product.find(p => p.product_inventory_id === product.product_id);
     if (selectedProduct && selectedProduct.product_quantity < product.quantity) {
@@ -102,7 +108,7 @@ const checkProductStock = (product, index) => {
             text: `Only ${selectedProduct.product_quantity} of ${selectedProduct.product_name} available.`,
             confirmButtonText: 'OK',
         });
-        // Reset quantity to the available stock
+
         packageForm.products[index].quantity = selectedProduct.product_quantity;
     }
 };
@@ -116,7 +122,7 @@ const handleEditPackage = () => {
                 text: 'The Package was updated successfully!',
                 confirmButtonText: 'OK',
             });
-            closeEditPackageModal(); // Close the modal and reset the form data
+            closeEditPackageModal();
         },
         onError: () => {
             Swal.fire({
@@ -190,10 +196,6 @@ const resetFormData = () => {
 
 
 
-
-
-
-
 <template>
 
     <Head title="Dashboard" />
@@ -210,6 +212,23 @@ const resetFormData = () => {
                         </div>
                         <div
                             class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
+
+                            <label for="table-search" class="sr-only">Search</label>
+                            <div class="relative">
+                                <div
+                                    class="absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none">
+                                    <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                        fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd"
+                                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <input type="text" id="table-search" v-model="searchQuery" @input="search"
+                                    class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="Search for items">
+                            </div>
+
                             <!-- Add Package Button -->
                             <button type="button" @click="openCreatePackageModal"
                                 class="flex items-center justify-center text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none dark:focus:ring-indigo  -700">
@@ -227,7 +246,7 @@ const resetFormData = () => {
                     </div>
 
                     <div class="overflow-x-auto max-h-135 overflow-y-auto">
-                        <table class="w-full text-xs text-left text-gray-500 dark:text-gray-400">
+                        <table class="w-full text-xs text-left text-gray-500 dark:text-gray-400 ">
                             <thead
                                 class="text-xs text-gray-700 uppercase w-full bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>

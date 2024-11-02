@@ -71,8 +71,7 @@ class TransactionController extends Controller
             'price' => $price,
 
         ]);
-
-        return redirect()->back()->with('success', 'Items added to cart');
+        return back()->with(['success' => 'Items added to cart']);
     }
 
     public function updateStatus(Request $request, $id)
