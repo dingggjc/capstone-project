@@ -1,9 +1,8 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { ref, onMounted, watch, defineProps } from 'vue';
+import { ref, onMounted, watch, defineProps, computed } from 'vue';
 import { initFlowbite } from 'flowbite';
-import { DataTable } from 'simple-datatables';
 import { ElDialog } from 'element-plus';
 import { Inertia } from '@inertiajs/inertia';
 import Swal from 'sweetalert2';
@@ -15,8 +14,6 @@ import axios from 'axios';
 
 onMounted(() => {
     initFlowbite();
-    const dataTable = new DataTable("#search-table");
-
 });
 
 const props = defineProps({
@@ -50,7 +47,28 @@ watch(payAmount, (newPayAmount) => {
 });
 
 
-// Payment Modal state
+const selectedStatus = ref('Pending');
+const isStatusClicked = ref(false);
+
+
+const filteredTransactions = computed(() => {
+    if (!isStatusClicked.value) {
+        return props.transactions;
+    }
+    return props.transactions.filter(transaction => {
+        return transaction.status === selectedStatus.value;
+    });
+});
+
+const handleStatusChange = (status) => {
+    selectedStatus.value = status;
+    isStatusClicked.value = true;
+};
+
+const resetStatusFilter = () => {
+    isStatusClicked.value = false;
+    selectedStatus.value = '';
+};
 const showPaymentModal = ref(false);
 
 const openPaymentModal = () => {
@@ -73,20 +91,19 @@ const addToCart = async () => {
             product_inventory_id: form.value.product_inventory_id,
             package_id: form.value.package_id,
         });
-
-
         form.value = { type: 'product', product_inventory_id: null, package_id: null, qty: 1 };
-
 
         Inertia.reload({ only: ['carts', 'carts_total'] });
     } catch (error) {
         if (error.response && error.response.status === 400) {
+
             Swal.fire('Error', error.response.data.error, 'error');
         } else {
             Swal.fire('Error', 'An error occurred while adding to cart', 'error');
         }
     }
 };
+
 
 
 
@@ -355,13 +372,7 @@ const clearTransaction = () => {
 
 
                                 </table>
-
-
-
-
-
                             </div>
-
                             <button type="button" @click="openPaymentModal"
                                 class="flex w-full items-center justify-center gap-2 mt-2 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-indigo-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-indigo-100 dark:border-indigo-600 dark:bg-indigo-800 dark:text-indigo-400 dark:hover:bg-indigo-700 dark:hover:text-white dark:focus:ring-indigo-700">
                                 Payment
@@ -372,55 +383,84 @@ const clearTransaction = () => {
                 </div>
             </form>
 
-            <!-- Table Section -->
-            <div>
-                <div class="space-y-4 mx-10 2xl:px-0 mt-8 px-5 py-5 bg-white
-                    dark:bg-gray-800">
+            <div class=" max-w-screen-x2 ">
+                <div class="bg-white mx-10 2xl:px-0 mt-8 px-5 shadow-lg relative sm:rounded-lg overflow-hidden">
                     <div
-                        class="w-full lg:w-full px-5 py-5 shadow-lg rounded-lg overflow-hidden bg-white dark:bg-gray-800">
-                        <table id="search-table" class="min-w-full bg-white dark:bg-indigo-800">
-                            <thead>
+                        class="flex flex-col bg-indigo-100  md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
+                        <button id="dropdownRadioButton" data-dropdown-toggle="dropdownDefaultRadio"
+                            class="text-white bg-indigo-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
+                            type="button">Payment Status <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m1 1 4 4 4-4" />
+                            </svg>
+                        </button>
+
+                        <!-- Dropdown menu -->
+                        <div id="dropdownDefaultRadio"
+                            class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600">
+                            <ul class="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200"
+                                aria-labelledby="dropdownRadioButton">
+                                <li>
+                                    <div class="flex items-center">
+                                        <input id="default-radio-1" type="radio" value="" name="default-radio"
+                                            @change="handleStatusChange('Paid')"
+                                            class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                        <label for="default-radio-1"
+                                            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Paid</label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="flex items-center">
+                                        <input checked id="default-radio-2" type="radio" value=""
+                                            @change="handleStatusChange('Pending')" name="default-radio"
+                                            class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                        <label for="default-radio-2"
+                                            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Pending</label>
+                                    </div>
+                                </li>
+
+                            </ul>
+                        </div>
+                        <button @click="resetStatusFilter"
+                            class="text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center">
+                            Reset Filter
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto max-h-135 overflow-y-auto">
+                        <table class="w-full text-xs text-left text-gray-500 dark:text-gray-400 ">
+                            <thead
+                                class="text-xs text-gray-700 uppercase w-full bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
-                                    <th
-                                        class="px-6 py-3 border-b-2 border-indigo-300 dark:border-indigo-700 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
-                                        Customer Name
-                                    </th>
+                                    <th scope="col" class="px-8 py-4">Cashier</th>
+                                    <th scope="col" class="px-8 py-3"> Customer Name</th>
+                                    <th scope="col" class="px-8 py-3">Invoice</th>
+                                    <th scope="col" class="px-8 py-3">Transaction Date</th>
+                                    <th scope="col" class="px-8 py-3">Status</th>
+                                    <th scope="col" class="text-center">Print</th>
+                                    <th scope="col" class="px-2 py-3"></th>
 
-                                    <th
-                                        class="px-6 py-3 border-b-2 border-indigo-300 dark:border-indigo-700 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
-                                        Total
-                                    </th>
-                                    <th
-                                        class="px-6 py-3 border-b-2 border-indigo-300 dark:border-indigo-700 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
-                                        Transaction Date
-                                    </th>
-                                    <th
-                                        class="px-6 py-3 border-b-2 border-indigo-300 dark:border-indigo-700 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
-                                        Status
-                                    </th>
-                                    <th
-                                        class="px-6 py-3 border-b-2 border-indigo-300 dark:border-indigo-700 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
-                                        Actions
-                                    </th>
-                                    <th
-                                        class="px-6 py-3 border-b-2 border-indigo-300 dark:border-indigo-700 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
 
-                                    </th>
+
                                 </tr>
                             </thead>
                             <tbody v-if="transactions && transactions.length">
-                                <tr v-for="transaction in transactions" :key="transaction.id">
-                                    <td class="font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        {{ transaction.customer_name }}
-                                    </td>
-
-                                    <td>{{ transaction.grand_total }}</td>
-                                    <td>{{ new Date(transaction.created_at).toLocaleDateString('en-US', {
-                                        year:
-                                            'numeric', month: 'long', day: 'numeric'
-                                    }) }}</td>
-                                    <td>
-                                        <span
+                                <tr v-for="transaction in filteredTransactions" :key="transaction.id"
+                                    class="border-b cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 dark:border-gray-700">
+                                    <th scope="row"
+                                        class="px-8 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        {{ transaction.cashier ? transaction.cashier.name : 'N/A' }}
+                                    </th>
+                                    <td class="px-8 py-3">{{
+                                        transaction.customer_name }}</td>
+                                    <td class="px-8 py-3">{{ transaction.invoice }}</td>
+                                    <td class="px-8 py-3">{{ new
+                                        Date(transaction.created_at).toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric'
+                                        }) }}</td>
+                                    <td class="px-8 py-3"><span
                                             :class="transaction.status === 'Paid'
                                                 ? 'inline-flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300'
                                                 : 'inline-flex items-center bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300'">
@@ -428,11 +468,8 @@ const clearTransaction = () => {
                                                 ? 'w-2 h-2 me-1 bg-green-500 rounded-full'
                                                 : 'w-2 h-2 me-1 bg-red-500 rounded-full'"></span>
                                             {{ transaction.status }}
-                                        </span>
-                                    </td>
-                                    <td>
-
-                                        <button class="rounded-full bg-indigo-300 p-2"
+                                        </span></td>
+                                    <td class="px-8 py-3 text-center"> <button class="rounded-full bg-indigo-300 p-2"
                                             @click="$inertia.get(route('transactions.print'), { invoice: transaction.invoice })">
                                             <svg class="w-6 h-6 text-indigo-800 dark:indigo-white" aria-hidden="true"
                                                 xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
@@ -440,25 +477,23 @@ const clearTransaction = () => {
                                                 <path stroke="currentColor" stroke-linejoin="round" stroke-width="2"
                                                     d="M16.444 18H19a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h2.556M17 11V5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v6h10ZM7 15h10v4a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-4Z" />
                                             </svg>
-                                        </button>
-                                    </td>
-                                    <td>
-                                        <button @click="updateTransactionStatus(transaction.id, 'Paid')"
+
+                                        </button></td>
+                                    <td class="px-2 py-3"><button
+                                            @click="updateTransactionStatus(transaction.id, 'Paid')"
                                             class="rounded-full bg-green-300 p-2 text-green-800 hover:bg-green-400"
                                             v-if="transaction.status === 'Pending'">
                                             Mark as Paid
-                                        </button>
+                                        </button></td>
 
-                                    </td>
                                 </tr>
-                            </tbody>
 
+                            </tbody>
                         </table>
                     </div>
-
                 </div>
-
             </div>
+
         </section>
 
 

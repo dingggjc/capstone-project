@@ -21,15 +21,21 @@ const props = defineProps({
 });
 const searchQuery = ref(props.searchQuery || '');
 const selectedStatus = ref('Pending');
+const isStatusClicked = ref(false);
 
 
 const filteredTransactions = computed(() => {
+    if (!isStatusClicked.value) {
+        return props.transactions;
+    }
     return props.transactions.filter(transaction => {
         return transaction.status === selectedStatus.value;
     });
 });
+
 const handleStatusChange = (status) => {
     selectedStatus.value = status;
+    isStatusClicked.value = true;
 };
 
 const search = () => {
@@ -206,7 +212,7 @@ const search = () => {
                     </div>
 
                     <div class="overflow-x-auto max-h-135 overflow-y-auto">
-                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
+                        <table class="w-full text-xs text-left text-gray-500 dark:text-gray-400 ">
                             <thead
                                 class="text-xs text-gray-700 uppercase w-full bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>

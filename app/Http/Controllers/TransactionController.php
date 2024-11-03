@@ -47,14 +47,25 @@ class TransactionController extends Controller
         $package = $request->package_id ? PackageModel::find($request->package_id) : null;
         $price = 0;
 
+        // Check stock for individual product
         if ($product) {
             if ($product->product_quantity < $request->qty) {
-                return response()->json(['error' => 'Insufficient product stock'], 400);
+                return response()->json(['error' => 'Insufficient stock for the selected product.'], 400);
             }
             $price += $product->product_price * $request->qty;
         }
-
         if ($package) {
+            foreach ($package->products as $packageProduct) {
+                $productQtyInPackage = $packageProduct->pivot->quantity;
+                $requiredQuantity = $request->qty * $productQtyInPackage;
+
+
+                if ($packageProduct->product_quantity < $requiredQuantity) {
+                    return response()->json([
+                        'error' => "Insufficient stock for product: {$packageProduct->product_name} in the package."
+                    ], 400);
+                }
+            }
             $price += $package->package_price * $request->qty;
         }
 
@@ -68,6 +79,8 @@ class TransactionController extends Controller
 
         return back()->with(['success' => 'Items added to cart']);
     }
+
+
 
 
     public function updateStatus(Request $request, $id)

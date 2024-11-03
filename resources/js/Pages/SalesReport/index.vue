@@ -171,6 +171,7 @@ function generatePDF() {
                                         <th scope="col" class="px-8 py-4">Date</th>
                                         <th scope="col" class="px-8 py-3">Cashier</th>
                                         <th scope="col" class="px-8 py-3">Customer</th>
+                                        <th scope="col" class="px-8 py-3">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody v-if="filteredTransactions && filteredTransactions.length">
@@ -194,7 +195,7 @@ function generatePDF() {
                                 </tbody>
                                 <tr
                                     class="text-gray-700 text-base w-auto uppercase py-10 bg-indigo-50 dark:bg-indigo-700 dark:text-gray-400">
-                                    <td colspan="5" class="px-6 py-3 text-right font-bold">Total</td>
+                                    <td colspan="4" class="px-6 py-3 text-right font-bold">Total</td>
                                     <td colspan="1" class="px-6 py-3 font-bold  text-left">{{ totalAmount }}</td>
 
                                 </tr>
