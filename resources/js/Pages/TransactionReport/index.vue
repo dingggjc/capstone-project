@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
-import { onMounted, defineProps, } from 'vue';
+import { Head, router } from '@inertiajs/vue3';
+import { onMounted, defineProps, ref, computed } from 'vue';
 import { initFlowbite } from 'flowbite';
 
 
@@ -10,13 +10,32 @@ onMounted(() => {
 
 });
 
+
 const props = defineProps({
     products: Array,
     packages: Array,
     carts_total: Number,
     carts: Array,
-    transactions: Array
+    transactions: Array,
+    searchQuery: String
 });
+const searchQuery = ref(props.searchQuery || '');
+const selectedStatus = ref('Pending');
+
+
+const filteredTransactions = computed(() => {
+    return props.transactions.filter(transaction => {
+        return transaction.status === selectedStatus.value;
+    });
+});
+const handleStatusChange = (status) => {
+    selectedStatus.value = status;
+};
+
+const search = () => {
+    router.get(route('transaction.report'), { query: searchQuery.value }, { preserveState: true });
+};
+
 
 </script>
 
@@ -50,7 +69,7 @@ const props = defineProps({
                                             clip-rule="evenodd"></path>
                                     </svg>
                                 </div>
-                                <input type="text" id="table-search"
+                                <input type="text" id="table-search" v-model="searchQuery" @input="search"
                                     class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     placeholder="Search for items">
                             </div>
@@ -159,6 +178,7 @@ const props = defineProps({
                                     <li>
                                         <div class="flex items-center">
                                             <input id="default-radio-1" type="radio" value="" name="default-radio"
+                                                @change="handleStatusChange('Paid')"
                                                 class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                                             <label for="default-radio-1"
                                                 class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Paid</label>
@@ -167,7 +187,7 @@ const props = defineProps({
                                     <li>
                                         <div class="flex items-center">
                                             <input checked id="default-radio-2" type="radio" value=""
-                                                name="default-radio"
+                                                @change="handleStatusChange('Pending')" name="default-radio"
                                                 class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                                             <label for="default-radio-2"
                                                 class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Pending</label>
@@ -201,7 +221,7 @@ const props = defineProps({
                                 </tr>
                             </thead>
                             <tbody v-if="transactions && transactions.length">
-                                <tr v-for="transaction in transactions" :key="transaction.id"
+                                <tr v-for="transaction in filteredTransactions" :key="transaction.id"
                                     class="border-b cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 dark:border-gray-700">
                                     <th scope="row"
                                         class="px-8 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">

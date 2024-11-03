@@ -93,6 +93,7 @@ Route::middleware('auth')->group(function () {
 
     // In your web.php or routes file
     Route::put('/transaction/update-status/{id}', [TransactionController::class, 'updateStatus'])->name('transaction.updateStatus');
+    Route::get('/transactions/search', [TransactionReportController::class, 'search'])->name('transaction.search');
 });
 
 
