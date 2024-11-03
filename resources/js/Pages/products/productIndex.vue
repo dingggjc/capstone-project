@@ -176,7 +176,7 @@ const getColorClass = (quantity) => {
 };
 
 const getStockStatus = (quantity) => {
-    if (quantity >= 26) return 'Safe';
+    if (quantity >= 26) return 'Adequate';
     if (quantity >= 11 && quantity <= 25) return 'Low';
     if (quantity <= 10) return 'Ctitical';
     return 'Unknown';
@@ -203,10 +203,10 @@ const resetFormData = () => {
 
         <section class="bg-gray-50 dark:bg-gray-900 p-3 sm:p-5 mt-20  antialiased">
 
-            <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
+            <div class="mx-auto max-w-screen-xl px-4 lg:px-12 ">
                 <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg">
                     <div
-                        class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
+                        class="flex flex-col md:flex-row items-center justify-between bg-indigo-100  space-y-3 md:space-y-0 md:space-x-4 p-4">
                         <button id="dropdownRadioButton" data-dropdown-toggle="dropdownDefaultRadio"
                             class="text-white bg-indigo-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
                             type="button">Manage Products <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true"

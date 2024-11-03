@@ -206,7 +206,7 @@ const resetFormData = () => {
             <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
                 <div class="bg-white  relative shadow-md sm:rounded-lg overflow-hidden">
                     <div
-                        class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
+                        class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 bg-indigo-100  md:space-x-4 p-4">
                         <div class="w-full md:w-1/2">
                             <p class="text-2xl mb-3 ml-4  text-gray-900 dark:text-white">Manage Packages</p>
                         </div>

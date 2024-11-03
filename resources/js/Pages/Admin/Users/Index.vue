@@ -163,7 +163,7 @@ onMounted(() => {
             <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
                 <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
                     <div
-                        class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
+                        class="flex flex-col md:flex-row items-center justify-between bg-indigo-100  space-y-3 md:space-y-0 md:space-x-4 p-4">
                         <div class="w-full md:w-1/2">
                             <p class="text-2xl mb-3 ml-4 text-gray-900 dark:text-white">Manage Users</p>
                         </div>
@@ -307,7 +307,7 @@ onMounted(() => {
 
             <!-- Add User Modal -->
             <el-dialog v-model="showCreateUserModal" width="50%">
-                <template v-slot:title>
+                <template v-slot:header>
                     <span class="font-bold text-2xl px-2">Add User</span>
                 </template>
                 <hr class="mb-5 border-gray-300 dark:border-gray-600" />
