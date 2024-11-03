@@ -118,8 +118,19 @@ const destroyCart = (cartId) => {
 
 
 const submitTransaction = async (status) => {
+
+    if (!form.value.customer_name || !form.value.customer_phone || !form.value.vehicle_type || !form.value.vehicle_plate) {
+        Swal.fire({
+            title: 'Error',
+            text: 'Please fill out all required fields.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
     if (payAmount.value < props.carts_total) {
-        // Alert the user about insufficient payment
+
         Swal.fire({
             title: 'Insufficient Payment',
             text: `The payment amount is less than the total amount due. Please enter an amount equal to or greater than ₱${props.carts_total}.`,

@@ -8,7 +8,12 @@ class TransactionReportController extends Controller
 {
     public function index()
     {
-        $transactions = Transactions::with('cashier')->get(); // Load the cashier relationship
+
+        $transactions = Transactions::with([
+            'cashier',
+            'details.product',
+            'details.package'
+        ])->get();
 
         return inertia('TransactionReport/index', [
             'transactions' => $transactions,
