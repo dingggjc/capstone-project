@@ -7,6 +7,8 @@ import { DataTable } from 'simple-datatables';
 import { ElDialog } from 'element-plus';
 import { Inertia } from '@inertiajs/inertia';
 import Swal from 'sweetalert2';
+import axios from 'axios';
+
 
 
 
@@ -64,24 +66,26 @@ const form = ref({
     qty: 1,
 });
 
-const addToCart = () => {
-    const data = {
-        qty: form.value.qty,
-        product_inventory_id: form.value.product_inventory_id,
-        package_id: form.value.package_id
-    };
-    Inertia.post(route('transaction.addToCart'), data, {
-        onSuccess: () => {
+const addToCart = async () => {
+    try {
+        const response = await axios.post(route('transaction.addToCart'), {
+            qty: form.value.qty,
+            product_inventory_id: form.value.product_inventory_id,
+            package_id: form.value.package_id,
+        });
 
-            form.value = {
 
-                type: 'product',
-                product_inventory_id: null,
-                package_id: null,
-                qty: 1,
-            };
+        form.value = { type: 'product', product_inventory_id: null, package_id: null, qty: 1 };
+
+
+        Inertia.reload({ only: ['carts', 'carts_total'] });
+    } catch (error) {
+        if (error.response && error.response.status === 400) {
+            Swal.fire('Error', error.response.data.error, 'error');
+        } else {
+            Swal.fire('Error', 'An error occurred while adding to cart', 'error');
         }
-    });
+    }
 };
 
 
@@ -113,59 +117,77 @@ const destroyCart = (cartId) => {
 };
 
 
-const submitTransaction = (transactionStatus) => {
-    Inertia.post(route('transaction.store'), {
-        cash: payAmount.value,
-        change: changeAmount.value,
-        carts_total: props.carts_total,
-        customer_name: form.value.customer_name,
-        customer_phone: form.value.customer_phone,
-        vehicle_type: form.value.vehicle_type,
-        vehicle_plate: form.value.vehicle_plate,
-        status: transactionStatus // use transactionStatus passed as argument
-    }, {
-        onSuccess: () => {
-            Swal.fire('Success', 'Transaction completed successfully', 'success');
+const submitTransaction = async (status) => {
+    if (payAmount.value < props.carts_total) {
+        // Alert the user about insufficient payment
+        Swal.fire({
+            title: 'Insufficient Payment',
+            text: `The payment amount is less than the total amount due. Please enter an amount equal to or greater than ₱${props.carts_total}.`,
+            icon: 'error',
+            confirmButtonText: 'OK',
+            customClass: {
+                popup: 'swal-custom-z-index'
+            }
+        });
+        return;
+    }
+
+    try {
+        Swal.fire({
+            title: 'Processing...',
+            text: 'Please wait while we process your transaction.',
+            icon: 'info',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            willOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        const response = await axios.post(route('transaction.store'), {
+            cash: payAmount.value,
+            change: changeAmount.value,
+            carts_total: props.carts_total,
+            customer_name: form.value.customer_name,
+            customer_phone: form.value.customer_phone,
+            vehicle_type: form.value.vehicle_type,
+            vehicle_plate: form.value.vehicle_plate,
+            status,
+        });
+
+        if (response.data.success) {
+            Swal.fire('Success', 'Transaction completed successfully', 'success').then(() => {
+                Inertia.reload({ only: ['carts', 'transactions', 'carts_total'] });
+            });
 
             payAmount.value = 0;
-            changeAmount.value = 0;
-            form.value = {
-                customer_name: '',
-                customer_phone: '',
-                vehicle_type: '',
-                vehicle_plate: ''
-            };
-        },
-        onError: () => {
-            Swal.fire('Error', 'Failed to process transaction', 'error');
+            form.value = { customer_name: '', customer_phone: '', vehicle_type: '', vehicle_plate: '' };
+            showPaymentModal.value = false;
+
+        } else {
+            Swal.fire('Error', 'Transaction completed, but an error occurred.', 'error');
         }
-    });
+    } catch (error) {
+        Swal.fire('Error', 'Failed to process transaction', 'error');
+    }
 };
 
 
-const updateTransactionStatus = (transactionId, newStatus) => {
-    Swal.fire({
+
+const updateTransactionStatus = async (transactionId, newStatus) => {
+    const result = await Swal.fire({
         title: 'Mark as Paid?',
-        text: 'Are you sure you want to change the status to Paid?',
+        text: 'Change status to Paid?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Yes, update it!',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Inertia.put(route('transaction.updateStatus', { id: transactionId }),
-                { status: newStatus },
-                {
-                    onSuccess: () => {
-                        Swal.fire('Updated!', 'The transaction status has been updated to Paid.', 'success');
-                    },
-                    onError: () => {
-                        Swal.fire('Error!', 'Failed to update transaction status.', 'error');
-                    }
-                }
-            );
-        }
     });
+    if (result.isConfirmed) {
+        Inertia.put(route('transaction.updateStatus', { id: transactionId }), { status: newStatus }, {
+            onSuccess: () => Swal.fire('Updated!', 'Transaction status updated to Paid.', 'success'),
+            onError: () => Swal.fire('Error!', 'Failed to update status.', 'error'),
+        });
+    }
 };
 
 const clearTransaction = () => {
@@ -369,6 +391,10 @@ const clearTransaction = () => {
                                         class="px-6 py-3 border-b-2 border-indigo-300 dark:border-indigo-700 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
                                         Actions
                                     </th>
+                                    <th
+                                        class="px-6 py-3 border-b-2 border-indigo-300 dark:border-indigo-700 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
+
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody v-if="transactions && transactions.length">
@@ -394,11 +420,7 @@ const clearTransaction = () => {
                                         </span>
                                     </td>
                                     <td>
-                                        <button @click="updateTransactionStatus(transaction.id, 'Paid')"
-                                            class="rounded-full bg-green-300 p-2 text-green-800 hover:bg-green-400"
-                                            v-if="transaction.status === 'Pending'">
-                                            Mark as Paid
-                                        </button>
+
                                         <button class="rounded-full bg-indigo-300 p-2"
                                             @click="$inertia.get(route('transactions.print'), { invoice: transaction.invoice })">
                                             <svg class="w-6 h-6 text-indigo-800 dark:indigo-white" aria-hidden="true"
@@ -408,6 +430,14 @@ const clearTransaction = () => {
                                                     d="M16.444 18H19a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h2.556M17 11V5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v6h10ZM7 15h10v4a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-4Z" />
                                             </svg>
                                         </button>
+                                    </td>
+                                    <td>
+                                        <button @click="updateTransactionStatus(transaction.id, 'Paid')"
+                                            class="rounded-full bg-green-300 p-2 text-green-800 hover:bg-green-400"
+                                            v-if="transaction.status === 'Pending'">
+                                            Mark as Paid
+                                        </button>
+
                                     </td>
                                 </tr>
                             </tbody>
@@ -423,7 +453,7 @@ const clearTransaction = () => {
 
 
 
-        <el-dialog v-model="showPaymentModal" width="70%">
+        <el-dialog v-model="showPaymentModal" width="70%" :z-index="1000">
             <template #header>
                 <section class="bg-white pb-10 antialiased dark:bg-gray-900 md:py-">
                     <div class="mx-auto w-auto px-10 2xl:px-0">

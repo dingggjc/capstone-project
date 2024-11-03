@@ -359,11 +359,6 @@ const resetFormData = () => {
                                 </option>
 
                             </select>
-
-                            <input type="number" v-model="product.quantity" min="1"
-                                @input="checkProductStock(product, index)"
-                                class="w-24 mr-2 border border-gray-300 rounded-md" />
-
                             <button type="button" @click="removeProductFromPackage(index)"
                                 class="text-red-600">Remove</button>
                         </div>

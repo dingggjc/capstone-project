@@ -44,7 +44,6 @@ class PackageController extends Controller
 
     public function store(Request $request)
     {
-
         $validated = $request->validate([
             'package_name' => 'nullable|string|max:255',
             'package_description' => 'nullable|string',
@@ -54,29 +53,25 @@ class PackageController extends Controller
             'products.*.quantity' => 'required|integer|min:1',
         ]);
 
-        // Create the package
         $package = PackageModel::create([
             'package_name' => $validated['package_name'],
             'package_description' => $validated['package_description'],
             'package_price' => $validated['package_price']
         ]);
 
-
         foreach ($validated['products'] as $productData) {
             $product = Products::find($productData['product_id']);
             if ($product->product_quantity >= $productData['quantity']) {
                 $package->products()->attach($product->product_inventory_id, ['quantity' => $productData['quantity']]);
-
-
-                $product->decrement('product_quantity', $productData['quantity']);
             } else {
-
                 return back()->withErrors(['product' => "Not enough inventory for product: {$product->product_name}"]);
             }
         }
 
         return redirect()->back()->with('success', 'Package created successfully!');
     }
+
+
 
 
     public function destroy($id)
@@ -90,12 +85,10 @@ class PackageController extends Controller
         return redirect()->back()->with('error', 'Package not found!');
     }
 
-
     public function update(Request $request, $id)
     {
         $package = PackageModel::findOrFail($id);
 
-        // Validate the package data
         $validated = $request->validate([
             'package_name' => 'required|string|max:225',
             'package_description' => 'nullable|string',
@@ -105,29 +98,19 @@ class PackageController extends Controller
             'products.*.quantity' => 'required|integer|min:1',
         ]);
 
-
         $package->update([
             'package_name' => $validated['package_name'],
             'package_description' => $validated['package_description'],
             'package_price' => $validated['package_price']
         ]);
 
-
         $package->products()->detach();
-
 
         foreach ($validated['products'] as $productData) {
             $product = Products::find($productData['product_id']);
-
-
             if ($product->product_quantity >= $productData['quantity']) {
-
                 $package->products()->attach($product->product_inventory_id, ['quantity' => $productData['quantity']]);
-
-
-                $product->decrement('product_quantity', $productData['quantity']);
             } else {
-
                 return back()->withErrors(['product' => "Not enough inventory for product: {$product->product_name}"]);
             }
         }

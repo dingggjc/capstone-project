@@ -10,7 +10,7 @@ use App\Models\Products;
 use App\Models\PackageModel;
 use Illuminate\Support\Str;
 use App\Models\Transactions;
-use Carbon\Carbon;
+
 
 class TransactionController extends Controller
 {
@@ -48,31 +48,27 @@ class TransactionController extends Controller
         $price = 0;
 
         if ($product) {
-            if ($product->product_quantity >= $request->qty) {
-                $product->product_quantity -= $request->qty;
-                $product->save();
-            } else {
-                return redirect()->back()->with('error', 'Insufficient product stock');
+            if ($product->product_quantity < $request->qty) {
+                return response()->json(['error' => 'Insufficient product stock'], 400);
             }
             $price += $product->product_price * $request->qty;
         }
+
         if ($package) {
             $price += $package->package_price * $request->qty;
         }
 
-
-
         Cart::create([
-
             'product_inventory_id' => $request->product_inventory_id,
             'package_id' => $request->package_id,
             'cashier_id' => Auth::user()->id,
             'qty' => $request->qty,
             'price' => $price,
-
         ]);
+
         return back()->with(['success' => 'Items added to cart']);
     }
+
 
     public function updateStatus(Request $request, $id)
     {
@@ -99,7 +95,6 @@ class TransactionController extends Controller
         $carts = Cart::where('cashier_id', Auth::user()->id)->get();
         $carts_total = 0;
 
-        // Calculate carts total dynamically based on current prices
         foreach ($carts as $cart) {
             if ($cart->product_inventory_id && $cart->products) {
                 $carts_total += $cart->products->product_price * $cart->qty;
@@ -110,7 +105,6 @@ class TransactionController extends Controller
         }
 
         $status = $request->status ?? ($request->cash >= $carts_total ? 'Paid' : 'Pending');
-
         $invoice = 'GRNSDE-' . Str::upper(Str::random(10));
 
         $transaction = Transactions::create([
@@ -126,31 +120,48 @@ class TransactionController extends Controller
             'status' => $status,
         ]);
 
-        $carts = Cart::with(['products', 'package'])->where('cashier_id', Auth::user()->id)->get();
-        foreach ($carts as $cart) {
-            $transaction->details()->create([
-                'transaction_id' => $transaction->id,
-                'product_inventory_id' => $cart->product_inventory_id,
-                'package_id' => $cart->package_id,
-                'qty' => $cart->qty,
-                'product_price' => $cart->product_inventory_id && $cart->products ? $cart->products->product_price : null,
-                'package_price' => $cart->package_id && $cart->package ? $cart->package->package_price : null,
-            ]);
+        if ($status === 'Paid') {
+            foreach ($carts as $cart) {
+                if ($cart->product_inventory_id && $cart->products) {
+                    $cart->products->decrement('product_quantity', $cart->qty);
+                }
 
+                if ($cart->package_id && $cart->package) {
+                    foreach ($cart->package->products as $product) {
+                        $productQtyInPackage = $product->pivot->quantity; // Quantity of the product in this package
+                        $product->decrement('product_quantity', $cart->qty * $productQtyInPackage); // Adjust based on cart qty
+                    }
+                }
 
-            $product_price = $cart->product_inventory_id && $cart->products ? $cart->products->product_price * $cart->qty : 0;
-            $package_price = $cart->package_id && $cart->package ? $cart->package->package_price * $cart->qty : 0;
+                $transaction->details()->create([
+                    'transaction_id' => $transaction->id,
+                    'product_inventory_id' => $cart->product_inventory_id,
+                    'package_id' => $cart->package_id,
+                    'qty' => $cart->qty,
+                    'product_price' => $cart->product_inventory_id && $cart->products ? $cart->products->product_price : null,
+                    'package_price' => $cart->package_id && $cart->package ? $cart->package->package_price : null,
+                ]);
 
-            $profit = $product_price + $package_price;
+                $product_price = $cart->product_inventory_id && $cart->products ? $cart->products->product_price * $cart->qty : 0;
+                $package_price = $cart->package_id && $cart->package ? $cart->package->package_price * $cart->qty : 0;
+                $profit = $product_price + $package_price;
 
-            $transaction->profits()->create([
-                'transaction_id' => $transaction->id,
-                'total' => $profit,
-            ]);
-            Cart::where('cashier_id', Auth::user()->id)->delete();
-            return redirect()->back()->with('success', 'Transaction completed successfully');
+                $transaction->profits()->create([
+                    'transaction_id' => $transaction->id,
+                    'total' => $profit,
+                ]);
+            }
         }
+
+        Cart::where('cashier_id', Auth::user()->id)->delete();
+
+        return response()->json([
+            'success' => true,
+            'data' => $transaction
+        ]);
     }
+
+
     public function print(Request $request)
     {
 
