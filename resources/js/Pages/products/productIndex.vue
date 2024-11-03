@@ -1,11 +1,11 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
-import { onMounted, ref } from "vue";
+import { Head, router } from '@inertiajs/vue3';
+import { onMounted, ref, watch } from "vue";
 import { initFlowbite } from "flowbite";
 import { ElDialog } from 'element-plus';
-import { useForm } from '@inertiajs/vue3'; // Import useForm for handling form submission
-import Swal from 'sweetalert2'; // Import SweetAlert2
+import { useForm } from '@inertiajs/vue3';
+import Swal from 'sweetalert2';
 
 defineProps({
     products: Array
@@ -15,7 +15,26 @@ onMounted(() => {
     initFlowbite();
 });
 
-// Modal visibility states and product data
+
+const stockStatusFilter = ref('');
+
+
+const searchQuery = ref('');
+const search = () => {
+    router.get(route('productIndex'), {
+        query: searchQuery.value,
+        stock_status: stockStatusFilter.value
+    }, { preserveState: true, replace: true });
+};
+
+const setStockStatusFilter = (status) => {
+    stockStatusFilter.value = status;
+    search();
+};
+
+watch(stockStatusFilter, (newStatus) => {
+    search();
+});
 const showCreateProductModal = ref(false);
 const showEditProductModal = ref(false);
 const showPreviewProductModal = ref(false);
@@ -36,17 +55,17 @@ const previewProduct = ref({
     product_quantity: 0
 });
 
-// Modal control functions
+
 const openCreateProductModal = () => {
-    resetFormData(); // Reset the form before opening the modal
+    resetFormData();
     showCreateProductModal.value = true;
 };
 const closeCreateProductModal = () => {
     showCreateProductModal.value = false;
-    resetFormData(); // Reset the form when closing the modal
+    resetFormData();
 };
 
-// Open Edit Modal and populate form
+
 const openEditProductModal = (product) => {
     editProduct.value = { ...product };
 
@@ -58,15 +77,15 @@ const openEditProductModal = (product) => {
 };
 const closeEditProductModal = () => {
     showEditProductModal.value = false;
-    resetFormData(); // Reset the form when closing the modal
+    resetFormData();
 };
 const openPreviewProductModal = (product) => {
-    previewProduct.value = { ...product }; // Set the preview data
+    previewProduct.value = { ...product };
     showPreviewProductModal.value = true;
 };
 const closePreviewProductModal = () => { showPreviewProductModal.value = false; };
 
-// Initialize form only once
+
 const productForm = useForm({
     product_name: '',
     product_price: 0,
@@ -74,7 +93,7 @@ const productForm = useForm({
     product_quantity: 0
 });
 
-// Handle form submission for adding a product
+
 const handleAddProduct = () => {
     productForm.post(route('products.store'), {
         onSuccess: () => {
@@ -97,7 +116,7 @@ const handleAddProduct = () => {
     });
 };
 
-// Handle form submission for updating a product
+
 
 const handleEditProduct = () => {
     productForm.put(route('products.update', editProduct.value.product_inventory_id), {
@@ -108,7 +127,7 @@ const handleEditProduct = () => {
                 text: 'The product was updated successfully!',
                 confirmButtonText: 'OK',
             });
-            closeEditProductModal(); // Close the modal and reset the form data
+            closeEditProductModal();
         },
         onError: () => {
             Swal.fire({
@@ -121,7 +140,7 @@ const handleEditProduct = () => {
     });
 };
 
-// Handle product deletion
+
 const deleteProduct = (product) => {
     Swal.fire({
         title: 'Are you sure?',
@@ -157,14 +176,14 @@ const getColorClass = (quantity) => {
 };
 
 const getStockStatus = (quantity) => {
-    if (quantity >= 26) return 'Safe (good)';
-    if (quantity >= 11 && quantity <= 25) return 'Low Stock';
-    if (quantity <= 10) return 'Very Low Stock';
+    if (quantity >= 26) return 'Safe';
+    if (quantity >= 11 && quantity <= 25) return 'Low';
+    if (quantity <= 10) return 'Ctitical';
     return 'Unknown';
 };
 
 
-// Corrected resetFormData function
+
 const resetFormData = () => {
     productForm.reset();
 };
@@ -185,15 +204,82 @@ const resetFormData = () => {
         <section class="bg-gray-50 dark:bg-gray-900 p-3 sm:p-5 mt-20  antialiased">
 
             <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
-                <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
+                <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg">
                     <div
                         class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
-                        <div class="w-full md:w-1/2">
-                            <p class="text-2xl mb-3 ml-4  text-gray-900 dark:text-white">Manage Products</p>
+                        <button id="dropdownRadioButton" data-dropdown-toggle="dropdownDefaultRadio"
+                            class="text-white bg-indigo-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
+                            type="button">Manage Products <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m1 1 4 4 4-4" />
+                            </svg>
+                        </button>
+
+                        <!-- Dropdown menu -->
+                        <div id="dropdownDefaultRadio"
+                            class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600">
+                            <ul class="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200"
+                                aria-labelledby="dropdownRadioButton">
+                                <li>
+                                    <div class="flex items-center">
+                                        <input id="default-radio-1" type="radio" value="" name="default-radio"
+                                            @click="setStockStatusFilter('Safe')"
+                                            class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                        <label for="default-radio-1"
+                                            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Safe</label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="flex items-center">
+                                        <input checked id="default-radio-2" type="radio" value="" name="default-radio"
+                                            @click="setStockStatusFilter('Low')"
+                                            class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                        <label for="default-radio-2"
+                                            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Low</label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="flex items-center">
+                                        <input checked id="default-radio-2" type="radio" value="" name="default-radio"
+                                            @click="setStockStatusFilter('Critical')"
+                                            class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                        <label for="default-radio-2"
+                                            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Critical</label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="flex items-center">
+                                        <input checked id="default-radio-2" type="radio" value="" name="default-radio"
+                                            @click="setStockStatusFilter('')"
+                                            class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                        <label for="default-radio-2"
+                                            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Reset</label>
+                                    </div>
+                                </li>
+
+                            </ul>
                         </div>
                         <div
                             class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
-                            <!-- Add Product Button -->
+
+
+
+                            <label for="table-search" class="sr-only">Search</label>
+                            <div class="relative">
+                                <div
+                                    class="absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none">
+                                    <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                        fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd"
+                                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <input type="text" id="table-search" v-model="searchQuery" @input="search"
+                                    class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="Search for items">
+                            </div>
                             <button type="button" @click="openCreateProductModal"
                                 class="flex items-center justify-center text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-400 font-medium rounded-lg text-sm px-4 py-2 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none dark:focus:ring-indigo-700">
                                 <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewBox="0 0 20 20"
