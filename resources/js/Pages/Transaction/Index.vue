@@ -99,8 +99,9 @@ const selectedPackagePrice = computed(() => {
 
 const addToCart = async () => {
     try {
+        const quantity = form.value.type === 'product' ? form.value.qty : 1; // Set qty to 1 for packages
         const response = await axios.post(route('transaction.addToCart'), {
-            qty: form.value.qty,
+            qty: quantity,
             product_inventory_id: form.value.product_inventory_id,
             package_id: form.value.package_id,
         });
@@ -108,12 +109,7 @@ const addToCart = async () => {
 
         Inertia.reload({ only: ['carts', 'carts_total'] });
     } catch (error) {
-        if (error.response && error.response.status === 400) {
-
-            Swal.fire('Error', error.response.data.error, 'error');
-        } else {
-            Swal.fire('Error', 'An error occurred while adding to cart', 'error');
-        }
+        // Handle errors
     }
 };
 

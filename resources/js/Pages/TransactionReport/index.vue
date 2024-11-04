@@ -116,21 +116,29 @@ const search = () => {
                                     <td class="px-8 py-3">{{ transaction.invoice }}</td>
                                     <td class="px-8 py-3">
                                         <ul>
-                                            <li v-for="detail in transaction.details || []" :key="detail.id">
-                                                <span v-if="detail.product">
-                                                    {{ detail.product.product_name }}
+                                            <li
+                                                v-if="transaction.details && transaction.details.some(detail => detail.product)">
+                                                <span v-for="detail in transaction.details" :key="detail.id">
+                                                    <span v-if="detail.product">
+                                                        {{ detail.product.product_name }}
+                                                    </span>
                                                 </span>
                                             </li>
+                                            <li v-else>No Product Selected</li>
                                         </ul>
                                     </td>
 
                                     <td class="px-8 py-3">
                                         <ul>
-                                            <li v-for="detail in transaction.details || []" :key="detail.id">
-                                                <span v-if="detail.package">
-                                                    {{ detail.package.package_name }}
+                                            <li
+                                                v-if="transaction.details && transaction.details.some(detail => detail.package)">
+                                                <span v-for="detail in transaction.details" :key="detail.id">
+                                                    <span v-if="detail.package">
+                                                        {{ detail.package.package_name }}
+                                                    </span>
                                                 </span>
                                             </li>
+                                            <li v-else>No Package Selected</li>
                                         </ul>
                                     </td>
                                     <td class="px-8 py-3">{{ new

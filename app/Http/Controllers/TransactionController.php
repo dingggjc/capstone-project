@@ -47,18 +47,18 @@ class TransactionController extends Controller
         $package = $request->package_id ? PackageModel::find($request->package_id) : null;
         $price = 0;
 
-        // Check stock for individual product
+
         if ($product) {
             if ($product->product_quantity < $request->qty) {
                 return response()->json(['error' => 'Insufficient stock for the selected product.'], 400);
             }
             $price += $product->product_price * $request->qty;
         }
+
         if ($package) {
             foreach ($package->products as $packageProduct) {
                 $productQtyInPackage = $packageProduct->pivot->quantity;
-                $requiredQuantity = $request->qty * $productQtyInPackage;
-
+                $requiredQuantity = $productQtyInPackage;
 
                 if ($packageProduct->product_quantity < $requiredQuantity) {
                     return response()->json([
@@ -66,14 +66,14 @@ class TransactionController extends Controller
                     ], 400);
                 }
             }
-            $price += $package->package_price * $request->qty;
+            $price += $package->package_price;
         }
 
         Cart::create([
             'product_inventory_id' => $request->product_inventory_id,
             'package_id' => $request->package_id,
             'cashier_id' => Auth::user()->id,
-            'qty' => $request->qty,
+            'qty' => $product ? $request->qty : 1,
             'price' => $price,
         ]);
 
