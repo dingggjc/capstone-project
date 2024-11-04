@@ -75,10 +75,26 @@ const openPaymentModal = () => {
 const form = ref({
 
     type: 'product',
-    product_inventory_id: null,
-    package_id: null,
-    qty: 1,
+    product_inventory_id: '',
+    package_id: '',
+    qty: '',
 });
+
+
+const selectedProductPrice = computed(() => {
+    const product = props.products.find(
+        (item) => item.product_inventory_id === form.value.product_inventory_id
+    );
+    return product ? product.product_price.toFixed(2) : "0";
+});
+
+const selectedPackagePrice = computed(() => {
+    const pkg = props.packages.find(
+        (item) => item.package_id === form.value.package_id
+    );
+    return pkg ? pkg.package_price : 0;
+});
+
 
 const addToCart = async () => {
     try {
@@ -131,6 +147,15 @@ const destroyCart = (cartId) => {
 
 
 const submitTransaction = async (status) => {
+    if (props.carts.length === 0) {
+        Swal.fire({
+            title: 'Error',
+            text: 'Your cart is empty. Please add at least one product or package before proceeding with the transaction.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
 
     if (!form.value.customer_name || !form.value.customer_phone || !form.value.vehicle_type || !form.value.vehicle_plate) {
         Swal.fire({
@@ -143,7 +168,6 @@ const submitTransaction = async (status) => {
     }
 
     if (payAmount.value < props.carts_total) {
-
         Swal.fire({
             title: 'Insufficient Payment',
             text: `The payment amount is less than the total amount due. Please enter an amount equal to or greater than ₱${props.carts_total}.`,
@@ -187,7 +211,6 @@ const submitTransaction = async (status) => {
             payAmount.value = 0;
             form.value = { customer_name: '', customer_phone: '', vehicle_type: '', vehicle_plate: '' };
             showPaymentModal.value = false;
-
         } else {
             Swal.fire('Error', 'Transaction completed, but an error occurred.', 'error');
         }
@@ -244,7 +267,7 @@ const clearTransaction = () => {
                             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:grid-rows-1">
 
 
-                                <div class="sm:col-span-2">
+                                <div class="sm:col-span-1">
                                     <label for="select-product-input"
                                         class="block text-sm font-medium mb-2 text-gray-900 dark:text-white">Product*</label>
                                     <select id="select-product-input" v-model="form.product_inventory_id"
@@ -252,9 +275,18 @@ const clearTransaction = () => {
                                         <option disabled selected>Select a Product</option>
                                         <option v-for="product in products" :key="product.product_inventory_id"
                                             :value="product.product_inventory_id">
-                                            {{ product.product_name }}
+                                            {{ product.product_name }} ({{ parseInt(product.product_quantity) }} left)
                                         </option>
                                     </select>
+
+                                </div>
+
+                                <div>
+                                    <label for=""
+                                        class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Price</label>
+                                    <input type="text" id="company-name" :value="selectedProductPrice"
+                                        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
+                                        placeholder="Product Price" disabled />
                                 </div>
 
                                 <div>
@@ -266,7 +298,7 @@ const clearTransaction = () => {
                                 </div>
 
 
-                                <div class="sm:col-span-3">
+                                <div class="sm:col-span-2">
                                     <label for="select-package-input"
                                         class="block text-sm font-medium mb-2 text-gray-900 dark:text-white">Package*</label>
                                     <select id="select-package-input" v-model="form.package_id"
@@ -276,6 +308,14 @@ const clearTransaction = () => {
                                             {{ pkg.package_name }}
                                         </option>
                                     </select>
+
+                                </div>
+                                <div>
+                                    <label for=""
+                                        class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Price</label>
+                                    <input type="text" id="company-name" :value="selectedPackagePrice"
+                                        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
+                                        placeholder="Package Price" disabled />
                                 </div>
 
 
@@ -464,17 +504,21 @@ const clearTransaction = () => {
                                                 ? 'w-2 h-2 me-1 bg-green-500 rounded-full'
                                                 : 'w-2 h-2 me-1 bg-red-500 rounded-full'"></span>
                                             {{ transaction.status }}
-                                        </span></td>
-                                    <td class="px-8 py-3 text-center"> <button class="rounded-full bg-indigo-300 p-2"
-                                            @click="$inertia.get(route('transactions.print'), { invoice: transaction.invoice })">
+                                        </span>
+                                    </td>
+                                    <td class="px-8 py-3 text-center">
+                                        <button class="rounded-full bg-indigo-300 p-2"
+                                            @click="$inertia.get(route('transactions.print'), { invoice: transaction.invoice })"
+                                            :disabled="transaction.status === 'Pending'">
                                             <svg class="w-6 h-6 text-indigo-800 dark:indigo-white" aria-hidden="true"
                                                 xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
                                                 viewBox="0 0 24 24">
                                                 <path stroke="currentColor" stroke-linejoin="round" stroke-width="2"
                                                     d="M16.444 18H19a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h2.556M17 11V5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v6h10ZM7 15h10v4a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-4Z" />
                                             </svg>
+                                        </button>
+                                    </td>
 
-                                        </button></td>
                                     <td class="px-2 py-3"><button
                                             @click="updateTransactionStatus(transaction.id, 'Paid')"
                                             class="rounded-full bg-green-300 p-2 text-green-800 hover:bg-green-400"

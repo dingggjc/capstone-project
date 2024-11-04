@@ -274,7 +274,7 @@ const resetFormData = () => {
                                     <td class="px-8 py-3">
                                         <ul>
                                             <li v-for="product in pkg.products" :key="product.product_id">
-                                                {{ product.product_name }} {{ product.quantity }}
+                                                {{ product.product_name }}
                                             </li>
                                         </ul>
                                     </td>
@@ -452,8 +452,9 @@ const resetFormData = () => {
                                 class="flex-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
                                 <option v-for="item in products" :key="item.product_inventory_id"
                                     :value="item.product_inventory_id">
-                                    {{ item.product_name }} ({{ item.product_quantity }} left)
+                                    {{ item.product_name }} ({{ parseInt(item.product_quantity) }} left)
                                 </option>
+
                             </select>
 
                             <input type="number" v-model="product.quantity" min="1"
