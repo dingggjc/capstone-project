@@ -224,7 +224,7 @@ const resetFormData = () => {
                                 <li>
                                     <div class="flex items-center">
                                         <input id="default-radio-1" type="radio" value="" name="default-radio"
-                                            @click="setStockStatusFilter('Safe')"
+                                            @click="setStockStatusFilter('Adequate')"
                                             class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                                         <label for="default-radio-1"
                                             class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Safe</label>

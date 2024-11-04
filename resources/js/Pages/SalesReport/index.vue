@@ -4,9 +4,9 @@ import { Head, usePage, router } from '@inertiajs/vue3';
 import { onMounted, defineProps, computed, ref, watch } from 'vue';
 import { initFlowbite } from 'flowbite';
 import pdfMake from 'pdfmake/build/pdfmake';
-import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import 'pdfmake/build/vfs_fonts';
 
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
 
 onMounted(() => {
     initFlowbite();

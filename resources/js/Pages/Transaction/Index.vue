@@ -8,10 +8,6 @@ import { Inertia } from '@inertiajs/inertia';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 
-
-
-
-
 onMounted(() => {
     initFlowbite();
 });
@@ -384,7 +380,7 @@ const clearTransaction = () => {
             </form>
 
             <div class=" max-w-screen-x2 ">
-                <div class="bg-white mx-10 2xl:px-0 mt-8 px-5 shadow-lg relative sm:rounded-lg overflow-hidden">
+                <div class="bg-white mx-10 2xl:px-0 mt-8 px-5 shadow-lg relative sm:rounded-lg ">
                     <div
                         class="flex flex-col bg-indigo-100  md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
                         <button id="dropdownRadioButton" data-dropdown-toggle="dropdownDefaultRadio"
