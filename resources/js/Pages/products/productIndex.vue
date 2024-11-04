@@ -176,9 +176,9 @@ const getColorClass = (quantity) => {
 };
 
 const getStockStatus = (quantity) => {
-    if (quantity >= 26) return 'Adequate';
-    if (quantity >= 11 && quantity <= 25) return 'Low';
-    if (quantity <= 10) return 'Ctitical';
+    if (quantity >= 30) return 'Adequate';
+    if (quantity >= 10 && quantity <= 29) return 'Low';
+    if (quantity <= 9) return 'Critical';
     return 'Unknown';
 };
 
@@ -254,7 +254,7 @@ const resetFormData = () => {
                                             @click="setStockStatusFilter('')"
                                             class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                                         <label for="default-radio-2"
-                                            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Reset</label>
+                                            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">All</label>
                                     </div>
                                 </li>
 

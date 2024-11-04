@@ -245,7 +245,7 @@ const resetFormData = () => {
                         </div>
                     </div>
 
-                    <div class="overflow-x-auto max-h-135 overflow-y-auto">
+                    <div class="overflow-x max-h-135 overflow-y-auto">
                         <table class="w-full text-xs text-left text-gray-500 dark:text-gray-400 ">
                             <thead
                                 class="text-xs text-gray-700 uppercase w-full bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -352,7 +352,8 @@ const resetFormData = () => {
                             class="flex items-center mb-2">
 
                             <select v-model="product.product_id" @change="checkProductStock(product, index)"
-                                class="mr-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                class="mr-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                style="min-width: 230px;">
                                 <option v-for="item in products" :key="item.product_inventory_id"
                                     :value="item.product_inventory_id">
                                     {{ item.product_name }} ({{ item.product_quantity }} left)
@@ -449,7 +450,8 @@ const resetFormData = () => {
                         <div v-for="(product, index) in packageForm.products" :key="index"
                             class="flex items-center mb-3 space-x-2">
                             <select v-model="product.product_id"
-                                class="flex-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
+                                class="flex-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                                style="min-width: 230px;">
                                 <option v-for="item in products" :key="item.product_inventory_id"
                                     :value="item.product_inventory_id">
                                     {{ item.product_name }} ({{ parseInt(item.product_quantity) }} left)
@@ -461,7 +463,8 @@ const resetFormData = () => {
                                 class="w-24 border border-gray-300 rounded-lg p-2.5 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
 
                             <button type="button" @click="removeProductFromPackage(index)"
-                                class="text-red-600 font-medium hover:text-red-700 transition">Remove</button>
+                                class="text-red-600 font-medium hover:text-red-700 transition ml-2">Remove</button>
+
                         </div>
 
                         <button type="button" @click="addProductToPackage"

@@ -23,7 +23,7 @@ class ProductsController extends Controller
         })
             ->when($stockStatus, function ($queryBuilder) use ($stockStatus) {
                 // Apply stock status filtering
-                if ($stockStatus === 'Safe') {
+                if ($stockStatus === 'Adequate') {
                     $queryBuilder->where('product_quantity', '>=', 26);
                 } elseif ($stockStatus === 'Low') {
                     $queryBuilder->whereBetween('product_quantity', [11, 25]);

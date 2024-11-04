@@ -7,6 +7,7 @@ import { ElDialog } from 'element-plus';
 import { Inertia } from '@inertiajs/inertia';
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import NavLink from '@/Components/NavLink.vue';
 
 onMounted(() => {
     initFlowbite();
@@ -77,7 +78,7 @@ const form = ref({
     type: 'product',
     product_inventory_id: '',
     package_id: '',
-    qty: '',
+    qty: '1',
 });
 
 
@@ -242,7 +243,7 @@ const clearTransaction = () => {
         type: 'product',
         product_inventory_id: null,
         package_id: null,
-        qty: 1,
+        qty: '',
     };
 };
 
@@ -424,7 +425,7 @@ const clearTransaction = () => {
                     <div
                         class="flex flex-col bg-indigo-100  md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
                         <button id="dropdownRadioButton" data-dropdown-toggle="dropdownDefaultRadio"
-                            class="text-white bg-indigo-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
+                            class="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
                             type="button">Payment Status <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -455,13 +456,25 @@ const clearTransaction = () => {
                                             class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Pending</label>
                                     </div>
                                 </li>
+                                <li>
+                                    <div class="flex items-center">
+                                        <input checked id="default-radio-2" type="radio" value=""
+                                            @change="resetStatusFilter" name="default-radio"
+                                            class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                        <label for="default-radio-2"
+                                            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">All</label>
+                                    </div>
+                                </li>
 
                             </ul>
+
                         </div>
-                        <button @click="resetStatusFilter"
-                            class="text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center">
-                            Reset Filter
-                        </button>
+                        <NavLink :href="route('transaction.report')">
+                            <button type="button"
+                                class="flex items-center justify-center text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-400 font-medium rounded-lg text-sm px-4 py-2 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none dark:focus:ring-indigo-700">
+                                Show Details
+                            </button>
+                        </NavLink>
                     </div>
                     <div class="overflow-x-auto max-h-135 overflow-y-auto">
                         <table class="w-full text-xs text-left text-gray-500 dark:text-gray-400 ">
