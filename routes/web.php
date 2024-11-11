@@ -11,6 +11,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TransactionReportController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SalesReportController;
+use App\Http\Controllers\StaffController;
 
 use Inertia\Inertia;
 
@@ -95,6 +96,11 @@ Route::middleware('auth')->group(function () {
     // In your web.php or routes file
     Route::put('/transaction/update-status/{id}', [TransactionController::class, 'updateStatus'])->name('transaction.updateStatus');
     Route::get('/transactions/search', [TransactionReportController::class, 'search'])->name('transaction.search');
+
+
+    //manage wash staff
+    Route::get('/staff', [StaffController::class, 'index'])->name('staff.index');
+    Route::post('/staff/store', [StaffController::class, 'store'])->name('staff.store');
 });
 
 

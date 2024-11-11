@@ -207,6 +207,23 @@ const showingNavigationDropdown = ref(false);
                                 <span class="ms-3 pt-2 pb-2 text-sm">Manage Packages</span>
                             </NavLink>
                         </li>
+                        <li class="my-3">
+                            <NavLink :href="route('staff.index')"
+                                class="flex items-center w-full text-base font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:indigo:bg-gray-700">
+                                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-width="1"
+                                        d="M4.5 17H4a1 1 0 0 1-1-1 3 3 0 0 1 3-3h1m0-3.05A2.5 2.5 0 1 1 9 5.5M19.5 17h.5a1 1 0 0 0 1-1 3 3 0 0 0-3-3h-1m0-3.05a2.5 2.5 0 1 0-2-4.45m.5 13.5h-7a1 1 0 0 1-1-1 3 3 0 0 1 3-3h3a3 3 0 0 1 3 3 1 1 0 0 1-1 1Zm-1-9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z" />
+                                </svg>
+
+
+
+
+
+                                <span class="ms-3 pt-2 pb-2 text-sm">Wash Staff </span>
+                            </NavLink>
+                        </li>
                     </ul>
 
                     <hr class="my-20 border-gray-300 dark:border-gray-600" />
