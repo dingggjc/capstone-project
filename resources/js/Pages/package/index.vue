@@ -6,12 +6,15 @@ import { initFlowbite } from "flowbite";
 import { ElDialog } from 'element-plus';
 import Swal from 'sweetalert2';
 
+import { toRaw } from 'vue';
 
 
-defineProps({
+const props = defineProps({
     package: Array,
-    products: Array
-})
+    products: Array,
+    categories: Array
+});
+
 
 
 onMounted(() => {
@@ -42,6 +45,7 @@ const openEditPackageModal = (pkg) => {
     packageForm.package_name = pkg.package_name;
     packageForm.package_description = pkg.package_description
     packageForm.package_price = pkg.package_price;
+    packageForm.category_id = pkg.category_id;
 
 
     packageForm.products = pkg.products.map(product => ({
@@ -93,25 +97,31 @@ const packageForm = useForm({
     package_name: '',
     package_description: '',
     package_price: '0',
+    category_id: null,
     products: [
         { product_id: null, quantity: 1 }
     ]
 })
+const rawProducts = toRaw(packageForm.products);
+console.log(rawProducts);
 
+const checkProductStock = (selectedProduct, index) => {
+    const productData = props.products.find(p => p.product_inventory_id === selectedProduct.product_id);
 
-const checkProductStock = (product, index) => {
-    const selectedProduct = product.find(p => p.product_inventory_id === product.product_id);
-    if (selectedProduct && selectedProduct.product_quantity < product.quantity) {
+    if (productData && productData.product_quantity < selectedProduct.quantity) {
         Swal.fire({
             icon: 'error',
             title: 'Stock Limit Exceeded',
-            text: `Only ${selectedProduct.product_quantity} of ${selectedProduct.product_name} available.`,
+            text: `Only ${productData.product_quantity} of ${productData.product_name} available.`,
             confirmButtonText: 'OK',
         });
 
-        packageForm.products[index].quantity = selectedProduct.product_quantity;
+
+        packageForm.products[index].quantity = productData.product_quantity;
     }
 };
+
+
 
 const handleEditPackage = () => {
     packageForm.put(route('package.update', editPackage.value.package_id), {
@@ -137,7 +147,16 @@ const handleEditPackage = () => {
 
 
 const handleAddPackage = () => {
-    console.log(packageForm.products);
+    if (!packageForm.category_id) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Please select a category.',
+            confirmButtonText: 'OK',
+        });
+        return;
+    }
+
     packageForm.post(route('package.store'), {
         onSuccess: () => {
             Swal.fire({
@@ -252,6 +271,7 @@ const resetFormData = () => {
                                 <tr>
                                     <th scope="col" class="px-8 py-4">Package name</th>
                                     <th scope="col" class="px-8 py-3">Description</th>
+                                    <th scope="col" class="px-8 py-3">Category</th>
                                     <th scope="col" class="px-8 py-3">Product</th>
                                     <th scope="col" class="px-8 py-3">Price</th>
                                     <th scope="col" class="px-8 py-3">Date Added</th>
@@ -270,6 +290,8 @@ const resetFormData = () => {
                                     </th>
                                     <td class="px-8 py-3 max-w-[12rem] truncate">
                                         {{ pkg.package_description }}
+                                    </td>
+                                    <td class="px-8 py-3"> {{ pkg.category?.category_name || 'No category assigned' }}
                                     </td>
                                     <td class="px-8 py-3">
                                         <ul>
@@ -344,6 +366,19 @@ const resetFormData = () => {
                         <textarea v-model="packageForm.package_description" id="PackageDescription" required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                             placeholder="Enter Package description" rows="4"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="Category" class="block text-sm font-medium text-gray-700">Category</label>
+                        <select v-model="packageForm.category_id" id="Category" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <option disabled value="">Select a Category</option>
+                            <option v-for="category in categories" :key="category.category_id"
+                                :value="category.category_id">
+                                {{ category.category_name }}
+                            </option>
+
+                        </select>
+
                     </div>
 
                     <div class="mb-4">
@@ -443,6 +478,17 @@ const resetFormData = () => {
                             class="mt-1 block w-full rounded-md border-gray-300 h-40 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                             placeholder="Enter Package description" rows="4"></textarea>
                     </div>
+                    <div class="mb-4">
+                        <label for="Category" class="block text-sm font-medium text-gray-700">Category</label>
+                        <select v-model="packageForm.category_id" id="Category" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <option disabled value="">Select a Category</option>
+                            <option v-for="category in categories" :key="category.id" :value="category.id">
+                                {{ category.category_name }}
+                            </option>
+                        </select>
+                    </div>
+
 
 
                     <div class="mb-4">

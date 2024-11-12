@@ -16,7 +16,8 @@ const showEditCategoryModal = ref(false);
 const categoryForm = useForm({
     category_id: '',
     category_name: '',
-    category_description: ''
+    category_description: '',
+    category_example: ''
 });
 
 
@@ -35,6 +36,7 @@ const openEditCategoryModal = (category) => {
     categoryForm.category_id = category.category_id;
     categoryForm.category_name = category.category_name;
     categoryForm.category_description = category.category_description;
+    categoryForm.category_example = category.category_example;
     showEditCategoryModal.value = true;
 };
 const closeEditCategoryModal = () => {
@@ -182,6 +184,7 @@ const resetFormData = () => {
                                 <tr>
                                     <th scope="col" class="px-8 py-4">Category Name</th>
                                     <th scope="col" class="px-8 py-3">Description</th>
+                                    <th scope="col" class="px-8 py-3">Car Types Included</th>
                                     <th scope="col" class="text-center">Actions</th>
 
 
@@ -196,6 +199,7 @@ const resetFormData = () => {
                                         {{ category.category_name }}
                                     </th>
                                     <td class="px-8 py-3">{{ category.category_description }} </td>
+                                    <td class="px-8 py-3">{{ category.category_example }}</td>
                                     <td class=" py-3 flex items-center justify-center space-x-2">
 
                                         <button type="button" @click="openEditCategoryModal(category)"
@@ -246,6 +250,12 @@ const resetFormData = () => {
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                             placeholder="Enter description" rows="4"></textarea>
                     </div>
+                    <div class="mb-4">
+                        <label for="categoryExample" class="block text-sm font-medium text-gray-700">Example</label>
+                        <input v-model="categoryForm.category_example" type="text" id="categoryExample" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            placeholder="Enter Example name" />
+                    </div>
 
                     <div class="flex justify-end">
                         <button type="button" @click="closeAddCategoryModal"
@@ -276,7 +286,13 @@ const resetFormData = () => {
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                             placeholder="Enter description" rows="4"></textarea>
                     </div>
-
+                    <div class="mb-4">
+                        <label for="categoryExample" class="block text-sm font-medium text-gray-700">Category
+                            Name</label>
+                        <input v-model="categoryForm.category_example" type="text" id="categoryExample"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            placeholder="Enter Example name" />
+                    </div>
                     <div class="flex justify-end">
                         <button type="button" @click="closeAddCategoryModal"
                             class="text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2">

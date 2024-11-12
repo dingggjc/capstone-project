@@ -16,7 +16,11 @@ return new class extends Migration
             $table->string('package_name');
             $table->text('package_description')->nullable();
             $table->decimal('package_price', 8, 2);
+            $table->unsignedBigInteger('category_id');
             $table->timestamps();
+
+
+            $table->foreign('category_id')->references('category_id')->on('categories')->onDelete('cascade');
         });
     }
 

@@ -24,10 +24,12 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'category_name' => 'required|string|max:255',
             'category_description' => 'required|string',
+            'category_example' => 'required|string',
         ]);
         CategoryModel::create([
             'category_name' => $validated['category_name'],
             'category_description' => $validated['category_description'],
+            'category_example' => $validated['category_example'],
         ]);
         return redirect()->back()->with('success', 'Category added successfully!');
     }
@@ -46,6 +48,7 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'category_name' => 'required|string|max:255',
             'category_description' => 'required|string',
+            'category_example' => 'required|string',
         ]);
 
         $category = CategoryModel::find($id);
@@ -53,6 +56,7 @@ class CategoryController extends Controller
             $category->update([
                 'category_name' => $validated['category_name'],
                 'category_description' => $validated['category_description'],
+                'category_example' => $validated['category_example'],
             ]);
             return redirect()->back()->with('success', 'Category updated successfully!');
         }

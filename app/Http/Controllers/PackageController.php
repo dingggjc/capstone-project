@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CategoryModel;
 use App\Models\PackageModel;
 use App\Models\Products;
 use Illuminate\Http\Request;
@@ -32,10 +33,12 @@ class PackageController extends Controller
                 ->orWhere('product_description', 'LIKE', "%{$query}%");
         })
             ->get();
+        $categories = CategoryModel::all();
 
         return Inertia::render('package/index', [
             'package' => $packages,
             'products' => $products,
+            'categories' => $categories,
             'searchQuery' => $query
         ]);
     }
@@ -44,10 +47,12 @@ class PackageController extends Controller
 
     public function store(Request $request)
     {
+
         $validated = $request->validate([
             'package_name' => 'nullable|string|max:255',
             'package_description' => 'nullable|string',
             'package_price' => 'nullable|numeric',
+            'category_id' => 'required|exists:categories,id',
             'products' => 'required|array',
             'products.*.product_id' => 'required|exists:product_inventory,product_inventory_id',
             'products.*.quantity' => 'required|integer|min:1',
@@ -56,7 +61,8 @@ class PackageController extends Controller
         $package = PackageModel::create([
             'package_name' => $validated['package_name'],
             'package_description' => $validated['package_description'],
-            'package_price' => $validated['package_price']
+            'package_price' => $validated['package_price'],
+            'category_id' => $validated['category_id']
         ]);
 
         foreach ($validated['products'] as $productData) {
@@ -93,6 +99,7 @@ class PackageController extends Controller
             'package_name' => 'required|string|max:225',
             'package_description' => 'nullable|string',
             'package_price' => 'nullable|numeric',
+            'category_id' => 'required|exists:categories,id',
             'products' => 'required|array',
             'products.*.product_id' => 'required|exists:product_inventory,product_inventory_id',
             'products.*.quantity' => 'required|integer|min:1',
@@ -101,7 +108,8 @@ class PackageController extends Controller
         $package->update([
             'package_name' => $validated['package_name'],
             'package_description' => $validated['package_description'],
-            'package_price' => $validated['package_price']
+            'package_price' => $validated['package_price'],
+            'category_id' => $validated['category_id'],
         ]);
 
         $package->products()->detach();
