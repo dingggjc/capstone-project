@@ -17,7 +17,8 @@ class PackageModel extends Model
     protected $fillable = [
         'package_name',
         'package_description',
-        'package_price'
+        'package_price',
+        'category_id'
     ];
 
     public function products()
@@ -25,5 +26,9 @@ class PackageModel extends Model
         return $this->belongsToMany(Products::class, 'package_product', 'package_id', 'product_inventory_id')
             ->withPivot('quantity')
             ->withTimestamps();
+    }
+    public function category()
+    {
+        return $this->belongsTo(CategoryModel::class, 'category_id', 'category_id');
     }
 }

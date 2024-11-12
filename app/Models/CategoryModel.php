@@ -17,6 +17,6 @@ class CategoryModel extends Model
 
     public function packages()
     {
-        return $this->hasMany(PackageModel::class);
+        return $this->hasMany(PackageModel::class, 'category_id', 'category_id');
     }
 }

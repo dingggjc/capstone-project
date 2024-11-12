@@ -147,6 +147,7 @@ const handleEditPackage = () => {
 
 
 const handleAddPackage = () => {
+    console.log(packageForm);
     if (!packageForm.category_id) {
         Swal.fire({
             icon: 'error',

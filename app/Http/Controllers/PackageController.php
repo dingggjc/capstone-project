@@ -15,7 +15,7 @@ class PackageController extends Controller
     {
         $query = $request->input('query');
 
-        $packages = PackageModel::with('products')
+        $packages = PackageModel::with(['products', 'category'])
             ->when($query, function ($queryBuilder) use ($query) {
                 $queryBuilder->where('package_name', 'LIKE', "%{$query}%")
                     ->orWhere('package_description', 'LIKE', "%{$query}%")
@@ -52,7 +52,7 @@ class PackageController extends Controller
             'package_name' => 'nullable|string|max:255',
             'package_description' => 'nullable|string',
             'package_price' => 'nullable|numeric',
-            'category_id' => 'required|exists:categories,id',
+            'category_id' => 'required|exists:categories,category_id',
             'products' => 'required|array',
             'products.*.product_id' => 'required|exists:product_inventory,product_inventory_id',
             'products.*.quantity' => 'required|integer|min:1',
