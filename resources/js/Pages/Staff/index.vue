@@ -1,17 +1,32 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import { ElDialog } from 'element-plus';
 import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import Swal from 'sweetalert2';
+
 defineProps({
     staff: Array
 });
+
+
 const showAddStaffModal = ref(false);
+const showEditStaffModal = ref(false);
+
+
+const staffForm = useForm({
+    staff_id: '',
+    staff_name: '',
+    staff_phone: '',
+    status: 'Active'
+});
+
+
 const resetFormData = () => {
     staffForm.reset();
 };
+
 
 const openAddStaffModal = () => {
     resetFormData();
@@ -22,19 +37,30 @@ const closeAddStaffModal = () => {
     resetFormData();
 };
 
-const staffForm = useForm({
-    staff_name: '',
-    staff_phone: '',
-    status: 'Active'
-});
+
+const openEditStaffModal = (staff) => {
+    staffForm.staff_id = staff.staff_id;
+    staffForm.staff_name = staff.staff_name;
+    staffForm.staff_phone = staff.staff_phone;
+    staffForm.status = staff.status;
+    showEditStaffModal.value = true;
+};
+
+
+
+const closeEditStaffModal = () => {
+    showEditStaffModal.value = false;
+    resetFormData();
+};
+
 
 const handleAddStaff = () => {
     staffForm.post(route('staff.store'), {
         onSuccess: () => {
             Swal.fire({
                 icon: 'success',
-                title: 'Product Added',
-                text: 'The product was added successfully!',
+                title: 'Staff Added',
+                text: 'The staff member was added successfully!',
                 confirmButtonText: 'OK',
             });
             closeAddStaffModal();
@@ -43,13 +69,69 @@ const handleAddStaff = () => {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'There was an error adding the product.',
+                text: 'There was an error adding the staff member.',
                 confirmButtonText: 'OK',
             });
         }
     });
 };
+
+
+const handleEditStaff = () => {
+    staffForm.put(route('staff.update', staffForm.staff_id), {
+        onSuccess: () => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Staff Updated',
+                text: 'The staff member was updated successfully!',
+                confirmButtonText: 'OK',
+            });
+            closeEditStaffModal();
+        },
+        onError: () => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'There was an error updating the staff member.',
+                confirmButtonText: 'OK',
+            });
+        }
+    });
+};
+
+const deleteStaff = (staff) => {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'You will not be able to recover this staff!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, keep it',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            staffForm.delete(route('staff.destroy', staff.staff_id), {
+                onSuccess: () => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Staff Deleted',
+                        text: 'The staff member was deleted successfully!',
+                        confirmButtonText: 'OK',
+                    });
+                },
+                onError: () => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'There was an error deleting the staff member.',
+                        confirmButtonText: 'OK',
+                    });
+                }
+            });
+        }
+    });
+};
 </script>
+
 
 <template>
 
@@ -124,10 +206,10 @@ const handleAddStaff = () => {
 
                                     <td class="px-8 py-3">
                                         <span
-                                            :class="staff.status === 'active'
+                                            :class="staff.status === 'Active'
                                                 ? 'inline-flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300'
                                                 : 'inline-flex items-center bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300'">
-                                            <span :class="staff.status === 'active'
+                                            <span :class="staff.status === 'Active'
                                                 ? 'w-2 h-2 me-1 bg-green-500 rounded-full'
                                                 : 'w-2 h-2 me-1 bg-red-500 rounded-full'"></span>
                                             {{ staff.status }}
@@ -137,7 +219,7 @@ const handleAddStaff = () => {
 
                                     <td class=" py-3 flex items-center justify-center space-x-2">
 
-                                        <button type="button"
+                                        <button type="button" @click="openEditStaffModal(staff)"
                                             class="inline-flex items-center px-4 py-2 text-xs font-medium text-indigo-700 bg-white border rounded-lg border-indigo-700 hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-indigo-800 dark:bg-indigo-600 dark:hover:bg-indigo-700">
                                             <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg"
                                                 viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -148,21 +230,7 @@ const handleAddStaff = () => {
                                             </svg>
                                             Edit
                                         </button>
-
-                                        <button type="button"
-                                            class="inline-flex items-center px-4 py-2 text-xs font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-indigo-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
-                                            <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
-                                                aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M12 4.5c5.523 0 10 6 10 6s-4.477 6-10 6-10-6-10-6 4.477-6 10-6z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M12 8.25a2.25 2.25 0 110 4.5 2.25 2.25 0 010-4.5z" />
-                                            </svg>
-                                            Preview
-                                        </button>
-
-                                        <button type="button"
+                                        <button type="button" @click="deleteStaff(staff)"
                                             class="inline-flex items-center px-4 py-2 text-xs font-medium text-red-600 bg-white border border-red-600 rounded-lg hover:bg-red-600 hover:text-white focus:outline-none focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900 dark:bg-gray-800 dark:text-red-500 dark:border-red-500 dark:hover:bg-red-600 dark:hover:text-white">
                                             <svg class="w-4 h-4 mr-2" viewBox="0 0 14 15" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -213,6 +281,44 @@ const handleAddStaff = () => {
                     </div>
                 </form>
             </el-dialog>
+
+
+            <el-dialog v-model="showEditStaffModal" title="Edit Staff" width="30%">
+                <form @submit.prevent="handleEditStaff">
+                    <div class="mb-4">
+                        <label for="staffName" class="block text-sm font-medium text-gray-700">Name</label>
+                        <input v-model="staffForm.staff_name" type="text" id="staffName"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            placeholder="Enter staff name" />
+                    </div>
+                    <div class="mb-4">
+                        <label for="staffPhone" class="block text-sm font-medium text-gray-700">Phone</label>
+                        <input v-model="staffForm.staff_phone" type="text" id="staffPhone"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            placeholder="Enter staff phone" />
+                    </div>
+                    <div class="mb-4">
+                        <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                        <select v-model="staffForm.status" id="status"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="button" @click="closeEditStaffModal"
+                            class="text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                            Save
+                        </button>
+                    </div>
+                </form>
+            </el-dialog>
+
+
 
 
         </section>

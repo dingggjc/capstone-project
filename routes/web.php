@@ -101,6 +101,8 @@ Route::middleware('auth')->group(function () {
     //manage wash staff
     Route::get('/staff', [StaffController::class, 'index'])->name('staff.index');
     Route::post('/staff/store', [StaffController::class, 'store'])->name('staff.store');
+    Route::delete('/staff/{id}', [StaffController::class, 'destroy'])->name('staff.destroy');
+    Route::put('/staff/{id}', [StaffController::class, 'update'])->name('staff.update');
 });
 
 
