@@ -13,6 +13,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SalesReportController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\specialsController;
 use Inertia\Inertia;
 
 // Landing page
@@ -109,6 +110,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/category/store', [CategoryController::class, 'store'])->name('category.store');
     Route::delete('/category/{id}', [CategoryController::class, 'destroy'])->name('category.destroy');
     Route::put('/category/{id}', [CategoryController::class, 'update'])->name('category.update');
+
+    //manage specials
+    Route::get('/specials', [specialsController::class, 'index'])->name('specials.index');
+    Route::post('/specials/store', [specialsController::class, 'store'])->name('specials.store');
+    Route::delete('/specials/{id}', [specialsController::class, 'destroy'])->name('specials.destroy');
+    Route::put('/specials/{id}', [specialsController::class, 'update'])->name('specials.update');
 });
 
 

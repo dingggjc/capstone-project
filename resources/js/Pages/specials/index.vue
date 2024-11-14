@@ -7,69 +7,86 @@ import { ref } from 'vue';
 import Swal from 'sweetalert2';
 
 defineProps({
-    staff: Array
+    specials: Array
 });
 
 
-const showAddStaffModal = ref(false);
-const showEditStaffModal = ref(false);
+const showAddSpecialModal = ref(false);
+const showEditSpecialModal = ref(false);
 
 
-const staffForm = useForm({
-    staff_id: '',
-    staff_name: '',
-    staff_phone: '',
-    status: 'Active'
+const specialForm = useForm({
+    specials_id: '',
+    name: '',
+    description: '',
+    price: ''
 });
-
 
 const resetFormData = () => {
-    staffForm.reset();
+    specialForm.reset();
 };
 
 
-const openAddStaffModal = () => {
+const openAddSpecialModal = () => {
     resetFormData();
-    showAddStaffModal.value = true;
+    showAddSpecialModal.value = true;
 };
-const closeAddStaffModal = () => {
-    showAddStaffModal.value = false;
+const closeAddSpecialModal = () => {
     resetFormData();
+    showAddSpecialModal.value = false;
 };
 
+const openEditSpecialModal = (special) => {
+    specialForm.specials_id = special.specials_id;
+    specialForm.name = special.name;
+    specialForm.description = special.description;
+    specialForm.price = special.price;
+    showEditSpecialModal.value = true;
+}
 
-const openEditStaffModal = (staff) => {
-    staffForm.staff_id = staff.staff_id;
-    staffForm.staff_name = staff.staff_name;
-    staffForm.staff_phone = staff.staff_phone;
-    staffForm.status = staff.status;
-    showEditStaffModal.value = true;
-};
-
-
-
-const closeEditStaffModal = () => {
-    showEditStaffModal.value = false;
+const closeEditSpecialModal = () => {
     resetFormData();
-};
+    showEditSpecialModal.value = false;
+}
 
-
-const handleAddStaff = () => {
-    staffForm.post(route('staff.store'), {
+const handleAddSpecial = () => {
+    specialForm.post(route('specials.store'), {
         onSuccess: () => {
             Swal.fire({
                 icon: 'success',
-                title: 'Staff Added',
-                text: 'The staff member was added successfully!',
+                title: 'Special package Added',
+                text: 'The special package was added successfully!',
                 confirmButtonText: 'OK',
             });
-            closeAddStaffModal();
+            closeAddSpecialModal();
         },
         onError: () => {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'There was an error adding the staff member.',
+                text: 'There was an error adding the package special member.',
+                confirmButtonText: 'OK',
+            });
+        }
+    });
+};
+
+const handleEditSpecial = () => {
+    specialForm.put(route('specials.update', specialForm.specials_id), {
+        onSuccess: () => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Special Package Updated',
+                text: 'The Special Package was updated successfully!',
+                confirmButtonText: 'OK',
+            });
+            closeEditSpecialModal();
+        },
+        onError: () => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'There was an error updating the Special Package.',
                 confirmButtonText: 'OK',
             });
         }
@@ -77,44 +94,22 @@ const handleAddStaff = () => {
 };
 
 
-const handleEditStaff = () => {
-    staffForm.put(route('staff.update', staffForm.staff_id), {
-        onSuccess: () => {
-            Swal.fire({
-                icon: 'success',
-                title: 'Staff Updated',
-                text: 'The staff member was updated successfully!',
-                confirmButtonText: 'OK',
-            });
-            closeEditStaffModal();
-        },
-        onError: () => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'There was an error updating the staff member.',
-                confirmButtonText: 'OK',
-            });
-        }
-    });
-};
-
-const deleteStaff = (staff) => {
+const deleteSpecial = (special) => {
     Swal.fire({
         title: 'Are you sure?',
-        text: 'You will not be able to recover this staff!',
+        text: 'You will not be able to recover this special package!',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Yes, delete it!',
         cancelButtonText: 'No, keep it',
     }).then((result) => {
         if (result.isConfirmed) {
-            staffForm.delete(route('staff.destroy', staff.staff_id), {
+            specialForm.delete(route('specials.destroy', special.specials_id), {
                 onSuccess: () => {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Staff Deleted',
-                        text: 'The staff member was deleted successfully!',
+                        title: 'Special Package Deleted',
+                        text: 'Special Package was deleted successfully!',
                         confirmButtonText: 'OK',
                     });
                 },
@@ -122,7 +117,7 @@ const deleteStaff = (staff) => {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'There was an error deleting the staff member.',
+                        text: 'There was an error deleting the special package.',
                         confirmButtonText: 'OK',
                     });
                 }
@@ -130,6 +125,8 @@ const deleteStaff = (staff) => {
         }
     });
 };
+
+
 </script>
 
 
@@ -143,7 +140,7 @@ const deleteStaff = (staff) => {
                     <div
                         class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 bg-indigo-100  md:space-x-4 p-4">
                         <div class="w-full md:w-1/2">
-                            <p class="text-2xl mb-3 ml-4  text-gray-900 dark:text-white">Manage Carwash Staff</p>
+                            <p class="text-2xl mb-3 ml-4  text-gray-900 dark:text-white">Manage Special Services</p>
                         </div>
                         <div
                             class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
@@ -164,14 +161,14 @@ const deleteStaff = (staff) => {
                                     placeholder="Search for items">
                             </div>
 
-                            <button type="button" @click="openAddStaffModal"
+                            <button type="button" @click="openAddSpecialModal"
                                 class="flex items-center justify-center text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none dark:focus:ring-indigo  -700">
                                 <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewBox="0 0 20 20"
                                     xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                     <path clip-rule="evenodd" fill-rule="evenodd"
                                         d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
                                 </svg>
-                                Add Staff
+                                Add Specials
                             </button>
 
 
@@ -185,8 +182,8 @@ const deleteStaff = (staff) => {
                                 class="text-xs text-gray-700 uppercase w-full bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
                                     <th scope="col" class="px-8 py-4">Name</th>
-                                    <th scope="col" class="px-8 py-3">Phone</th>
-                                    <th scope="col" class="px-8 py-3">Status</th>
+                                    <th scope="col" class="px-8 py-3">Description</th>
+                                    <th scope="col" class="px-8 py-3">Price</th>
                                     <th scope="col" class="text-center">Actions</th>
 
 
@@ -194,32 +191,25 @@ const deleteStaff = (staff) => {
                             </thead>
                             <tbody>
 
-                                <tr v-for="staff in staff" :key="staff.staff_id"
+                                <tr v-for="special in specials" :key="special.specials_id"
                                     class="border-b cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 dark:border-gray-700">
                                     <th scope="row"
                                         class="px-8 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        {{ staff.staff_name }}
+                                        {{ special.name }}
 
                                     </th>
 
-                                    <td class="px-8 py-3"> {{ staff.staff_phone }} </td>
+                                    <td class="px-8 py-3">
+                                        {{ special.description }} </td>
 
                                     <td class="px-8 py-3">
-                                        <span
-                                            :class="staff.status === 'Active'
-                                                ? 'inline-flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300'
-                                                : 'inline-flex items-center bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300'">
-                                            <span :class="staff.status === 'Active'
-                                                ? 'w-2 h-2 me-1 bg-green-500 rounded-full'
-                                                : 'w-2 h-2 me-1 bg-red-500 rounded-full'"></span>
-                                            {{ staff.status }}
-                                        </span>
+                                        {{ special.price }}
                                     </td>
 
 
                                     <td class=" py-3 flex items-center justify-center space-x-2">
 
-                                        <button type="button" @click="openEditStaffModal(staff)"
+                                        <button type="button" @click="openEditSpecialModal(special)"
                                             class="inline-flex items-center px-4 py-2 text-xs font-medium text-indigo-700 bg-white border rounded-lg border-indigo-700 hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-indigo-800 dark:bg-indigo-600 dark:hover:bg-indigo-700">
                                             <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg"
                                                 viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -230,7 +220,7 @@ const deleteStaff = (staff) => {
                                             </svg>
                                             Edit
                                         </button>
-                                        <button type="button" @click="deleteStaff(staff)"
+                                        <button type="button" @click="deleteSpecial(special)"
                                             class="inline-flex items-center px-4 py-2 text-xs font-medium text-red-600 bg-white border border-red-600 rounded-lg hover:bg-red-600 hover:text-white focus:outline-none focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900 dark:bg-gray-800 dark:text-red-500 dark:border-red-500 dark:hover:bg-red-600 dark:hover:text-white">
                                             <svg class="w-4 h-4 mr-2" viewBox="0 0 14 15" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -247,30 +237,29 @@ const deleteStaff = (staff) => {
                 </div>
             </div>
 
-            <el-dialog v-model="showAddStaffModal" title="Add Product" width="30%">
-                <form @submit.prevent="handleAddStaff">
+            <el-dialog v-model="showAddSpecialModal" title="Add Special Package" width="30%">
+                <form @submit.prevent="handleAddSpecial">
                     <div class="mb-4">
-                        <label for="staffName" class="block text-sm font-medium text-gray-700">Name</label>
-                        <input v-model="staffForm.staff_name" type="text" id="staffName" required
+                        <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                        <input v-model="specialForm.name" type="text" id="" required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            placeholder="Enter product name" />
+                            placeholder="Enter Special's name" />
                     </div>
                     <div class="mb-4">
-                        <label for="staffPhone" class="block text-sm font-medium text-gray-700">Phone</label>
-                        <input v-model="staffForm.staff_phone" type="text" id="staffPhone" required
+                        <label for="" class="block text-sm font-medium text-gray-700">Description</label>
+                        <input v-model="specialForm.description" type="text" id="description" required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            placeholder="Enter product name" />
+                            placeholder="Enter Description" />
                     </div>
                     <div class="mb-4">
-                        <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                        <select v-model="staffForm.status" id="status" required
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            <option value="Active">Active</option>
-                            <option value="Inactive">Inactive</option>
-                        </select>
+                        <label for="" class="block text-sm font-medium text-gray-700">Price</label>
+                        <input v-model="specialForm.price" type="text" id="price" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            placeholder="Enter price" />
                     </div>
+
                     <div class="flex justify-end">
-                        <button type="button" @click="closeAddStaffModal"
+                        <button type="button" @click="closeAddSpecialModal"
                             class="text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2">
                             Cancel
                         </button>
@@ -283,36 +272,35 @@ const deleteStaff = (staff) => {
             </el-dialog>
 
 
-            <el-dialog v-model="showEditStaffModal" title="Edit Staff" width="30%">
-                <form @submit.prevent="handleEditStaff">
+            <el-dialog v-model="showEditSpecialModal" title="Add Special Package" width="30%">
+                <form @submit.prevent="handleEditSpecial">
                     <div class="mb-4">
-                        <label for="staffName" class="block text-sm font-medium text-gray-700">Name</label>
-                        <input v-model="staffForm.staff_name" type="text" id="staffName"
+                        <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                        <input v-model="specialForm.name" type="text" id="name"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            placeholder="Enter staff name" />
+                            placeholder="Enter Specials name" />
                     </div>
                     <div class="mb-4">
-                        <label for="staffPhone" class="block text-sm font-medium text-gray-700">Phone</label>
-                        <input v-model="staffForm.staff_phone" type="text" id="staffPhone"
+                        <label for="" class="block text-sm font-medium text-gray-700">Description</label>
+                        <input v-model="specialForm.description" type="text" id="description"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            placeholder="Enter staff phone" />
+                            placeholder="Enter description" />
                     </div>
                     <div class="mb-4">
-                        <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                        <select v-model="staffForm.status" id="status"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            <option value="Active">Active</option>
-                            <option value="Inactive">Inactive</option>
-                        </select>
+                        <label for="" class="block text-sm font-medium text-gray-700">Price</label>
+                        <input v-model="specialForm.price" type="text" id="price"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            placeholder="Enter price" />
                     </div>
+
                     <div class="flex justify-end">
-                        <button type="button" @click="closeEditStaffModal"
+                        <button type="button" @click="closeEditSpecialModal"
                             class="text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2">
                             Cancel
                         </button>
                         <button type="submit"
                             class="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5">
-                            Save
+                            Update
                         </button>
                     </div>
                 </form>
