@@ -14,6 +14,7 @@ use App\Http\Controllers\SalesReportController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\specialsController;
+use App\Http\Controllers\otherServicesController;
 use Inertia\Inertia;
 
 // Landing page
@@ -116,6 +117,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/specials/store', [specialsController::class, 'store'])->name('specials.store');
     Route::delete('/specials/{id}', [specialsController::class, 'destroy'])->name('specials.destroy');
     Route::put('/specials/{id}', [specialsController::class, 'update'])->name('specials.update');
+
+    //manage other services
+    Route::get('/others', [otherServicesController::class, 'index'])->name('others.index');
+    Route::post('/others/store', [otherServicesController::class, 'store'])->name('others.store');
+    Route::delete('/others/{id}', [otherServicesController::class, 'destroy'])->name('others.destroy');
+    Route::put('/others/{id}', [otherServicesController::class, 'update'])->name('others.update');
 });
 
 

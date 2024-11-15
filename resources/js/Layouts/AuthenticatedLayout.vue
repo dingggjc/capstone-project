@@ -238,6 +238,22 @@ const showingNavigationDropdown = ref(false);
                             </NavLink>
                         </li>
                         <li class="my-3">
+                            <NavLink :href="route('others.index')"
+                                class="flex items-center w-full text-base font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:indigo:bg-gray-700">
+                                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="1"
+                                        d="M5 19V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v13H7a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h12M9 3v14m7 0v4" />
+                                </svg>
+
+
+
+                                <span class="ms-3 pt-2 pb-2 text-sm">Other Services</span>
+                            </NavLink>
+                        </li>
+                        <li class="my-3">
                             <NavLink :href="route('staff.index')"
                                 class="flex items-center w-full text-base font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:indigo:bg-gray-700">
                                 <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"

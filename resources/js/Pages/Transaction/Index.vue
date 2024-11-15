@@ -398,11 +398,7 @@ const props = defineProps({
                                                         d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm13.707-1.293a1 1 0 0 0-1.414-1.414L11 12.586l-1.793-1.793a1 1 0 0 0-1.414 1.414l2.5 2.5a 1 1 0 0 0 1.414 0l4-4Z"
                                                         clip-rule="evenodd" />
                                                 </svg>
-                                                Confirm and Submit
-                                            </button>
-                                            <button type="button"
-                                                class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-4 focus:outline-none focus:ring-gray-400 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-500">
-                                                Go Back
+                                                Choose this service
                                             </button>
                                         </div>
                                     </div>
