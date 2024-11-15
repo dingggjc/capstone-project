@@ -1,12 +1,15 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { initFlowbite } from 'flowbite';
+import { ElDrawer, ElButton } from 'element-plus';
 
 onMounted(() => {
     initFlowbite();
 });
+
+const drawer = ref(false)
 </script>
 
 <template>
@@ -56,6 +59,17 @@ onMounted(() => {
 
                                     <div
                                         class="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 md:p-6">
+
+                                        //drawer for recent customer
+                                        <el-button type="primary" style="margin-left: 16px" @click="drawer = true">
+                                            Open
+                                        </el-button>
+
+                                        <el-drawer v-model="drawer" title="I am the title" :with-header="false"
+                                            direction="ltr">
+                                            <span>Hi there!</span>
+                                        </el-drawer>
+
 
 
                                         <form class="mb-5">
@@ -124,7 +138,8 @@ onMounted(() => {
                                             <!-- Third Input Field -->
                                             <div>
                                                 <label for="Vehicle-type"
-                                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Vehicle</label>
+                                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Vehicle
+                                                    Type</label>
                                                 <div class="flex">
                                                     <span
                                                         class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-e-0 border-gray-300 rounded-s-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
@@ -168,7 +183,7 @@ onMounted(() => {
                                             </div>
                                             <p></p>
                                             <p class="text-gray-500  dark:text-gray-400 text-right"> <a href="#"
-                                                    class="inline-flex items-center font-medium text-indigo-600 dark:text-indigo-500 hover:underline">
+                                                    class="inline-flex items-center font-medium text-indigo-600 dark:text-blue-500 hover:underline">
                                                     Next
                                                     <svg class="w-4 h-4 ms-2 rtl:rotate-180" aria-hidden="true"
                                                         xmlns="http://www.w3.org/2000/svg" fill="none"

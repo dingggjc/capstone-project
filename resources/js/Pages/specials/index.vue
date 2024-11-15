@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { ElDialog } from 'element-plus';
+import { ElDialog, } from 'element-plus';
 import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import Swal from 'sweetalert2';
@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 defineProps({
     specials: Array
 });
+
 
 
 const showAddSpecialModal = ref(false);
