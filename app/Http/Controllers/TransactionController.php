@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Cart;
 use App\Models\Products;
 use App\Models\PackageModel;
+use App\Models\CategoryModel;
 use Illuminate\Support\Str;
 use App\Models\Transactions;
 
@@ -19,6 +20,7 @@ class TransactionController extends Controller
     {
         $products = Products::all();
         $packages = PackageModel::all();
+        $category = CategoryModel::all();
         $carts = Cart::with('products', 'package')->where('cashier_id', Auth::user()->id)->latest()->get();
 
 
@@ -38,6 +40,7 @@ class TransactionController extends Controller
             'products' => $products,
             'packages' => $packages,
             'transactions' => $transactions,
+            'category' => $category,
 
         ]);
     }

@@ -377,8 +377,9 @@ const resetFormData = () => {
                                 :value="category.category_id">
                                 {{ category.category_name }}
                             </option>
-
                         </select>
+
+
 
                     </div>
 
