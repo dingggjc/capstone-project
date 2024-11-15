@@ -94,9 +94,9 @@ class PackageController extends Controller
 
     public function update(Request $request, $id)
     {
+        Log::info($request->all());
 
         $package = PackageModel::findOrFail($id);
-
         $validated = $request->validate([
             'package_name' => 'required|string|max:225',
             'package_description' => 'nullable|string',
@@ -106,13 +106,15 @@ class PackageController extends Controller
             'products.*.product_id' => 'required|exists:product_inventory,product_inventory_id',
             'products.*.quantity' => 'required|integer|min:1',
         ]);
-
         $package->update([
             'package_name' => $validated['package_name'],
             'package_description' => $validated['package_description'],
             'package_price' => $validated['package_price'],
             'category_id' => $validated['category_id'],
         ]);
+        Log::info('Incoming Data:', $request->all()); // Log raw input
+        Log::info('Validated Data:', $validated);
+
 
         $package->products()->detach();
 

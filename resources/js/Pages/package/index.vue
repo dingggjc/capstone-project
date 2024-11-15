@@ -40,12 +40,14 @@ const editPackage = ref({
 });
 
 const openEditPackageModal = (pkg) => {
+
     editPackage.value = { ...pkg };
 
     packageForm.package_name = pkg.package_name;
     packageForm.package_description = pkg.package_description
     packageForm.package_price = pkg.package_price;
     packageForm.category_id = pkg.category_id;
+
 
 
     packageForm.products = pkg.products.map(product => ({
@@ -102,8 +104,8 @@ const packageForm = useForm({
         { product_id: null, quantity: 1 }
     ]
 })
-const rawProducts = toRaw(packageForm.products);
-console.log(rawProducts);
+
+
 
 const checkProductStock = (selectedProduct, index) => {
     const productData = props.products.find(p => p.product_inventory_id === selectedProduct.product_id);
@@ -124,6 +126,7 @@ const checkProductStock = (selectedProduct, index) => {
 
 
 const handleEditPackage = () => {
+
     packageForm.put(route('package.update', editPackage.value.package_id), {
         onSuccess: () => {
             Swal.fire({
@@ -147,7 +150,7 @@ const handleEditPackage = () => {
 
 
 const handleAddPackage = () => {
-    console.log(packageForm);
+
     if (!packageForm.category_id) {
         Swal.fire({
             icon: 'error',
@@ -389,7 +392,7 @@ const resetFormData = () => {
                             class="flex items-center mb-2">
 
                             <select v-model="product.product_id" @change="checkProductStock(product, index)"
-                                class="mr-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                class="mr-2 bg-gray-50 border w-full border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                 style="min-width: 230px;">
                                 <option v-for="item in products" :key="item.product_inventory_id"
                                     :value="item.product_inventory_id">
@@ -485,10 +488,12 @@ const resetFormData = () => {
                         <select v-model="packageForm.category_id" id="Category" required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                             <option disabled value="">Select a Category</option>
-                            <option v-for="category in categories" :key="category.id" :value="category.id">
+                            <option v-for="category in categories" :key="category.category_id"
+                                :value="category.category_id">
                                 {{ category.category_name }}
                             </option>
                         </select>
+
                     </div>
 
 
@@ -507,8 +512,7 @@ const resetFormData = () => {
 
                             </select>
 
-                            <input type="number" v-model="product.quantity" min="1"
-                                class="w-24 border border-gray-300 rounded-lg p-2.5 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+
 
                             <button type="button" @click="removeProductFromPackage(index)"
                                 class="text-red-600 font-medium hover:text-red-700 transition ml-2">Remove</button>
