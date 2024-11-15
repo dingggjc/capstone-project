@@ -42,6 +42,10 @@ const props = defineProps({
         type: Array,
         required: true,
     },
+    specials: {
+        type: Array,
+        required: true,
+    },
 });
 
 </script>
@@ -79,12 +83,20 @@ const props = defineProps({
                                             id="settings-tab" data-tabs-target="#settings" type="button" role="tab"
                                             aria-controls="settings" aria-selected="false">Special Services</button>
                                     </li>
+                                    <li class="me-2" role="presentation">
+                                        <button @click="setActiveTab('review-tab')"
+                                            class="inline-block p-4 border-b-2 rounded-t-lg focus:text-indigo-600 focus:border-indigo-600 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                                            id="review-tab" data-tabs-target="#review" type="button" role="tab"
+                                            aria-controls="review" aria-selected="false">Other Services</button>
+                                    </li>
                                     <li role="presentation">
                                         <button @click="setActiveTab('contacts-tab')"
                                             class="inline-block p-4 border-b-2 rounded-t-lg focus:text-indigo-600 focus:border-indigo-600 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
                                             id="contacts-tab" data-tabs-target="#contacts" type="button" role="tab"
                                             aria-controls="contacts" aria-selected="false">Add ons</button>
                                     </li>
+
+
                                 </ul>
                             </div>
                             <div id="default-tab-content">
@@ -201,9 +213,10 @@ const props = defineProps({
                                     </div>
 
                                 </div>
-                                <div class="hidden" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-                                    <div class="rounded-lg border  border-gray-200 bg-white p-2  dark:border-gray-700 dark:bg-gray-800 md:p-6"
-                                        style="max-height: 400px; overflow-y: auto;">
+                                <div class="hidden" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab"
+                                    style="max-height: 400px; overflow-y: auto;">
+                                    <div
+                                        class="rounded-lg border  border-gray-200 bg-white p-2  dark:border-gray-700 dark:bg-gray-800 md:p-6">
 
 
                                         <button id="dropdownSearchButton" data-dropdown-toggle="dropdownSearch"
@@ -298,38 +311,104 @@ const props = defineProps({
                                     </div>
 
                                 </div>
+
+                                <!-- specials -->
                                 <div class="hidden dark:bg-gray-800" id="settings" role="tabpanel"
-                                    aria-labelledby="settings-tab">
-                                    <div
-                                        class="rounded-lg border border-gray-200 bg-white p-4  dark:border-gray-700 dark:bg-gray-800 md:p-6">
-                                        <div
-                                            class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
-
-                                            <div class="flex items-center justify-between md:order-3 md:justify-end">
-
-                                                <div class="text-end md:order-4 md:w-32">
-                                                    <p class="text-sm font-bold text-gray-900 dark:text-white">₱ 1100
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="w-full min-w-0 flex-1 pb-4 space-y-4 md:order-2 md:max-w-md">
+                                    aria-labelledby="settings-tab" style="max-height: 400px; overflow-y: auto;">
+                                    <div v-for="special in specials" :key="special.specials_id"
+                                        class="rounded-lg border border-gray-200 bg-white p-4 mb-4 dark:border-gray-700 dark:bg-gray-800 md:p-6">
+                                        <div class="flex items-center justify-between">
+                                            <div>
                                                 <h1
-                                                    class="text-sm font-medium text-gray-900 hover:underline dark:text-white">
-                                                    Underwash</h1>
+                                                    class="text-sm font-medium text-gray-600 hover:underline dark:text-white">
+                                                    {{ special.name }}</h1>
                                                 <h1
-                                                    class="text-sm font-medium text-gray-900 pb-0 hover:underline dark:text-white">
-                                                    Small</h1>
+                                                    class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
+                                                    {{ category.find(cat => cat.category_id ===
+                                                        special.category_id)?.category_name || 'No category assigned' }}
+                                                </h1>
+                                                <h1
+                                                    class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
+                                                    {{ category.find(cat => cat.category_id ===
+                                                        special.category_id)?.category_example || 'No example available' }}
+                                                </h1>
 
                                                 <a href="#"
-                                                    class="text-sm font-medium text-gray-900 hover:underline dark:text-white">
-                                                    Hugasan ang iwawom
+                                                    class="text-sm font-medium text-gray-600 hover:underline dark:text-white">
+                                                    {{ special.description }}
                                                 </a>
                                             </div>
-
+                                            <div class="text-end md:w-32">
+                                                <p class="text-sm font-bold text-gray-600 dark:text-white">₱ {{
+                                                    special.price }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-4 mt-4">
+                                            <button type="button"
+                                                class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
+                                                <svg class="w-5 h-5 text-white me-2" aria-hidden="true"
+                                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    fill="currentColor" viewBox="0 0 24 24">
+                                                    <path fill-rule="evenodd"
+                                                        d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm13.707-1.293a1 1 0 0 0-1.414-1.414L11 12.586l-1.793-1.793a1 1 0 0 0-1.414 1.414l2.5 2.5a 1 1 0 0 0 1.414 0l4-4Z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                                Choose Package
+                                            </button>
                                         </div>
                                     </div>
-
                                 </div>
+
+                                <!-- other services -->
+                                <div class="hidden dark:bg-gray-800" id="review" role="tabpanel"
+                                    aria-labelledby="review-tab" style="max-height: 400px; overflow-y: auto;">
+                                    <div
+                                        class="rounded-lg border border-gray-200 bg-white p-4 mb-4 dark:border-gray-700 dark:bg-gray-800 md:p-6">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <h1
+                                                    class="text-sm font-medium text-gray-600 hover:underline dark:text-white">
+                                                    Review your details
+                                                </h1>
+                                                <h1
+                                                    class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
+                                                    Package Selection
+                                                </h1>
+                                                <h1
+                                                    class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
+                                                    Special Services
+                                                </h1>
+                                                <h1
+                                                    class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
+                                                    Add-ons
+                                                </h1>
+                                            </div>
+                                            <div class="text-end md:w-32">
+                                                <p class="text-sm font-bold text-gray-600 dark:text-white">Total: ₱XXXX
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-4 mt-4">
+                                            <button type="button"
+                                                class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
+                                                <svg class="w-5 h-5 text-white me-2" aria-hidden="true"
+                                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    fill="currentColor" viewBox="0 0 24 24">
+                                                    <path fill-rule="evenodd"
+                                                        d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm13.707-1.293a1 1 0 0 0-1.414-1.414L11 12.586l-1.793-1.793a1 1 0 0 0-1.414 1.414l2.5 2.5a 1 1 0 0 0 1.414 0l4-4Z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                                Confirm and Submit
+                                            </button>
+                                            <button type="button"
+                                                class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-4 focus:outline-none focus:ring-gray-400 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-500">
+                                                Go Back
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- add ons -->
                                 <div class="hidden dark:bg-gray-800" id="contacts" role="tabpanel"
                                     aria-labelledby="contacts-tab">
                                     <div

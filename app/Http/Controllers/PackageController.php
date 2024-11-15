@@ -94,7 +94,7 @@ class PackageController extends Controller
 
     public function update(Request $request, $id)
     {
-        Log::info($request->all());
+
 
         $package = PackageModel::findOrFail($id);
         $validated = $request->validate([
@@ -112,9 +112,6 @@ class PackageController extends Controller
             'package_price' => $validated['package_price'],
             'category_id' => $validated['category_id'],
         ]);
-        Log::info('Incoming Data:', $request->all()); // Log raw input
-        Log::info('Validated Data:', $validated);
-
 
         $package->products()->detach();
 

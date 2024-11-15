@@ -7,7 +7,8 @@ import { ref } from 'vue';
 import Swal from 'sweetalert2';
 
 defineProps({
-    specials: Array
+    specials: Array,
+    categories: Array
 });
 
 
@@ -17,9 +18,10 @@ const showEditSpecialModal = ref(false);
 
 
 const specialForm = useForm({
-    specials_id: '',
+    specials_id: null,
     name: '',
     description: '',
+    category_id: null,
     price: ''
 });
 
@@ -42,6 +44,7 @@ const openEditSpecialModal = (special) => {
     specialForm.name = special.name;
     specialForm.description = special.description;
     specialForm.price = special.price;
+    specialForm.category_id = special.category_id;
     showEditSpecialModal.value = true;
 }
 
@@ -51,6 +54,7 @@ const closeEditSpecialModal = () => {
 }
 
 const handleAddSpecial = () => {
+    console.log(specialForm.data());
     specialForm.post(route('specials.store'), {
         onSuccess: () => {
             Swal.fire({
@@ -184,6 +188,7 @@ const deleteSpecial = (special) => {
                                 <tr>
                                     <th scope="col" class="px-8 py-4">Name</th>
                                     <th scope="col" class="px-8 py-3">Description</th>
+                                    <th scope="col" class="px-8 py-3">Category</th>
                                     <th scope="col" class="px-8 py-3">Price</th>
                                     <th scope="col" class="text-center">Actions</th>
 
@@ -201,7 +206,12 @@ const deleteSpecial = (special) => {
                                     </th>
 
                                     <td class="px-8 py-3">
-                                        {{ special.description }} </td>
+                                        {{ special.description }}
+
+                                    </td>
+                                    <td class="px-8 py-3">
+                                        {{ special.category ? special.category.category_name : 'No category assigned' }}
+                                    </td>
 
                                     <td class="px-8 py-3">
                                         {{ special.price }}
@@ -253,6 +263,20 @@ const deleteSpecial = (special) => {
                             placeholder="Enter Description" />
                     </div>
                     <div class="mb-4">
+                        <label for="Category" class="block text-sm font-medium text-gray-700">Category</label>
+                        <select v-model="specialForm.category_id" id="Category" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <option disabled value="">Select a Category</option>
+                            <option v-for="category in categories" :key="category.category_id"
+                                :value="category.category_id">
+                                {{ category.category_name }}
+                            </option>
+                        </select>
+
+
+
+                    </div>
+                    <div class="mb-4">
                         <label for="" class="block text-sm font-medium text-gray-700">Price</label>
                         <input v-model="specialForm.price" type="text" id="price" required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
@@ -286,6 +310,18 @@ const deleteSpecial = (special) => {
                         <input v-model="specialForm.description" type="text" id="description"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                             placeholder="Enter description" />
+                    </div>
+                    <div class="mb-4">
+                        <label for="Category" class="block text-sm font-medium text-gray-700">Category</label>
+                        <select v-model="specialForm.category_id" id="Category" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <option disabled value="">Select a Category</option>
+                            <option v-for="category in categories" :key="category.category_id"
+                                :value="category.category_id">
+                                {{ category.category_name }}
+                            </option>
+                        </select>
+
                     </div>
                     <div class="mb-4">
                         <label for="" class="block text-sm font-medium text-gray-700">Price</label>

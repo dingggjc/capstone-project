@@ -12,6 +12,12 @@ class specialsModel extends Model
     protected $fillable = [
         'name',
         'description',
-        'price'
+        'price',
+        'category_id'
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(CategoryModel::class, 'category_id', 'category_id');
+    }
 }

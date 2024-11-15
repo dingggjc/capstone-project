@@ -16,7 +16,10 @@ return new class extends Migration
             $table->string('name');
             $table->string('description');
             $table->string('price');
+            $table->unsignedBigInteger('category_id');
             $table->timestamps();
+
+            $table->foreign('category_id')->references('category_id')->on('categories')->onDelete('cascade');
         });
     }
 
