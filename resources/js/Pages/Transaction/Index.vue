@@ -39,7 +39,7 @@ const props = defineProps({
         required: true,
     },
     category: {
-        type: String,
+        type: Array,
         required: true,
     },
 });
@@ -260,12 +260,17 @@ const props = defineProps({
                                                     <h1
                                                         class="text-sm font-medium text-gray-600 hover:underline dark:text-white">
                                                         {{ pkg.package_name }}</h1>
-                                                    <h1 v-for="category in category" :key="category.category_id"
+                                                    <h1
                                                         class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
-                                                        {{ category.category_example }} </h1>
-                                                    <h1 v-for="category in category" :key="category.category_id"
+                                                        {{ category.find(cat => cat.category_id ===
+                                                            pkg.category_id)?.category_name || 'No category assigned' }}
+                                                    </h1>
+                                                    <h1
                                                         class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
-                                                        {{ category.category_name }} </h1>
+                                                        {{ category.find(cat => cat.category_id ===
+                                                            pkg.category_id)?.category_example || 'No example available' }}
+                                                    </h1>
+
                                                     <a href="#"
                                                         class="text-sm font-medium text-gray-600 hover:underline dark:text-white">
                                                         {{ pkg.package_description }}
