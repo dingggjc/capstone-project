@@ -7,9 +7,43 @@ import { ElDrawer, ElButton } from 'element-plus';
 
 onMounted(() => {
     initFlowbite();
+    const savedTab = localStorage.getItem('activeTab') || 'profile-tab';
+    document.getElementById(savedTab).click();
 });
 
-const drawer = ref(false)
+// const drawer = ref(false)
+
+const setActiveTab = (tabId) => {
+    localStorage.setItem('activeTab', tabId);
+};
+
+const props = defineProps({
+    products: {
+        type: Array,
+        required: true,
+    },
+    packages: {
+        type: Array,
+        required: true,
+    },
+    carts_total: {
+        type: Number,
+        required: true,
+    },
+    carts: {
+        type: Array,
+        required: true,
+    },
+    transactions: {
+        type: Array,
+        required: true,
+    },
+    specials: {
+        type: Array,
+        required: true,
+    }
+});
+
 </script>
 
 <template>
@@ -28,25 +62,25 @@ const drawer = ref(false)
                                 <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="default-tab"
                                     data-tabs-toggle="#default-tab-content" role="tablist">
                                     <li class="me-2" role="presentation">
-                                        <button
+                                        <button @click="setActiveTab('profile-tab')"
                                             class="inline-block p-4  focus:text-indigo-600 focus:border-indigo-600 border-b-2 rounded-t-lg"
                                             id="profile-tab" data-tabs-target="#profile" type="button" role="tab"
                                             aria-controls="profile" aria-selected="false">Customer details</button>
                                     </li>
                                     <li class="me-2" role="presentation">
-                                        <button
+                                        <button @click="setActiveTab('dashboard-tab')"
                                             class="inline-block p-4 border-b-2 rounded-t-lg focus:text-indigo-600 focus:border-indigo-600 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
                                             id="dashboard-tab" data-tabs-target="#dashboard" type="button" role="tab"
                                             aria-controls="dashboard" aria-selected="false">Package Selection</button>
                                     </li>
                                     <li class="me-2" role="presentation">
-                                        <button
+                                        <button @click="setActiveTab('settings-tab')"
                                             class="inline-block p-4 border-b-2 rounded-t-lg focus:text-indigo-600 focus:border-indigo-600 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
                                             id="settings-tab" data-tabs-target="#settings" type="button" role="tab"
                                             aria-controls="settings" aria-selected="false">Special Services</button>
                                     </li>
                                     <li role="presentation">
-                                        <button
+                                        <button @click="setActiveTab('contacts-tab')"
                                             class="inline-block p-4 border-b-2 rounded-t-lg focus:text-indigo-600 focus:border-indigo-600 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
                                             id="contacts-tab" data-tabs-target="#contacts" type="button" role="tab"
                                             aria-controls="contacts" aria-selected="false">Add ons</button>
@@ -60,7 +94,7 @@ const drawer = ref(false)
                                     <div
                                         class="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 md:p-6">
 
-                                        //drawer for recent customer
+                                        <!-- //drawer for recent customer
                                         <el-button type="primary" style="margin-left: 16px" @click="drawer = true">
                                             Open
                                         </el-button>
@@ -68,7 +102,7 @@ const drawer = ref(false)
                                         <el-drawer v-model="drawer" title="I am the title" :with-header="false"
                                             direction="ltr">
                                             <span>Hi there!</span>
-                                        </el-drawer>
+                                        </el-drawer> -->
 
 
 
@@ -135,31 +169,8 @@ const drawer = ref(false)
                                                         placeholder="09264648501">
                                                 </div>
                                             </div>
-                                            <!-- Third Input Field -->
-                                            <div>
-                                                <label for="Vehicle-type"
-                                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Vehicle
-                                                    Type</label>
-                                                <div class="flex">
-                                                    <span
-                                                        class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-e-0 border-gray-300 rounded-s-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
-                                                        <svg class="w-4 h-4 text-gray-500 dark:text-white"
-                                                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                                            width="24" height="24" fill="currentColor"
-                                                            viewBox="0 0 24 24">
-                                                            <path fill-rule="evenodd"
-                                                                d="M4 4a2 2 0 0 0-2 2v9a1 1 0 0 0 1 1h.535a3.5 3.5 0 1 0 6.93 0h3.07a3.5 3.5 0 1 0 6.93 0H21a1 1 0 0 0 1-1v-4a.999.999 0 0 0-.106-.447l-2-4A1 1 0 0 0 19 6h-5a2 2 0 0 0-2-2H4Zm14.192 11.59.016.02a1.5 1.5 0 1 1-.016-.021Zm-10 0 .016.02a1.5 1.5 0 1 1-.016-.021Zm5.806-5.572v-2.02h4.396l1 2.02h-5.396Z"
-                                                                clip-rule="evenodd" />
-                                                        </svg>
-
-                                                    </span>
-                                                    <input type="text" id="Vehicle-type"
-                                                        class="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 block flex-1 min-w-0 w-full text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
-                                                        placeholder="Vehicle-type">
-                                                </div>
-                                            </div>
                                             <!-- Fourth Input Field -->
-                                            <div>
+                                            <div class="col-span-2">
                                                 <label for="Vehicle-plate"
                                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Vehicle
                                                     plate</label>
@@ -181,18 +192,6 @@ const drawer = ref(false)
                                                         placeholder="Vehicle-plate">
                                                 </div>
                                             </div>
-                                            <p></p>
-                                            <p class="text-gray-500  dark:text-gray-400 text-right"> <a href="#"
-                                                    class="inline-flex items-center font-medium text-indigo-600 dark:text-blue-500 hover:underline">
-                                                    Next
-                                                    <svg class="w-4 h-4 ms-2 rtl:rotate-180" aria-hidden="true"
-                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                        viewBox="0 0 14 10">
-                                                        <path stroke="currentColor" stroke-linecap="round"
-                                                            stroke-linejoin="round" stroke-width="2"
-                                                            d="M1 5h12m0 0L9 1m4 4L9 9" />
-                                                    </svg>
-                                                </a></p>
 
 
                                         </form>
@@ -204,27 +203,77 @@ const drawer = ref(false)
                                 </div>
                                 <div class="hidden" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
                                     <div
-                                        class="rounded-lg border border-gray-200 bg-white p-4  dark:border-gray-700 dark:bg-gray-800 md:p-6">
+                                        class="rounded-lg border  border-gray-200 bg-white p-2  dark:border-gray-700 dark:bg-gray-800 md:p-6">
+
+
+                                        <button id="dropdownSearchButton" data-dropdown-toggle="dropdownSearch"
+                                            data-dropdown-placement="bottom"
+                                            class="text-black mb-5 bg-gray-200 hover:bg-grey-800 focus:ring-4 focus:outline-none focus:ring-indigo-300  rounded-lg font-medium text-sm px-5 py-2 text-center inline-flex items-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
+                                            type="button">Vehicle type <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                                <path stroke="currentColor" stroke-linecap="round"
+                                                    stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+                                            </svg>
+                                        </button>
+
+                                        <!-- Dropdown menu -->
+                                        <div id="dropdownSearch"
+                                            class="z-10 hidden  bg-white rounded-lg shadow w-60 dark:bg-gray-700">
+                                            <div class="p-3">
+                                                <label for="input-group-search" class="sr-only">Search</label>
+                                                <div class="relative">
+                                                    <div
+                                                        class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                                                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                                                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                                            fill="none" viewBox="0 0 20 20">
+                                                            <path stroke="currentColor" stroke-linecap="round"
+                                                                stroke-linejoin="round" stroke-width="2"
+                                                                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                                        </svg>
+                                                    </div>
+                                                    <input type="text" id="input-group-search"
+                                                        class="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
+                                                        placeholder="Search for vehicle type">
+                                                </div>
+                                            </div>
+                                            <ul class="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200"
+                                                aria-labelledby="dropdownSearchButton">
+                                                <li>
+                                                    <div
+                                                        class="flex items-center ps-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                                                        <input id="checkbox-item-11" type="checkbox" value=""
+                                                            class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                                        <label for="checkbox-item-11"
+                                                            class="w-full py-2 ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Picanto</label>
+                                                    </div>
+                                                </li>
+
+                                            </ul>
+
+                                        </div>
+
+
                                         <div
                                             class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
 
                                             <div class="flex items-center justify-between md:order-3 md:justify-end">
 
                                                 <div class="text-end md:order-4 md:w-32">
-                                                    <p class="text-sm font-bold text-gray-900 dark:text-white">₱ 400
+                                                    <p class="text-sm font-bold text-gray-600 dark:text-white">₱ 400
                                                     </p>
                                                 </div>
                                             </div>
                                             <div class="w-full min-w-0 flex-1 pb-4 space-y-4 md:order-2 md:max-w-md">
                                                 <h1
-                                                    class="text-sm font-medium text-gray-900 hover:underline dark:text-white">
+                                                    class="text-sm font-medium text-gray-600 hover:underline dark:text-white">
                                                     PACKAGE A Premium</h1>
                                                 <h1
-                                                    class="text-sm font-medium text-gray-900 pb-0 hover:underline dark:text-white">
-                                                    Small</h1>
+                                                    class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
+                                                    Small (sedan, motor, e-bike)</h1>
 
                                                 <a href="#"
-                                                    class="text-sm font-medium text-gray-900 hover:underline dark:text-white">
+                                                    class="text-sm font-medium text-gray-600 hover:underline dark:text-white">
                                                     Body wash with foam shampoo
                                                     Tire Black
                                                     Vacuum
@@ -247,6 +296,7 @@ const drawer = ref(false)
                                         </div>
 
                                     </div>
+
                                 </div>
                                 <div class="hidden dark:bg-gray-800" id="settings" role="tabpanel"
                                     aria-labelledby="settings-tab">
@@ -277,21 +327,8 @@ const drawer = ref(false)
                                             </div>
 
                                         </div>
-                                        <div class="flex items-center gap-4">
-                                            <button type="button"
-                                                class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
-                                                <svg class="w-5 h-5 text-white me-2" aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    fill="currentColor" viewBox="0 0 24 24">
-                                                    <path fill-rule="evenodd"
-                                                        d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm13.707-1.293a1 1 0 0 0-1.414-1.414L11 12.586l-1.793-1.793a1 1 0 0 0-1.414 1.414l2.5 2.5a1 1 0 0 0 1.414 0l4-4Z"
-                                                        clip-rule="evenodd" />
-                                                </svg>
-                                                Choose Package
-                                            </button>
-                                        </div>
-
                                     </div>
+
                                 </div>
                                 <div class="hidden dark:bg-gray-800" id="contacts" role="tabpanel"
                                     aria-labelledby="contacts-tab">
@@ -375,7 +412,15 @@ const drawer = ref(false)
                             </div>
 
 
-
+                            <p class="text-gray-500  dark:text-gray-400 text-right"> <a href="#"
+                                    class="inline-flex mt-5 items-center font-medium text-indigo-600 dark:text-indigo-500 hover:underline">
+                                    Next
+                                    <svg class="w-4 h-4 ms-2 rtl:rotate-180" aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
+                                    </svg>
+                                </a></p>
 
                         </div>
                     </section>
