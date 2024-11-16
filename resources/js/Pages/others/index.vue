@@ -12,6 +12,122 @@ defineProps({
 });
 
 
+const showAddOthersModal = ref(false);
+const showEditOthersModal = ref(false);
+
+
+const othersForm = useForm({
+    others_id: null,
+    others_name: '',
+    others_description: '',
+    category_id: null,
+    others_price: ''
+});
+
+const resetFormData = () => {
+    othersForm.reset();
+};
+
+const openAddOthersModal = () => {
+    resetFormData();
+    showAddOthersModal.value = true;
+};
+
+const closeAddOthersModal = () => {
+    resetFormData();
+    showAddOthersModal.value = false;
+};
+
+
+const openEditOthersModal = (others) => {
+    othersForm.others_id = others.others_id;
+    othersForm.others_name = others.others_name;
+    othersForm.others_description = others.others_description;
+    othersForm.category_id = others.category_id;
+    othersForm.others_price = others.others_price;
+    showEditOthersModal.value = true;
+};
+
+const closeEditOthersModal = () => {
+    resetFormData();
+    showEditOthersModal.value = false;
+};
+
+const handleAddOthers = () => {
+    othersForm.post(route('others.store'), {
+        onSuccess: () => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Other package Added',
+                text: 'The Other package was added successfully!',
+                confirmButtonText: 'OK',
+            });
+            closeAddOthersModal();
+        },
+        onError: () => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'There was an error adding Other package.',
+                confirmButtonText: 'OK',
+            });
+        }
+    });
+};
+
+const handleEditOthers = () => {
+    othersForm.put(route('others.update', othersForm.others_id), {
+        onSuccess: () => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Other Package Updated',
+                text: 'The Other Package was updated successfully!',
+                confirmButtonText: 'OK',
+            });
+            closeEditOthersModal();
+        },
+        onError: () => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'There was an error updating the Other Package.',
+                confirmButtonText: 'OK',
+            });
+        }
+    });
+};
+
+const deleteOthers = (others) => {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'You will not be able to recover this Other package!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, keep it',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            othersForm.delete(route('others.destroy', others.others_id), {
+                onSuccess: () => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Other Package Deleted',
+                        text: 'Other Package was deleted successfully!',
+                        confirmButtonText: 'OK',
+                    });
+                },
+                onError: () => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'There was an error deleting the Other package.',
+                        confirmButtonText: 'OK',
+                    });
+                }
+            });
+        }
+    });
+};
 </script>
 
 
@@ -46,7 +162,7 @@ defineProps({
                                     placeholder="Search for items">
                             </div>
 
-                            <button type="button"
+                            <button type="button" @click="openAddOthersModal"
                                 class="flex items-center justify-center text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none dark:focus:ring-indigo  -700">
                                 <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewBox="0 0 20 20"
                                     xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -77,29 +193,30 @@ defineProps({
                             </thead>
                             <tbody>
 
-                                <tr
+                                <tr v-for="others in others" :key="others.others_id"
                                     class="border-b cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 dark:border-gray-700">
                                     <th scope="row"
                                         class="px-8 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-
+                                        {{ others.others_name }}
                                     </th>
 
                                     <td class="px-8 py-3">
-
+                                        {{ others.others_description }}
 
                                     </td>
                                     <td class="px-8 py-3">
-
+                                        {{ others.category ? others.category.category_name : 'No category assigned' }}
                                     </td>
 
                                     <td class="px-8 py-3">
+                                        {{ others.others_price }}
 
                                     </td>
 
 
                                     <td class=" py-3 flex items-center justify-center space-x-2">
 
-                                        <button type="button"
+                                        <button type="button" @click="openEditOthersModal(others)"
                                             class="inline-flex items-center px-4 py-2 text-xs font-medium text-indigo-700 bg-white border rounded-lg border-indigo-700 hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-indigo-800 dark:bg-indigo-600 dark:hover:bg-indigo-700">
                                             <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg"
                                                 viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -110,7 +227,7 @@ defineProps({
                                             </svg>
                                             Edit
                                         </button>
-                                        <button type="button"
+                                        <button type="button" @click="deleteOthers(others)"
                                             class="inline-flex items-center px-4 py-2 text-xs font-medium text-red-600 bg-white border border-red-600 rounded-lg hover:bg-red-600 hover:text-white focus:outline-none focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900 dark:bg-gray-800 dark:text-red-500 dark:border-red-500 dark:hover:bg-red-600 dark:hover:text-white">
                                             <svg class="w-4 h-4 mr-2" viewBox="0 0 14 15" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -127,42 +244,40 @@ defineProps({
                 </div>
             </div>
 
-            <el-dialog title="Add Special Package" width="30%">
-                <form>
+            <el-dialog v-model="showAddOthersModal" title="Add Other Package" width="30%">
+                <form @submit.prevent="handleAddOthers">
                     <div class="mb-4">
                         <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-                        <input type="text" id="" required
+                        <input v-model="othersForm.others_name" type="text" id="" required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            placeholder="Enter Special's name" />
+                            placeholder="Enter Other Services name" />
                     </div>
                     <div class="mb-4">
                         <label for="" class="block text-sm font-medium text-gray-700">Description</label>
-                        <input type="text" id="description" required
+                        <input v-model="othersForm.others_description" type="text" id="description" required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                             placeholder="Enter Description" />
                     </div>
                     <div class="mb-4">
                         <label for="Category" class="block text-sm font-medium text-gray-700">Category</label>
-                        <select id="Category" required
+                        <select v-model="othersForm.category_id" id="Category" required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                             <option disabled value="">Select a Category</option>
-                            <option>
-
+                            <option v-for="category in categories" :key="category.category_id"
+                                :value="category.category_id">
+                                {{ category.category_name }}
                             </option>
                         </select>
-
-
-
                     </div>
                     <div class="mb-4">
                         <label for="" class="block text-sm font-medium text-gray-700">Price</label>
-                        <input type="text" id="price" required
+                        <input v-model="othersForm.others_price" type="text" id="price" required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                             placeholder="Enter price" />
                     </div>
 
                     <div class="flex justify-end">
-                        <button type="button"
+                        <button type="button" @click="closeAddOthersModal"
                             class="text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2">
                             Cancel
                         </button>
@@ -175,46 +290,46 @@ defineProps({
             </el-dialog>
 
 
-            <el-dialog title="Add Special Package" width="30%">
-                <form>
+            <el-dialog v-model="showEditOthersModal" title="Edit Other Package" width="30%">
+                <form @submit.prevent="handleEditOthers">
                     <div class="mb-4">
                         <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-                        <input type="text" id="name"
+                        <input v-model="othersForm.others_name" type="text" id="" required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            placeholder="Enter Specials name" />
+                            placeholder="Enter Special's name" />
                     </div>
                     <div class="mb-4">
                         <label for="" class="block text-sm font-medium text-gray-700">Description</label>
-                        <input type="text" id="description"
+                        <input v-model="othersForm.others_description" type="text" id="description" required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            placeholder="Enter description" />
+                            placeholder="Enter Description" />
                     </div>
                     <div class="mb-4">
                         <label for="Category" class="block text-sm font-medium text-gray-700">Category</label>
-                        <select id="Category" required
+                        <select v-model="othersForm.category_id" id="Category" required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                             <option disabled value="">Select a Category</option>
-                            <option>
-
+                            <option v-for="category in categories" :key="category.category_id"
+                                :value="category.category_id">
+                                {{ category.category_name }}
                             </option>
                         </select>
-
                     </div>
                     <div class="mb-4">
                         <label for="" class="block text-sm font-medium text-gray-700">Price</label>
-                        <input type="text" id="price"
+                        <input v-model="othersForm.others_price" type="text" id="price" required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                             placeholder="Enter price" />
                     </div>
 
                     <div class="flex justify-end">
-                        <button type="button"
+                        <button type="button" @click="closeEditOthersModal"
                             class="text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2">
                             Cancel
                         </button>
                         <button type="submit"
                             class="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5">
-                            Update
+                            Add
                         </button>
                     </div>
                 </form>
