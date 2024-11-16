@@ -6,9 +6,11 @@ import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import Swal from 'sweetalert2';
 
-defineProps({
+
+const { products } = defineProps({
     specials: Array,
-    categories: Array
+    categories: Array,
+    products: Array
 });
 
 
@@ -22,7 +24,10 @@ const specialForm = useForm({
     name: '',
     description: '',
     category_id: null,
-    price: ''
+    price: '',
+    products: [
+        { product_id: null, quantity: 1 }
+    ]
 });
 
 const resetFormData = () => {
@@ -45,8 +50,48 @@ const openEditSpecialModal = (special) => {
     specialForm.description = special.description;
     specialForm.price = special.price;
     specialForm.category_id = special.category_id;
+
+    // Check if special.products is defined and is an array
+    specialForm.products = Array.isArray(special.products)
+        ? special.products.map(product => ({
+            product_id: product.product_inventory_id,
+            quantity: product.pivot?.quantity || 1, // Handle missing pivot or quantity gracefully
+        }))
+        : [];
+
     showEditSpecialModal.value = true;
-}
+};
+
+
+
+const addProductToSpecials = () => {
+    specialForm.products.push({ id: null, quantity: 1 });
+};
+
+const removeProductFromSpecials = (index) => {
+    if (specialForm.products.length > 1) {
+        specialForm.products.splice(index, 1);
+    }
+};
+
+
+const checkProductStock = (selectedProduct, index) => {
+    const productData = products.find(p => p.product_inventory_id === selectedProduct.product_id);
+
+    if (productData && productData.product_quantity < selectedProduct.quantity) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Stock Limit Exceeded',
+            text: `Only ${Math.floor(productData.product_quantity)} of ${productData.product_name} are available.`,
+            confirmButtonText: 'OK',
+        });
+        closeAddSpecialModal();
+
+        specialForm.products[index].quantity = productData.product_quantity;
+        return;
+    }
+};
+
 
 const closeEditSpecialModal = () => {
     resetFormData();
@@ -94,6 +139,7 @@ const handleEditSpecial = () => {
                 text: 'There was an error updating the Special Package.',
                 confirmButtonText: 'OK',
             });
+            closeEditSpecialModal();
         }
     });
 };
@@ -189,6 +235,7 @@ const deleteSpecial = (special) => {
                                     <th scope="col" class="px-8 py-4">Name</th>
                                     <th scope="col" class="px-8 py-3">Description</th>
                                     <th scope="col" class="px-8 py-3">Category</th>
+                                    <th scope="col" class="px-8 py-3">Products</th>
                                     <th scope="col" class="px-8 py-3">Price</th>
                                     <th scope="col" class="text-center">Actions</th>
 
@@ -211,6 +258,13 @@ const deleteSpecial = (special) => {
                                     </td>
                                     <td class="px-8 py-3">
                                         {{ special.category ? special.category.category_name : 'No category assigned' }}
+                                    </td>
+                                    <td class="px-8 py-3">
+                                        <ul>
+                                            <li v-for="product in special.products" :key="product.product_inventory_id">
+                                                {{ product.product_name }} (x{{ product.pivot.quantity }})
+                                            </li>
+                                        </ul>
                                     </td>
 
                                     <td class="px-8 py-3">
@@ -273,7 +327,26 @@ const deleteSpecial = (special) => {
                             </option>
                         </select>
 
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium">Products</label>
+                            <div v-for="(product, index) in specialForm.products" :key="index"
+                                class="flex items-center mb-2">
 
+                                <select v-model="product.product_id" @change="checkProductStock(product, index)"
+                                    class="mr-2 bg-gray-50 border w-full border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                    style="min-width: 230px;">
+                                    <option v-for="item in products" :key="item.product_inventory_id"
+                                        :value="item.product_inventory_id">
+                                        {{ item.product_name }} ({{ item.product_quantity }} left)
+                                    </option>
+
+                                </select>
+                                <button type="button" @click="removeProductFromSpecials(index)"
+                                    class="text-red-600">Remove</button>
+                            </div>
+                            <button type="button" @click="addProductToSpecials" class="text-indigo-600">Add
+                                Product</button>
+                        </div>
 
                     </div>
                     <div class="mb-4">
@@ -321,7 +394,31 @@ const deleteSpecial = (special) => {
                                 {{ category.category_name }}
                             </option>
                         </select>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700">Products</label>
+                            <div v-for="(product, index) in specialForm.products" :key="index"
+                                class="flex items-center mb-3 space-x-2">
+                                <select v-model="product.product_id"
+                                    class="flex-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                                    style="min-width: 230px;">
+                                    <option v-for="item in products" :key="item.product_inventory_id"
+                                        :value="item.product_inventory_id">
+                                        {{ item.product_name }} ({{ parseInt(item.product_quantity) }} left)
+                                    </option>
 
+                                </select>
+
+
+
+                                <button type="button" @click="removeProductFromSpecials(index)"
+                                    class="text-red-600 font-medium hover:text-red-700 transition ml-2">Remove</button>
+
+                            </div>
+
+                            <button type="button" @click="addProductToSpecials"
+                                class="text-blue-600 hover:text-blue-700 font-medium transition mt-2">Add
+                                Product</button>
+                        </div>
                     </div>
                     <div class="mb-4">
                         <label for="" class="block text-sm font-medium text-gray-700">Price</label>

@@ -6,8 +6,6 @@ import { initFlowbite } from "flowbite";
 import { ElDialog } from 'element-plus';
 import Swal from 'sweetalert2';
 
-import { toRaw } from 'vue';
-
 
 const props = defineProps({
     package: Array,
@@ -114,14 +112,17 @@ const checkProductStock = (selectedProduct, index) => {
         Swal.fire({
             icon: 'error',
             title: 'Stock Limit Exceeded',
-            text: `Only ${productData.product_quantity} of ${productData.product_name} available.`,
+            text: `Only ${Math.floor(productData.product_quantity)} of ${productData.product_name} available.`,
             confirmButtonText: 'OK',
         });
 
+        closeCreatePackageModal();
+        closeEditPackageModal();
 
         packageForm.products[index].quantity = productData.product_quantity;
     }
 };
+
 
 
 
@@ -144,6 +145,7 @@ const handleEditPackage = () => {
                 text: 'There was an error updating the Package.',
                 confirmButtonText: 'OK',
             });
+            closeEditPackageModal();
         }
     });
 };
@@ -396,7 +398,8 @@ const resetFormData = () => {
                                 style="min-width: 230px;">
                                 <option v-for="item in products" :key="item.product_inventory_id"
                                     :value="item.product_inventory_id">
-                                    {{ item.product_name }} ({{ item.product_quantity }} left)
+                                    {{ item.product_name }} ({{ parseInt(item.product_quantity) }} left)
+
                                 </option>
 
                             </select>

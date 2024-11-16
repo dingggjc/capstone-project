@@ -17,6 +17,35 @@ const setActiveTab = (tabId) => {
     localStorage.setItem('activeTab', tabId);
 };
 
+const nextTab = () => {
+
+    const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+
+
+    const activeTab = tabs.find((tab) => tab.getAttribute('aria-selected') === 'true');
+
+    if (activeTab) {
+
+        const currentIndex = tabs.indexOf(activeTab);
+
+
+        const nextIndex = (currentIndex + 1) % tabs.length;
+
+
+        const nextTab = tabs[nextIndex];
+        if (nextTab) {
+            const nextTabId = nextTab.id;
+
+
+            setActiveTab(nextTabId);
+
+
+            nextTab.click();
+        }
+    }
+};
+
+
 const props = defineProps({
     products: {
         type: Array,
@@ -87,12 +116,7 @@ const props = defineProps({
                                             id="settings-tab" data-tabs-target="#settings" type="button" role="tab"
                                             aria-controls="settings" aria-selected="false">Special Services</button>
                                     </li>
-                                    <li class="me-2" role="presentation">
-                                        <button @click="setActiveTab('review-tab')"
-                                            class="inline-block p-4 border-b-2 rounded-t-lg focus:text-indigo-600 focus:border-indigo-600 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
-                                            id="review-tab" data-tabs-target="#review" type="button" role="tab"
-                                            aria-controls="review" aria-selected="false">Other Services</button>
-                                    </li>
+
                                     <li role="presentation">
                                         <button @click="setActiveTab('contacts-tab')"
                                             class="inline-block p-4 border-b-2 rounded-t-lg focus:text-indigo-600 focus:border-indigo-600 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
@@ -362,58 +386,6 @@ const props = defineProps({
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- other services -->
-                                <div class="hidden dark:bg-gray-800" id="review" role="tabpanel"
-                                    aria-labelledby="review-tab" style="max-height: 400px; overflow-y: auto;">
-                                    <div v-for="others in others" :key="others.others_id">
-                                        <div
-                                            class="rounded-lg border border-gray-200 bg-white p-4 mb-4 dark:border-gray-700 dark:bg-gray-800 md:p-6">
-                                            <div class="flex items-center justify-between">
-                                                <div>
-                                                    <h1
-                                                        class="text-sm font-medium text-gray-600 hover:underline dark:text-white">
-                                                        {{ others.others_name }}
-                                                    </h1>
-                                                    <h1
-                                                        class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
-                                                        {{ category.find(cat => cat.category_id ===
-                                                            others.category_id)?.category_name || 'No category assigned' }}
-                                                    </h1>
-                                                    <h1
-                                                        class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
-                                                        {{ category.find(cat => cat.category_id ===
-                                                            others.category_id)?.category_example || 'No example available'
-                                                        }}
-                                                    </h1>
-                                                    <h1
-                                                        class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
-                                                        {{ others.others_description }}
-                                                    </h1>
-                                                </div>
-                                                <div class="text-end md:w-32">
-                                                    <p class="text-sm font-bold text-gray-600 dark:text-white">
-                                                        ₱ {{ others.others_price }}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="flex items-center gap-4 mt-4">
-                                                <button type="button"
-                                                    class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
-                                                    <svg class="w-5 h-5 text-white me-2" aria-hidden="true"
-                                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        fill="currentColor" viewBox="0 0 24 24">
-                                                        <path fill-rule="evenodd"
-                                                            d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm13.707-1.293a1 1 0 0 0-1.414-1.414L11 12.586l-1.793-1.793a1 1 0 0 0-1.414 1.414l2.5 2.5a 1 1 0 0 0 1.414 0l4-4Z"
-                                                            clip-rule="evenodd" />
-                                                    </svg>
-                                                    Choose this service
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <!-- add ons -->
                                 <div class="hidden dark:bg-gray-800" id="contacts" role="tabpanel"
                                     aria-labelledby="contacts-tab">
@@ -500,7 +472,7 @@ const props = defineProps({
                             </div>
 
 
-                            <p class="text-gray-500  dark:text-gray-400 text-right"> <a href="#"
+                            <p class="text-gray-500  dark:text-gray-400 text-right"> <button @click="nextTab"
                                     class="inline-flex mt-5 items-center font-medium text-indigo-600 dark:text-indigo-500 hover:underline">
                                     Next
                                     <svg class="w-4 h-4 ms-2 rtl:rotate-180" aria-hidden="true"
@@ -508,7 +480,7 @@ const props = defineProps({
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                             stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
                                     </svg>
-                                </a></p>
+                                </button></p>
 
                         </div>
                     </section>

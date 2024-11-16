@@ -11,6 +11,7 @@ use App\Models\PackageModel;
 use App\Models\CategoryModel;
 use App\Models\specialsModel;
 use App\Models\otherServicesModel;
+use App\Models\StaffModel;
 use Illuminate\Support\Str;
 use App\Models\Transactions;
 
@@ -25,6 +26,7 @@ class TransactionController extends Controller
         $category = CategoryModel::all();
         $specials = specialsModel::all();
         $others = otherServicesModel::all();
+        $staffs = StaffModel::all();
 
         $carts = Cart::with('products', 'package')->where('cashier_id', Auth::user()->id)->latest()->get();
 
@@ -48,6 +50,7 @@ class TransactionController extends Controller
             'category' => $category,
             'specials' => $specials,
             'others' => $others,
+            'staffs' => $staffs,
 
         ]);
     }

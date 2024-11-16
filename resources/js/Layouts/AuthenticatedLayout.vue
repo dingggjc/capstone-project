@@ -237,7 +237,7 @@ const showingNavigationDropdown = ref(false);
                                 <span class="ms-3 pt-2 pb-2 text-sm">Manage Special Services</span>
                             </NavLink>
                         </li>
-                        <li class="my-3">
+                        <!-- <li class="my-3">
                             <NavLink :href="route('others.index')"
                                 class="flex items-center w-full text-base font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:indigo:bg-gray-700">
                                 <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
@@ -252,7 +252,7 @@ const showingNavigationDropdown = ref(false);
 
                                 <span class="ms-3 pt-2 pb-2 text-sm">Other Services</span>
                             </NavLink>
-                        </li>
+                        </li> -->
                         <li class="my-3">
                             <NavLink :href="route('staff.index')"
                                 class="flex items-center w-full text-base font-medium text-indigo-900 rounded-lg transition duration-75 group hover:bg-indigo-100 dark:text-white dark:indigo:bg-gray-700">
