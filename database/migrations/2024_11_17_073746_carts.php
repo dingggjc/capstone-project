@@ -13,6 +13,7 @@ return new class extends Migration
             $table->unsignedBigInteger('cashier_id')->index();
             $table->unsignedBigInteger('product_inventory_id')->nullable()->index();
             $table->unsignedBigInteger('package_id')->nullable()->index();
+            $table->unsignedBigInteger('specials_id')->nullable()->index();
             // $table->string('customer_name')->nullable();
             // $table->string('customer_phone')->nullable();
             // $table->string('vehicle_type')->nullable();
@@ -25,6 +26,7 @@ return new class extends Migration
             $table->foreign('cashier_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('product_inventory_id')->references('product_inventory_id')->on('product_inventory')->onDelete('set null');
             $table->foreign('package_id')->references('package_id')->on('t_package')->onDelete('set null');
+            $table->foreign('specials_id')->references('specials_id')->on('specials')->onDelete('set null');
         });
     }
 

@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { onMounted, ref } from 'vue';
 import { initFlowbite } from 'flowbite';
+import { Inertia } from '@inertiajs/inertia';
 import { ElDrawer, ElButton, ElNotification } from 'element-plus';
 
 
@@ -14,6 +15,7 @@ onMounted(() => {
 
 // const drawer = ref(false)
 
+const selectedPackageId = ref(null);
 
 const customerform = useForm({
     name: '',
@@ -44,11 +46,86 @@ const submitCustomerForm = () => {
         },
     });
 };
+const addToCartForm = useForm({
+    product_inventory_id: null,
+    package_id: null,
+    specials_id: null,
+    qty: 1,
+});
+
+const addToCart = (type, id) => {
+    if (type === 'product') {
+        addToCartForm.product_inventory_id = id;
+        addToCartForm.package_id = null;
+        addToCartForm.specials_id = null;
+    } else if (type === 'package') {
+        addToCartForm.product_inventory_id = null;
+        addToCartForm.package_id = id;
+        addToCartForm.specials_id = null;
+    } else if (type === 'special') {
+        addToCartForm.product_inventory_id = null;
+        addToCartForm.package_id = null;
+        addToCartForm.specials_id = id;
+    } else {
+        console.error("Invalid type provided to addToCart:", type);
+    }
+
+    console.log("Form Data Before Submit:", addToCartForm);
+
+    addToCartForm.post(route('cart.add'), {
+        onSuccess: () => {
+            ElNotification({
+                title: 'Success',
+                message: 'Item added to cart successfully!',
+                type: 'success',
+            });
+        },
+        onError: (errors) => {
+            console.error("Error Adding to Cart:", errors);
+            ElNotification({
+                title: 'Error',
+                message: errors?.error || 'Failed to add item to cart.',
+                type: 'error',
+            });
+        },
+    });
+};
 
 
+console.log(addToCartForm);
+
+const removeFromCart = (id) => {
+    Inertia.post(route('cart.remove'), { id }, {
+        onSuccess: () => {
+            ElNotification({
+                title: 'Success',
+                message: 'Item removed from cart!',
+                type: 'success',
+            });
+        },
+        onError: (errors) => {
+            ElNotification({
+                title: 'Error',
+                message: 'Failed to remove item.',
+                type: 'error',
+            });
+        },
+    });
+};
+
+const quantity = ref(1);
 
 
+const incrementQuantity = () => {
+    quantity.value += 1;
+};
 
+
+const decrementQuantity = () => {
+    if (quantity.value > 1) {
+        quantity.value -= 1;
+    }
+};
 
 const setActiveTab = (tabId) => {
     localStorage.setItem('activeTab', tabId);
@@ -106,6 +183,10 @@ const props = defineProps({
     },
 
 });
+
+const isPackageDisabled = (id) => {
+    return selectedPackageId.value !== null && selectedPackageId.value !== id;
+};
 
 </script>
 
@@ -358,7 +439,8 @@ const props = defineProps({
                                                 </div>
                                             </div>
                                             <div class="flex items-center gap-4 mt-4">
-                                                <button type="button"
+                                                <button type="button" :disabled="isPackageDisabled(pkg.package_id)"
+                                                    @click="addToCart('package', pkg.package_id)"
                                                     class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
                                                     <svg class="w-5 h-5 text-white me-2" aria-hidden="true"
                                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -407,7 +489,7 @@ const props = defineProps({
                                             </div>
                                         </div>
                                         <div class="flex items-center gap-4 mt-4">
-                                            <button type="button"
+                                            <button type="button" @click="addToCart('special', special.specials_id)"
                                                 class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
                                                 <svg class="w-5 h-5 text-white me-2" aria-hidden="true"
                                                     xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -426,7 +508,7 @@ const props = defineProps({
                                     aria-labelledby="contacts-tab">
                                     <div v-for="product in products" :key="product.product_inventory_id">
                                         <div
-                                            class="rounded-lg border border-gray-200 bg-white p-4  dark:border-gray-700 dark:bg-gray-800 md:p-6">
+                                            class="rounded-lg border mb-4 border-gray-200 bg-white p-4  dark:border-gray-700 dark:bg-gray-800 md:p-6">
                                             <div
                                                 class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
 
@@ -455,6 +537,7 @@ const props = defineProps({
                                                     <div class="flex items-center">
                                                         <button type="button" id="decrement-button-2"
                                                             data-input-counter-decrement="counter-input-2"
+                                                            @click="decrementQuantity"
                                                             class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
                                                             <svg class="h-2.5 w-2.5 text-gray-900 dark:text-white"
                                                                 aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
@@ -465,6 +548,7 @@ const props = defineProps({
                                                             </svg>
                                                         </button>
                                                         <input type="text" id="counter-input-2" data-input-counter
+                                                            @click="incrementQuantity"
                                                             class="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white"
                                                             placeholder="" value="1" required />
                                                         <button type="button" id="increment-button-2"
@@ -489,6 +573,7 @@ const props = defineProps({
 
                                             <div class="flex items-center gap-4">
                                                 <button type="button"
+                                                    @click="addToCart('product', product.product_inventory_id)"
                                                     class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
                                                     <svg class="w-5 h-5 text-white me-2" aria-hidden="true"
                                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -524,28 +609,52 @@ const props = defineProps({
                     <section class="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
                         <div class="space-y-6">
                             <div
-                                class="rounded-lg border border-gray-200 bg-white  pt-8 my-20 pb-8 p-4 dark:border-gray-700 dark:bg-gray-800 sm:p-6">
+                                class="rounded-lg border border-gray-200 bg-white pt-8 my-20 pb-8 p-4 dark:border-gray-700 dark:bg-gray-800 sm:p-6">
                                 <p class="text-xl font-semibold text-gray-900 dark:text-white">Summary</p>
 
                                 <div class="space-y-4 pt-4 pb-4">
-                                    <dl class="flex items-center justify-between gap-4 pt-4 pb-4">
-                                        <dt class="text-sm font-normal text-gray-500 dark:text-gray-400">Package A
-                                        </dt>
-                                        <dd class="text-sm font-medium text-gray-900 dark:text-white">₱ 400</dd>
-                                    </dl>
+                                    <!-- Loop through cart items -->
+                                    <div v-for="cartItem in carts" :key="cartItem.id"
+                                        class="flex items-center justify-between gap-4">
+                                        <!-- Remove button -->
+                                        <button @click="removeFromCart(cartItem.id)" type="button"
+                                            class="inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500">
+                                            Remove
+                                        </button>
 
+                                        <!-- Item name and type -->
+                                        <dt class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                            {{ cartItem.product_inventory_id ? products.find(p => p.product_inventory_id
+                                                === cartItem.product_inventory_id)?.product_name : '' }}
+                                            {{ cartItem.package_id ? packages.find(pkg => pkg.package_id ===
+                                                cartItem.package_id)?.package_name : '' }}
+                                            {{ cartItem.specials_id ? specials.find(special => special.specials_id ===
+                                                cartItem.specials_id)?.name : '' }}
+                                        </dt>
+
+                                        <!-- Item price -->
+                                        <dd class="text-sm font-medium text-gray-900 dark:text-white">
+                                            ₱ {{ cartItem.price }}
+                                        </dd>
+                                    </div>
+
+                                    <!-- Subtotal -->
                                     <dl
                                         class="flex items-center justify-between gap-4 border-t border-gray-200 pt-4 pb-4 dark:border-gray-700">
                                         <dt class="text-sm font-bold text-gray-900 dark:text-white">Subtotal</dt>
-                                        <dd class="text-sm font-bold text-gray-900 dark:text-white">₱ 400</dd>
+                                        <dd class="text-sm font-bold text-gray-900 dark:text-white">
+                                            ₱ {{ carts.reduce((total, item) => total + item.price, 0) }}
+                                        </dd>
                                     </dl>
                                 </div>
 
+                                <!-- Proceed to Payment Button -->
                                 <a href="#"
                                     class="flex w-full items-center justify-center rounded-lg bg-indigo-700 py-2.5 text-sm font-medium text-white hover:bg-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
                                     Proceed to Payment
                                 </a>
 
+                                <!-- Pay Later Option -->
                                 <div class="flex items-center justify-center gap-2 pt-4 pb-4">
                                     <span class="text-sm font-normal text-gray-500 dark:text-gray-400">or</span>
                                     <a href="#"

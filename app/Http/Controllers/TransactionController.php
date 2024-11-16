@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\Cart;
@@ -83,9 +84,10 @@ class TransactionController extends Controller
 
     public function addToCart(Request $request)
     {
+
         $product = $request->product_inventory_id ? Products::find($request->product_inventory_id) : null;
         $package = $request->package_id ? PackageModel::find($request->package_id) : null;
-        $special = $request->special_id ? specialsModel::with('products')->find($request->special_id) : null;
+        $special = $request->specials_id ? specialsModel::find($request->specials_id) : null;
         $price = 0;
 
 
@@ -125,8 +127,10 @@ class TransactionController extends Controller
 
 
         Cart::create([
+
             'product_inventory_id' => $request->product_inventory_id,
             'package_id' => $request->package_id,
+            'specials_id' => $request->specials_id,
             'cashier_id' => Auth::user()->id,
             'qty' => $product ? $request->qty : 1,
             'price' => $price,
@@ -134,6 +138,23 @@ class TransactionController extends Controller
 
         return back()->with(['success' => 'Items added to cart']);
     }
+    public function removeFromCart(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:carts,id',
+        ]);
+
+        $cartItem = Cart::find($request->id);
+
+        if ($cartItem) {
+            $cartItem->delete();
+            return redirect()->back()->with('success', 'Item successfully removed from the cart!');
+        }
+
+        return redirect()->back()->with('error', 'Item could not be found!');
+    }
+
+
 
 
 

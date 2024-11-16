@@ -19,7 +19,12 @@ class Products extends Model
         'product_price',
         'product_quantity',
     ];
-
+    public function specials()
+    {
+        return $this->belongsToMany(specialsModel::class, 'product_specials', 'product_id', 'specials_id')
+            ->withPivot('quantity')
+            ->withTimestamps();
+    }
 
     protected $casts = [
         'product_price' => 'float',

@@ -15,6 +15,7 @@ class Cart extends Model
         'cashier_id',
         'product_inventory_id',
         'package_id',
+        'specials_id',
         'qty',
         'price',
     ];
@@ -35,5 +36,9 @@ class Cart extends Model
     public function package()
     {
         return $this->belongsTo(PackageModel::class, 'package_id');
+    }
+    public function special()
+    {
+        return $this->belongsTo(specialsModel::class, 'specials_id'); // Correct reference
     }
 }
