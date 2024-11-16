@@ -14,6 +14,7 @@ use App\Models\otherServicesModel;
 use App\Models\StaffModel;
 use Illuminate\Support\Str;
 use App\Models\Transactions;
+use App\Models\TemporaryCustomerDetail;
 
 
 class TransactionController extends Controller
@@ -52,12 +53,39 @@ class TransactionController extends Controller
             'others' => $others,
             'staffs' => $staffs,
 
+
         ]);
     }
+
+    public function saveCustomerDetails(Request $request)
+    {
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:15',
+            'vehicle_plate' => 'required|string|max:10',
+        ]);
+
+
+        $customerDetails = TemporaryCustomerDetail::updateOrCreate(
+            ['cashier_id' => Auth::id()],
+            $validated
+        );
+
+
+        return redirect()->back()->with([
+            'success' => 'Customer details saved successfully!',
+            'customerDetails' => $customerDetails
+        ]);
+    }
+
+
+
     public function addToCart(Request $request)
     {
         $product = $request->product_inventory_id ? Products::find($request->product_inventory_id) : null;
         $package = $request->package_id ? PackageModel::find($request->package_id) : null;
+        $special = $request->special_id ? specialsModel::with('products')->find($request->special_id) : null;
         $price = 0;
 
 
@@ -81,6 +109,20 @@ class TransactionController extends Controller
             }
             $price += $package->package_price;
         }
+
+        if ($special) {
+            foreach ($special->products as $specialProduct) {
+                $requiredQuantity = $specialProduct->pivot->quantity;
+
+                if ($specialProduct->product_quantity < $requiredQuantity) {
+                    return response()->json([
+                        'error' => "Insufficient stock for product: {$specialProduct->product_name} in the special."
+                    ], 400);
+                }
+            }
+            $price += $special->price;
+        }
+
 
         Cart::create([
             'product_inventory_id' => $request->product_inventory_id,

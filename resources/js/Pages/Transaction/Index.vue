@@ -1,9 +1,10 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import { onMounted, ref } from 'vue';
 import { initFlowbite } from 'flowbite';
-import { ElDrawer, ElButton } from 'element-plus';
+import { ElDrawer, ElButton, ElNotification } from 'element-plus';
+
 
 onMounted(() => {
     initFlowbite();
@@ -13,37 +14,61 @@ onMounted(() => {
 
 // const drawer = ref(false)
 
+
+const customerform = useForm({
+    name: '',
+    phone: '',
+    vehicle_plate: '',
+});
+
+
+
+const submitCustomerForm = () => {
+    customerform.post(route('customer.details.save'), {
+        onSuccess: () => {
+            ElNotification({
+                title: 'Success',
+                message: 'Customer saved successfully!',
+                type: 'success',
+            });
+
+            Inertia.reload();
+        },
+        onError: (errors) => {
+            ElNotification({
+                title: 'Error',
+                message: 'Failed to update customer details. Please check the form.',
+                type: 'error',
+            });
+            console.error(errors);
+        },
+    });
+};
+
+
+
+
+
+
 const setActiveTab = (tabId) => {
     localStorage.setItem('activeTab', tabId);
 };
 
 const nextTab = () => {
-
     const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
-
-
     const activeTab = tabs.find((tab) => tab.getAttribute('aria-selected') === 'true');
-
     if (activeTab) {
-
         const currentIndex = tabs.indexOf(activeTab);
-
-
         const nextIndex = (currentIndex + 1) % tabs.length;
-
-
         const nextTab = tabs[nextIndex];
         if (nextTab) {
             const nextTabId = nextTab.id;
-
-
             setActiveTab(nextTabId);
-
-
             nextTab.click();
         }
     }
 };
+
 
 
 const props = defineProps({
@@ -79,6 +104,7 @@ const props = defineProps({
         type: Array,
         required: true,
     },
+
 });
 
 </script>
@@ -168,7 +194,8 @@ const props = defineProps({
                                         </form>
 
 
-                                        <form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <form @submit.prevent="submitCustomerForm"
+                                            class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <!-- First Input Field -->
                                             <div>
                                                 <label for="name-1"
@@ -183,10 +210,12 @@ const props = defineProps({
                                                                 d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z" />
                                                         </svg>
                                                     </span>
-                                                    <input type="text" id="name-1"
+                                                    <input type="text" id="name-1" v-model="customerform.name"
                                                         class="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 block flex-1 min-w-0 w-full text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
                                                         placeholder="Charles Acierto">
                                                 </div>
+                                                <p v-if="customerform.errors.name" class="text-red-500 text-xs mt-1">{{
+                                                    customerform.errors.name }}</p>
                                             </div>
 
                                             <!-- Second Input Field -->
@@ -204,10 +233,12 @@ const props = defineProps({
                                                                 d="M7.978 4a2.553 2.553 0 0 0-1.926.877C4.233 6.7 3.699 8.751 4.153 10.814c.44 1.995 1.778 3.893 3.456 5.572 1.68 1.679 3.577 3.018 5.57 3.459 2.062.456 4.115-.073 5.94-1.885a2.556 2.556 0 0 0 .001-3.861l-1.21-1.21a2.689 2.689 0 0 0-3.802 0l-.617.618a.806.806 0 0 1-1.14 0l-1.854-1.855a.807.807 0 0 1 0-1.14l.618-.62a2.692 2.692 0 0 0 0-3.803l-1.21-1.211A2.555 2.555 0 0 0 7.978 4Z" />
                                                         </svg>
                                                     </span>
-                                                    <input type="text" id="phone"
+                                                    <input type="text" id="phone" v-model="customerform.phone"
                                                         class="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 block flex-1 min-w-0 w-full text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
                                                         placeholder="09264648501">
                                                 </div>
+                                                <p v-if="customerform.errors.phone" class="text-red-500 text-xs mt-1">{{
+                                                    customerform.errors.phone }}</p>
                                             </div>
                                             <!-- Fourth Input Field -->
                                             <div class="col-span-2">
@@ -228,11 +259,15 @@ const props = defineProps({
 
                                                     </span>
                                                     <input type="text" id="Vehicle-plate"
+                                                        v-model="customerform.vehicle_plate"
                                                         class="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 block flex-1 min-w-0 w-full text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
                                                         placeholder="Vehicle-plate">
                                                 </div>
+                                                <p v-if="customerform.errors.vehicle_plate"
+                                                    class="text-red-500 text-xs mt-1">{{
+                                                        customerform.errors.vehicle_plate }}</p>
                                             </div>
-
+                                            <button type="submit">Save</button>
 
                                         </form>
 

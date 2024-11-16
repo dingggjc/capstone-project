@@ -85,6 +85,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/transaction/add-to-cart', [TransactionController::class, 'addToCart'])->name('transaction.addToCart');
     Route::delete('/transaction/cart/destroy', [TransactionController::class, 'destroyCart'])->name('transaction.destroyCart');
     Route::delete('/transaction/destroy-all', [TransactionController::class, 'destroyAllData'])->name('transaction.destroyAllData');
+    Route::post('/customer-details', [TransactionController::class, 'saveCustomerDetails'])->name('customer.details.save');
 });
 
 
