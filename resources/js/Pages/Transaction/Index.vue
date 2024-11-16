@@ -46,6 +46,10 @@ const props = defineProps({
         type: Array,
         required: true,
     },
+    others: {
+        type: Array,
+        required: true,
+    },
 });
 
 </script>
@@ -362,44 +366,50 @@ const props = defineProps({
                                 <!-- other services -->
                                 <div class="hidden dark:bg-gray-800" id="review" role="tabpanel"
                                     aria-labelledby="review-tab" style="max-height: 400px; overflow-y: auto;">
-                                    <div
-                                        class="rounded-lg border border-gray-200 bg-white p-4 mb-4 dark:border-gray-700 dark:bg-gray-800 md:p-6">
-                                        <div class="flex items-center justify-between">
-                                            <div>
-                                                <h1
-                                                    class="text-sm font-medium text-gray-600 hover:underline dark:text-white">
-                                                    Review your details
-                                                </h1>
-                                                <h1
-                                                    class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
-                                                    Package Selection
-                                                </h1>
-                                                <h1
-                                                    class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
-                                                    Special Services
-                                                </h1>
-                                                <h1
-                                                    class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
-                                                    Add-ons
-                                                </h1>
+                                    <div v-for="others in others" :key="others.others_id">
+                                        <div
+                                            class="rounded-lg border border-gray-200 bg-white p-4 mb-4 dark:border-gray-700 dark:bg-gray-800 md:p-6">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <h1
+                                                        class="text-sm font-medium text-gray-600 hover:underline dark:text-white">
+                                                        {{ others.others_name }}
+                                                    </h1>
+                                                    <h1
+                                                        class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
+                                                        {{ category.find(cat => cat.category_id ===
+                                                            others.category_id)?.category_name || 'No category assigned' }}
+                                                    </h1>
+                                                    <h1
+                                                        class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
+                                                        {{ category.find(cat => cat.category_id ===
+                                                            others.category_id)?.category_example || 'No example available'
+                                                        }}
+                                                    </h1>
+                                                    <h1
+                                                        class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
+                                                        {{ others.others_description }}
+                                                    </h1>
+                                                </div>
+                                                <div class="text-end md:w-32">
+                                                    <p class="text-sm font-bold text-gray-600 dark:text-white">
+                                                        ₱ {{ others.others_price }}
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <div class="text-end md:w-32">
-                                                <p class="text-sm font-bold text-gray-600 dark:text-white">Total: ₱XXXX
-                                                </p>
+                                            <div class="flex items-center gap-4 mt-4">
+                                                <button type="button"
+                                                    class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
+                                                    <svg class="w-5 h-5 text-white me-2" aria-hidden="true"
+                                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        fill="currentColor" viewBox="0 0 24 24">
+                                                        <path fill-rule="evenodd"
+                                                            d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm13.707-1.293a1 1 0 0 0-1.414-1.414L11 12.586l-1.793-1.793a1 1 0 0 0-1.414 1.414l2.5 2.5a 1 1 0 0 0 1.414 0l4-4Z"
+                                                            clip-rule="evenodd" />
+                                                    </svg>
+                                                    Choose this service
+                                                </button>
                                             </div>
-                                        </div>
-                                        <div class="flex items-center gap-4 mt-4">
-                                            <button type="button"
-                                                class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
-                                                <svg class="w-5 h-5 text-white me-2" aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    fill="currentColor" viewBox="0 0 24 24">
-                                                    <path fill-rule="evenodd"
-                                                        d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm13.707-1.293a1 1 0 0 0-1.414-1.414L11 12.586l-1.793-1.793a1 1 0 0 0-1.414 1.414l2.5 2.5a 1 1 0 0 0 1.414 0l4-4Z"
-                                                        clip-rule="evenodd" />
-                                                </svg>
-                                                Choose this service
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
