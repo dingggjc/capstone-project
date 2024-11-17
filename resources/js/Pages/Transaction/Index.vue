@@ -66,7 +66,7 @@ const decrementQty = (product) => {
     }
 };
 
-const addToCart = (type, id, qty) => {
+const addToCart = (type, id, qty = 1) => {
     if (type === 'product') {
         addToCartForm.product_inventory_id = id;
         addToCartForm.qty = qty;
@@ -565,7 +565,7 @@ const props = defineProps({
                                                         </button>
 
                                                         <!-- Quantity Input -->
-                                                        <input type="text" v-model="product.product_qty"
+                                                        <input type="text" value="1" v-model="product.product_qty"
                                                             class="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white"
                                                             placeholder="1" required />
 
