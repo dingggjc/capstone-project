@@ -53,15 +53,12 @@ const addToCartForm = useForm({
     qty: 1,
 });
 
-const isAlreadyInCart = (type, id) => {
-    return carts.some(cartItem => {
-        if (type === 'package') return cartItem.package_id === id;
-        if (type === 'special') return cartItem.specials_id === id;
-        if (type === 'product') return cartItem.product_inventory_id === id;
-        return false;
-    });
-};
+
 const addToCart = (type, id) => {
+    if (type === 'product') {
+        addToCartForm.product_inventory_id = id;
+        addToCartForm.qty = quantity.value;
+    }
     const existingPackage = addToCartForm.package_id;
     const existingSpecial = addToCartForm.specials_id;
 
@@ -117,8 +114,6 @@ const addToCart = (type, id) => {
     });
 };
 
-console.log(addToCartForm);
-
 const removeFromCart = (id) => {
     Inertia.post(route('cart.remove'), { id }, {
         onSuccess: () => {
@@ -141,16 +136,17 @@ const removeFromCart = (id) => {
 const quantity = ref(1);
 
 
-const incrementQuantity = () => {
-    quantity.value += 1;
+const incrementQuantity = (product) => {
+    if (!product.qty) product.qty = 1;
+    product.qty += 1;
 };
 
-
-const decrementQuantity = () => {
-    if (quantity.value > 1) {
-        quantity.value -= 1;
+const decrementQuantity = (product) => {
+    if (product.qty && product.qty > 1) {
+        product.qty -= 1;
     }
 };
+
 
 const setActiveTab = (tabId) => {
     localStorage.setItem('activeTab', tabId);
@@ -561,7 +557,7 @@ const isPackageDisabled = (id) => {
                                                     <div class="flex items-center">
                                                         <button type="button" id="decrement-button-2"
                                                             data-input-counter-decrement="counter-input-2"
-                                                            @click="decrementQuantity"
+                                                            @click="decrementQuantity(product)"
                                                             class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
                                                             <svg class="h-2.5 w-2.5 text-gray-900 dark:text-white"
                                                                 aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
@@ -572,10 +568,11 @@ const isPackageDisabled = (id) => {
                                                             </svg>
                                                         </button>
                                                         <input type="text" id="counter-input-2" data-input-counter
-                                                            @click="incrementQuantity"
+                                                            v-model="product.qty"
                                                             class="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white"
-                                                            placeholder="" value="1" required />
+                                                            placeholder="1" value="1" required />
                                                         <button type="button" id="increment-button-2"
+                                                            @click="incrementQuantity(product)"
                                                             data-input-counter-increment="counter-input-2"
                                                             class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
                                                             <svg class="h-2.5 w-2.5 text-gray-900 dark:text-white"
@@ -656,6 +653,7 @@ const isPackageDisabled = (id) => {
                                                 cartItem.specials_id)?.name : '' }}
                                         </dt>
 
+
                                         <!-- Item price -->
                                         <dd class="text-sm font-medium text-gray-900 dark:text-white">
                                             ₱ {{ cartItem.price }}
@@ -667,7 +665,8 @@ const isPackageDisabled = (id) => {
                                         class="flex items-center justify-between gap-4 border-t border-gray-200 pt-4 pb-4 dark:border-gray-700">
                                         <dt class="text-sm font-bold text-gray-900 dark:text-white">Subtotal</dt>
                                         <dd class="text-sm font-bold text-gray-900 dark:text-white">
-                                            ₱ {{ carts.reduce((total, item) => total + item.price, 0) }}
+                                            ₱ {{ carts.reduce((total, item) => total + item.qty * (item.price /
+                                                item.qty), 0) }}
                                         </dd>
                                     </dl>
                                 </div>
