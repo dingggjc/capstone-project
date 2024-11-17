@@ -15,6 +15,7 @@ use App\Http\Controllers\StaffController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\specialsController;
 use App\Http\Controllers\otherServicesController;
+use App\Http\Controllers\PaymentController;
 use Inertia\Inertia;
 
 // Landing page
@@ -126,6 +127,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/others/store', [otherServicesController::class, 'store'])->name('others.store');
     Route::delete('/others/{id}', [otherServicesController::class, 'destroy'])->name('others.destroy');
     Route::put('/others/{id}', [otherServicesController::class, 'update'])->name('others.update');
+
+    //manage payment
+    Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
 });
 
 
