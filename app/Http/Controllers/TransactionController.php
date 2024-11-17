@@ -132,7 +132,7 @@ class TransactionController extends Controller
             'package_id' => $request->package_id,
             'specials_id' => $request->specials_id,
             'cashier_id' => Auth::user()->id,
-            'qty' => $product ? $request->qty : 1,
+            'qty' => $request->qty,
             'price' => $price,
         ]);
 
@@ -153,9 +153,6 @@ class TransactionController extends Controller
 
         return redirect()->back()->with('error', 'Item could not be found!');
     }
-
-
-
 
 
 
