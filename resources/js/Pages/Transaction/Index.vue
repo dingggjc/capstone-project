@@ -53,24 +53,50 @@ const addToCartForm = useForm({
     qty: 1,
 });
 
+const isAlreadyInCart = (type, id) => {
+    return carts.some(cartItem => {
+        if (type === 'package') return cartItem.package_id === id;
+        if (type === 'special') return cartItem.specials_id === id;
+        if (type === 'product') return cartItem.product_inventory_id === id;
+        return false;
+    });
+};
 const addToCart = (type, id) => {
-    if (type === 'product') {
-        addToCartForm.product_inventory_id = id;
-        addToCartForm.package_id = null;
-        addToCartForm.specials_id = null;
-    } else if (type === 'package') {
+    const existingPackage = addToCartForm.package_id;
+    const existingSpecial = addToCartForm.specials_id;
+
+    if (type === 'package') {
+        if (existingPackage) {
+            ElNotification({
+                title: 'Warning',
+                message: 'You can only add one package to the cart.',
+                type: 'warning',
+            });
+            return;
+        }
         addToCartForm.product_inventory_id = null;
         addToCartForm.package_id = id;
         addToCartForm.specials_id = null;
     } else if (type === 'special') {
+        if (existingSpecial) {
+            ElNotification({
+                title: 'Warning',
+                message: 'You can only add one special to the cart.',
+                type: 'warning',
+            });
+            return;
+        }
         addToCartForm.product_inventory_id = null;
         addToCartForm.package_id = null;
         addToCartForm.specials_id = id;
+    } else if (type === 'product') {
+        addToCartForm.product_inventory_id = id;
+        addToCartForm.package_id = null;
+        addToCartForm.specials_id = null;
     } else {
         console.error("Invalid type provided to addToCart:", type);
+        return;
     }
-
-    console.log("Form Data Before Submit:", addToCartForm);
 
     addToCartForm.post(route('cart.add'), {
         onSuccess: () => {
@@ -90,7 +116,6 @@ const addToCart = (type, id) => {
         },
     });
 };
-
 
 console.log(addToCartForm);
 
@@ -439,8 +464,7 @@ const isPackageDisabled = (id) => {
                                                 </div>
                                             </div>
                                             <div class="flex items-center gap-4 mt-4">
-                                                <button type="button" :disabled="isPackageDisabled(pkg.package_id)"
-                                                    @click="addToCart('package', pkg.package_id)"
+                                                <button type="button" @click="addToCart('package', pkg.package_id)"
                                                     class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
                                                     <svg class="w-5 h-5 text-white me-2" aria-hidden="true"
                                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24"
