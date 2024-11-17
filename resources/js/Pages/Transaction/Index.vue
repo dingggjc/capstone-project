@@ -641,8 +641,10 @@ const props = defineProps({
 
                                         <!-- Item name and type -->
                                         <dt class="text-sm font-normal text-gray-500 dark:text-gray-400">
-                                            {{ cartItem.product_inventory_id ? products.find(p => p.product_inventory_id
-                                                === cartItem.product_inventory_id)?.product_name : '' }}
+                                            {{ cartItem.product_inventory_id
+                                                ? `${products.find(p => p.product_inventory_id ===
+                                            cartItem.product_inventory_id)?.product_name} (x${cartItem.qty})`
+                                            : '' }}
                                             {{ cartItem.package_id ? packages.find(pkg => pkg.package_id ===
                                                 cartItem.package_id)?.package_name : '' }}
                                             {{ cartItem.specials_id ? specials.find(special => special.specials_id ===
