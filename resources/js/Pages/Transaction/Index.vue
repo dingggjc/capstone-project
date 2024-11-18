@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { initFlowbite } from 'flowbite';
 import { Inertia } from '@inertiajs/inertia';
 import { ElDrawer, ElButton, ElNotification } from 'element-plus';
@@ -194,7 +194,28 @@ const props = defineProps({
 
 });
 
+const isFormValid = computed(() => {
+    const hasCustomerDetails =
+        customerform.name.trim() !== "" &&
+        customerform.phone.trim() !== "" &&
+        customerform.vehicle_plate.trim() !== "";
+    const hasCartItems = props.carts.length > 0;
 
+    return hasCustomerDetails && hasCartItems;
+});
+
+const proceedToPayment = () => {
+    if (!isFormValid.value) {
+        ElNotification({
+            title: "Error",
+            message: "Please ensure customer details are filled out and the cart is not empty.",
+            type: "error",
+        });
+        return;
+    }
+
+    Inertia.get(route("payment.index"));
+};
 
 </script>
 
@@ -645,19 +666,14 @@ const props = defineProps({
                                 </div>
 
                                 <!-- Proceed to Payment Button -->
-                                <NavLink :href="route('payment.index')"
+                                <NavLink v-if="isFormValid" :href="route('payment.index')"
                                     class="flex w-full items-center justify-center rounded-lg bg-indigo-700 py-2.5 text-sm font-medium text-white hover:bg-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
                                     Proceed to Payment
                                 </NavLink>
-
-                                <!-- Pay Later Option -->
-                                <div class="flex items-center justify-center gap-2 pt-4 pb-4">
-                                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">or</span>
-                                    <a href="#"
-                                        class="inline-flex items-center gap-2 text-sm font-medium text-indigo-700 underline hover:no-underline dark:text-indigo-500">
-                                        Pay Later
-                                    </a>
-                                </div>
+                                <button v-else :disabled="true" @click="proceedToPayment"
+                                    class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2.5 text-sm font-medium text-white cursor-not-allowed">
+                                    Proceed to Payment
+                                </button>
                             </div>
                         </div>
                     </section>

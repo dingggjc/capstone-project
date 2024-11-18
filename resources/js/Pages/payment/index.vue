@@ -126,7 +126,7 @@ const submitTransaction = () => {
                     router.get(route('transactions.print'), { invoice });
                     setTimeout(() => {
                         location.reload();
-                    }, 50);
+                    }, 500);
                 }
             });
             clearTransactionData();

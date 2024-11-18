@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         if (!User::where('email', 'admin@example.com')->exists()) {
 
             $adminUser = User::factory()->create([
-                'name' => 'Admin',
+                'name' => 'John Doe',
                 'email' => 'admin@example.com',
             ]);
             $adminUser->assignRole('admin');

@@ -297,7 +297,8 @@ class TransactionController extends Controller
         $transaction = Transactions::with([
             'cashier',
             'details.product',
-            'details.package'
+            'details.package',
+            'details.specials'
         ])->where('invoice', $request->invoice)->firstOrFail();
 
 

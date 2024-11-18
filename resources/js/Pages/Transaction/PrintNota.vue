@@ -29,7 +29,6 @@
                 <td>:</td>
                 <td>{{ transaction.customer_name }}</td>
             </tr>
-
             <tr>
                 <td>Plate Number</td>
                 <td>:</td>
@@ -71,6 +70,14 @@
                             {{ formatCurrency(detail.package_price) }}
                         </td>
                     </tr>
+                    <tr v-for="detail in transaction.details" :key="detail.id + '_special'">
+
+                        <td v-if="detail.specials">{{ detail.specials.name }}</td>
+                        <td></td>
+                        <td v-if="detail.specials" style="text-align: right">{{ formatCurrency(detail.price) }}</td>
+
+                    </tr>
+
                 </tbody>
 
 
@@ -107,6 +114,7 @@
         </div>
     </div>
 </template>
+
 
 <script>
 export default {
