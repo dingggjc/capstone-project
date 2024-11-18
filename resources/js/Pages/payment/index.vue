@@ -1,5 +1,5 @@
 <script setup>
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
 import { initFlowbite } from "flowbite";
 import { onMounted } from "vue";
 import { ElNotification } from 'element-plus';
@@ -7,11 +7,13 @@ onMounted(() => {
     initFlowbite();
 });
 
+const customerDetails = usePage().props.customerDetails || { name: '', phone: '', vehicle_plate: '' };
+
 
 const customerform = useForm({
-    name: '',
-    phone: '',
-    vehicle_plate: '',
+    name: customerDetails.name,
+    phone: customerDetails.phone,
+    vehicle_plate: customerDetails.vehicle_plate,
 });
 
 const submitCustomerForm = () => {
@@ -19,11 +21,9 @@ const submitCustomerForm = () => {
         onSuccess: () => {
             ElNotification({
                 title: 'Success',
-                message: 'Customer saved successfully!',
+                message: 'Customer details saved successfully!',
                 type: 'success',
             });
-
-            Inertia.reload();
         },
         onError: (errors) => {
             ElNotification({
@@ -35,7 +35,6 @@ const submitCustomerForm = () => {
         },
     });
 };
-
 
 </script>
 
@@ -149,7 +148,7 @@ const submitCustomerForm = () => {
                 <!-- Modal header -->
                 <div
                     class="flex items-center justify-between rounded-t border-b border-gray-200 p-4 dark:border-gray-700 md:p-5">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Billing Information</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Customer Information</h3>
                     <button type="button"
                         class="ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
                         data-modal-toggle="billingInformationModal">

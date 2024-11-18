@@ -29,6 +29,8 @@ class TransactionController extends Controller
         $others = otherServicesModel::all();
         $staffs = StaffModel::all();
 
+        $customerDetails = TemporaryCustomerDetail::where('cashier_id', Auth::id())->first();
+
         $carts = Cart::with('products', 'package')->where('cashier_id', Auth::user()->id)->latest()->get();
 
 
@@ -52,6 +54,7 @@ class TransactionController extends Controller
             'specials' => $specials,
             'others' => $others,
             'staffs' => $staffs,
+            'customerDetails' => $customerDetails,
 
 
         ]);

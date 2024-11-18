@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
 import { onMounted, ref } from 'vue';
 import { initFlowbite } from 'flowbite';
 import { Inertia } from '@inertiajs/inertia';
@@ -16,12 +16,14 @@ onMounted(() => {
 
 // const drawer = ref(false)
 
-const selectedPackageId = ref(null);
+
+const customerDetails = usePage().props.customerDetails || { name: '', phone: '', vehicle_plate: '' };
+
 
 const customerform = useForm({
-    name: '',
-    phone: '',
-    vehicle_plate: '',
+    name: customerDetails.name,
+    phone: customerDetails.phone,
+    vehicle_plate: customerDetails.vehicle_plate,
 });
 
 
@@ -34,8 +36,6 @@ const submitCustomerForm = () => {
                 message: 'Customer saved successfully!',
                 type: 'success',
             });
-
-            Inertia.reload();
         },
         onError: (errors) => {
             ElNotification({

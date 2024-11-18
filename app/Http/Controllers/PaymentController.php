@@ -11,7 +11,12 @@ class PaymentController extends Controller
 {
     public function index()
     {
-        return Inertia::render('payment/index');
+
+        $customerDetails = TemporaryCustomerDetail::where('cashier_id', Auth::id())->first();
+
+        return Inertia::render('payment/index', [
+            'customerDetails' => $customerDetails,
+        ]);
     }
 
     public function saveCustomerDetails(Request $request)
