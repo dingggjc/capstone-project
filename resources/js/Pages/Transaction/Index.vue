@@ -72,6 +72,8 @@ const addToCart = (type, id, qty = 1) => {
     if (type === 'product') {
         addToCartForm.product_inventory_id = id;
         addToCartForm.qty = qty;
+    } else if (type === 'staff') {
+        addToCartForm.staff_id = id; // Set the staff ID correctly
     }
 
 
@@ -106,6 +108,8 @@ const addToCart = (type, id, qty = 1) => {
         addToCartForm.product_inventory_id = id;
         addToCartForm.package_id = null;
         addToCartForm.specials_id = null;
+    } else if (type === 'staff') {
+        addToCartForm.staff_id = id; // Staff-specific logic
     } else {
         console.error("Invalid type provided to addToCart:", type);
         return;
@@ -705,7 +709,7 @@ const proceedToPayment = () => {
                                                 </div>
                                             </div>
                                             <div class="flex items-center gap-4 mt-4">
-                                                <button type="button"
+                                                <button type="button" @click="addToCart('staff', staff.staff_id)"
                                                     class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
                                                     <svg class="w-5 h-5 text-white me-2" aria-hidden="true"
                                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24"
