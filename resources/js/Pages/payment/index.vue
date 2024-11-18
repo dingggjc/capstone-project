@@ -19,22 +19,15 @@ const customerform = useForm({
 const submitCustomerForm = () => {
     customerform.post(route('customer.details.save'), {
         onSuccess: () => {
-            ElNotification({
-                title: 'Success',
-                message: 'Customer details saved successfully!',
-                type: 'success',
-            });
+            window.location.reload();
         },
         onError: (errors) => {
-            ElNotification({
-                title: 'Error',
-                message: 'Failed to update customer details. Please check the form.',
-                type: 'error',
-            });
             console.error(errors);
         },
     });
 };
+
+
 
 </script>
 
@@ -54,9 +47,10 @@ const submitCustomerForm = () => {
 
                     <dl>
                         <dt class="text-base font-medium text-gray-900 dark:text-white">Individual</dt>
-                        <dd class="mt-1 text-base font-normal text-gray-500 dark:text-gray-400">Charles Acierto
-                            09264648501</dd>
-                        <dd class="mt-1 text-base font-normal text-gray-500 dark:text-gray-400">Car plate - ABX123</dd>
+                        <dd class="mt-1 text-base font-normal text-gray-500 dark:text-gray-400"> {{ customerDetails.name
+                            }} {{ customerDetails.phone }}</dd>
+                        <dd class="mt-1 text-base font-normal text-gray-500 dark:text-gray-400"> Car plate - {{
+                            customerDetails.vehicle_plate }}</dd>
 
 
                     </dl>
