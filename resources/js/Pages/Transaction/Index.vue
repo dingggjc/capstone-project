@@ -155,20 +155,6 @@ const setActiveTab = (tabId) => {
     localStorage.setItem('activeTab', tabId);
 };
 
-const nextTab = () => {
-    const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
-    const activeTab = tabs.find((tab) => tab.getAttribute('aria-selected') === 'true');
-    if (activeTab) {
-        const currentIndex = tabs.indexOf(activeTab);
-        const nextIndex = (currentIndex + 1) % tabs.length;
-        const nextTab = tabs[nextIndex];
-        if (nextTab) {
-            const nextTabId = nextTab.id;
-            setActiveTab(nextTabId);
-            nextTab.click();
-        }
-    }
-};
 
 
 
@@ -315,7 +301,7 @@ const props = defineProps({
                                                     </span>
                                                     <input type="text" id="name-1" v-model="customerform.name"
                                                         class="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 block flex-1 min-w-0 w-full text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
-                                                        placeholder="Charles Acierto">
+                                                        placeholder="Input name">
                                                 </div>
                                                 <p v-if="customerform.errors.name" class="text-red-500 text-xs mt-1">{{
                                                     customerform.errors.name }}</p>
@@ -338,7 +324,7 @@ const props = defineProps({
                                                     </span>
                                                     <input type="text" id="phone" v-model="customerform.phone"
                                                         class="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 block flex-1 min-w-0 w-full text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
-                                                        placeholder="09264648501">
+                                                        placeholder="Input number">
                                                 </div>
                                                 <p v-if="customerform.errors.phone" class="text-red-500 text-xs mt-1">{{
                                                     customerform.errors.phone }}</p>
@@ -370,7 +356,7 @@ const props = defineProps({
                                                     class="text-red-500 text-xs mt-1">{{
                                                         customerform.errors.vehicle_plate }}</p>
                                             </div>
-                                            <button type="submit">Save</button>
+                                            <button class="flex justify-end col-span-2" type="submit">Save</button>
 
                                         </form>
 
@@ -608,18 +594,6 @@ const props = defineProps({
 
                                 </div>
                             </div>
-
-
-                            <p class="text-gray-500  dark:text-gray-400 text-right"> <button @click="nextTab"
-                                    class="inline-flex mt-5 items-center font-medium text-indigo-600 dark:text-indigo-500 hover:underline">
-                                    Next
-                                    <svg class="w-4 h-4 ms-2 rtl:rotate-180" aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                            stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
-                                    </svg>
-                                </button></p>
-
                         </div>
                     </section>
 

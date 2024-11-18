@@ -1,9 +1,9 @@
 <script setup>
-import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { Head, useForm, usePage, router } from '@inertiajs/vue3';
 import { initFlowbite } from "flowbite";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, } from "vue";
 import { ElNotification } from 'element-plus';
-
+import Swal from 'sweetalert2';
 onMounted(() => {
     initFlowbite();
 });
@@ -108,14 +108,28 @@ const submitTransaction = () => {
             vehicle_plate: customerform.vehicle_plate,
         })
         .then((response) => {
-            ElNotification({
-                title: 'Success',
-                message: response.data.message || 'Transaction completed successfully!',
-                type: 'success',
-            });
+            const invoice = response.data?.invoice;
 
-            // Reload the page or redirect to another route
-            window.location.href = route('transaction.index');
+            if (!invoice) {
+                throw new Error('Invoice not available in response data.');
+            }
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Transaction Complete!',
+                text: response.data.message || 'The transaction was completed successfully. Would you like to print the receipt?',
+                showCancelButton: true,
+                confirmButtonText: 'Print Now',
+                cancelButtonText: 'Close',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    router.get(route('transactions.print'), { invoice });
+                    setTimeout(() => {
+                        location.reload();
+                    }, 50);
+                }
+            });
+            clearTransactionData();
         })
         .catch((error) => {
             console.error('Transaction Error:', error.response?.data || error);
@@ -125,6 +139,12 @@ const submitTransaction = () => {
                 type: 'error',
             });
         });
+};
+
+const clearTransactionData = () => {
+    carts.splice(0);
+    inputAmount.value = 0;
+    customerform.reset();
 };
 
 </script>
@@ -223,7 +243,7 @@ const submitTransaction = () => {
                             </dl>
                         </div>
                         <div class="gap-4 sm:flex sm:items-center">
-                            <button type="button"
+                            <button type="button" @click="$inertia.visit(route('transaction.index'))"
                                 class="w-full rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-indigo-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">
                                 Return
                             </button>

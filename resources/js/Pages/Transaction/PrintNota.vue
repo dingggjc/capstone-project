@@ -29,11 +29,7 @@
                 <td>:</td>
                 <td>{{ transaction.customer_name }}</td>
             </tr>
-            <tr>
-                <td>Vehicle Type</td>
-                <td>:</td>
-                <td>{{ transaction.vehicle_type }}</td>
-            </tr>
+
             <tr>
                 <td>Plate Number</td>
                 <td>:</td>
