@@ -12,6 +12,6 @@ class StaffModel extends Model
     protected $fillable = [
         "staff_name",
         "staff_phone",
-        "status",
+        "staff_status",
     ];
 }

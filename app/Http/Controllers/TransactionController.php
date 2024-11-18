@@ -27,7 +27,7 @@ class TransactionController extends Controller
         $category = CategoryModel::all();
         $specials = specialsModel::all();
         $others = otherServicesModel::all();
-        $staffs = StaffModel::all();
+        $staff = StaffModel::all();
 
         $customerDetails = TemporaryCustomerDetail::where('cashier_id', Auth::id())->first();
 
@@ -53,7 +53,7 @@ class TransactionController extends Controller
             'category' => $category,
             'specials' => $specials,
             'others' => $others,
-            'staffs' => $staffs,
+            'staff' => $staff,
             'customerDetails' => $customerDetails,
 
 
@@ -110,6 +110,7 @@ class TransactionController extends Controller
             'package_id' => $request->package_id,
             'specials_id' => $request->specials_id,
             'cashier_id' => Auth::user()->id,
+            'staff_id' => $request->staff_id,
             'qty' => $request->qty,
             'price' => $price,
         ]);
@@ -180,6 +181,23 @@ class TransactionController extends Controller
         ]);
     }
 
+
+    public function saveStaffDetails(Request $request)
+    {
+        $validated = $request->validate([
+            'staff_name' => 'required|string|max:255',
+            'staff_phone' => 'required|string|max:15',
+            'staff_status' => 'required|string|max:255',
+        ]);
+        $staffDetails = StaffModel::updateOrCreate(
+            ['cashier_id' => Auth::id()],
+            $validated
+        );
+        return redirect()->back()->with([
+            'success' => 'Staff details saved successfully!',
+            'staffDetails' => $staffDetails
+        ]);
+    }
 
 
     public function updateStatus(Request $request, $id)
@@ -267,6 +285,7 @@ class TransactionController extends Controller
                 'product_inventory_id' => $cart->product_inventory_id,
                 'specials_id' => $cart->specials_id,
                 'package_id' => $cart->package_id,
+                'staff_id' => $cart->staff_id,
                 'qty' => $cart->qty,
                 'product_price' => $cart->product_inventory_id && $cart->products ? $cart->products->product_price : null,
                 'package_price' => $cart->package_id && $cart->package ? $cart->package->package_price : null,

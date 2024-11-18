@@ -51,6 +51,7 @@ const addToCartForm = useForm({
     product_inventory_id: null,
     package_id: null,
     specials_id: null,
+    staff_id: null,
     qty: 1,
 });
 
@@ -191,6 +192,10 @@ const props = defineProps({
         type: Array,
         required: true,
     },
+    staff: {
+        type: Array,
+        required: true,
+    },
 
 });
 
@@ -258,6 +263,12 @@ const proceedToPayment = () => {
                                             class="inline-block p-4 border-b-2 rounded-t-lg focus:text-indigo-600 focus:border-indigo-600 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
                                             id="contacts-tab" data-tabs-target="#contacts" type="button" role="tab"
                                             aria-controls="contacts" aria-selected="false">Add ons</button>
+                                    </li>
+                                    <li role="presentation">
+                                        <button @click="setActiveTab('staff-tab')"
+                                            class="inline-block p-4 border-b-2 rounded-t-lg focus:text-indigo-600 focus:border-indigo-600 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                                            id="staff-tab" data-tabs-target="#staff" type="button" role="tab"
+                                            aria-controls="staff" aria-selected="false">Assign Wash Staff</button>
                                     </li>
 
 
@@ -613,6 +624,101 @@ const proceedToPayment = () => {
                                         </div>
                                     </div>
 
+                                </div>
+
+                                <!-- staff -->
+                                <div class="hidden dark:bg-gray-800" id="staff" role="tabpanel"
+                                    aria-labelledby="staff-tab" style="max-height: 400px; overflow-y: auto;">
+                                    <div
+                                        class="rounded-lg border  border-gray-200 bg-white p-2  dark:border-gray-700 dark:bg-gray-800 md:p-6">
+                                        <button id="dropdownRadioButton" data-dropdown-toggle="dropdownDefaultRadio"
+                                            class="text-white mb-5 bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-xs px-5 py-2 text-center inline-flex items-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
+                                            type="button">Dropdown radio <svg class="w-2.5 h-2.5 ms-3"
+                                                aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 10 6">
+                                                <path stroke="currentColor" stroke-linecap="round"
+                                                    stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+                                            </svg>
+                                        </button>
+
+                                        <!-- Dropdown menu -->
+                                        <div id="dropdownDefaultRadio"
+                                            class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600">
+                                            <ul class="p-3 space-y-3 text-xs text-gray-700 dark:text-gray-200"
+                                                aria-labelledby="dropdownRadioButton">
+                                                <li>
+                                                    <div class="flex items-center">
+                                                        <input id="default-radio-1" type="radio" value=""
+                                                            name="default-radio"
+                                                            class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                                        <label for="default-radio-1"
+                                                            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Available</label>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="flex items-center">
+                                                        <input checked id="default-radio-2" type="radio" value=""
+                                                            name="default-radio"
+                                                            class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                                        <label for="default-radio-2"
+                                                            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Unavailable</label>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div v-for="staff in staff" :key="staff.staff_id"
+                                            class="rounded-lg border border-gray-200 bg-white p-4 mb-4 dark:border-gray-700 dark:bg-gray-800 md:p-6">
+
+
+
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <h1
+                                                        class="text-sm font-medium text-gray-600 hover:underline dark:text-white">
+                                                        {{ staff.staff_name }}</h1>
+                                                    <h1
+                                                        class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
+                                                        {{ staff.staff_phone }}
+                                                    </h1>
+                                                    <h1
+                                                        class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
+
+                                                    </h1>
+
+                                                    <a href="#"
+                                                        class="text-sm font-medium text-gray-600 hover:underline dark:text-white">
+
+                                                    </a>
+                                                </div>
+                                                <div class="text-end md:w-32">
+                                                    <p class="text-sm font-bold text-gray-600 dark:text-white">
+                                                        <span
+                                                            :class="staff.staff_status === 'Active'
+                                                                ? 'inline-flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300'
+                                                                : 'inline-flex items-center bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300'">
+                                                            <span :class="staff.staff_status === 'Active'
+                                                                ? 'w-2 h-2 me-1 bg-green-500 rounded-full'
+                                                                : 'w-2 h-2 me-1 bg-red-500 rounded-full'"></span>
+                                                            {{ staff.staff_status }}
+                                                        </span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-4 mt-4">
+                                                <button type="button"
+                                                    class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
+                                                    <svg class="w-5 h-5 text-white me-2" aria-hidden="true"
+                                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        fill="currentColor" viewBox="0 0 24 24">
+                                                        <path fill-rule="evenodd"
+                                                            d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm13.707-1.293a1 1 0 0 0-1.414-1.414L11 12.586l-1.793-1.793a1 1 0 0 0-1.414 1.414l2.5 2.5a 1 1 0 0 0 1.414 0l4-4Z"
+                                                            clip-rule="evenodd" />
+                                                    </svg>
+                                                    Assign Staff
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

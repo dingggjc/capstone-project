@@ -19,15 +19,15 @@ class StaffController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'staff_name' => 'nullable|string|max:255',
-            'staff_phone' => 'nullable|string|max:255',
-            'status' => 'nullable|string|max:255',
+            'staff_name' => 'required|string|max:255',
+            'staff_phone' => 'required|string|max:255',
+            'staff_status' => 'required|string|max:255|in:Active,Inactive',
         ]);
 
         StaffModel::create([
             'staff_name' => $validated['staff_name'],
             'staff_phone' => $validated['staff_phone'],
-            'status' => $validated['status'],
+            'staff_status' => $validated['staff_status'],
         ]);
 
         return redirect()->back()->with('success', 'Staff added successfully!');
@@ -47,7 +47,7 @@ class StaffController extends Controller
         $validated = $request->validate([
             'staff_name' => 'nullable|string|max:255',
             'staff_phone' => 'nullable|string|max:255',
-            'status' => 'nullable|string|max:255',
+            'staff_status' => 'nullable|string|max:255',
         ]);
 
         $staff = StaffModel::find($id);
@@ -55,7 +55,7 @@ class StaffController extends Controller
             $staff->update([
                 'staff_name' => $validated['staff_name'],
                 'staff_phone' => $validated['staff_phone'],
-                'status' => $validated['status'],
+                'staff_status' => $validated['staff_status'],
             ]);
             return redirect()->back()->with('success', 'Staff updated successfully!');
         }

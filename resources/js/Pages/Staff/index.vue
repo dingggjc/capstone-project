@@ -19,7 +19,7 @@ const staffForm = useForm({
     staff_id: '',
     staff_name: '',
     staff_phone: '',
-    status: 'Active'
+    staff_status: 'Active'
 });
 
 
@@ -42,7 +42,7 @@ const openEditStaffModal = (staff) => {
     staffForm.staff_id = staff.staff_id;
     staffForm.staff_name = staff.staff_name;
     staffForm.staff_phone = staff.staff_phone;
-    staffForm.status = staff.status;
+    staffForm.staff_status = staff.staff_status;
     showEditStaffModal.value = true;
 };
 
@@ -55,6 +55,7 @@ const closeEditStaffModal = () => {
 
 
 const handleAddStaff = () => {
+    console.log('Form Data:', staffForm);
     staffForm.post(route('staff.store'), {
         onSuccess: () => {
             Swal.fire({
@@ -206,13 +207,13 @@ const deleteStaff = (staff) => {
 
                                     <td class="px-8 py-3">
                                         <span
-                                            :class="staff.status === 'Active'
+                                            :class="staff.staff_status === 'Active'
                                                 ? 'inline-flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300'
                                                 : 'inline-flex items-center bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300'">
-                                            <span :class="staff.status === 'Active'
+                                            <span :class="staff.staff_status === 'Active'
                                                 ? 'w-2 h-2 me-1 bg-green-500 rounded-full'
                                                 : 'w-2 h-2 me-1 bg-red-500 rounded-full'"></span>
-                                            {{ staff.status }}
+                                            {{ staff.staff_status }}
                                         </span>
                                     </td>
 
@@ -247,23 +248,23 @@ const deleteStaff = (staff) => {
                 </div>
             </div>
 
-            <el-dialog v-model="showAddStaffModal" title="Add Product" width="30%">
+            <el-dialog v-model="showAddStaffModal" title="Add Staff" width="30%">
                 <form @submit.prevent="handleAddStaff">
                     <div class="mb-4">
                         <label for="staffName" class="block text-sm font-medium text-gray-700">Name</label>
                         <input v-model="staffForm.staff_name" type="text" id="staffName" required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            placeholder="Enter product name" />
+                            placeholder="Enter name" />
                     </div>
                     <div class="mb-4">
                         <label for="staffPhone" class="block text-sm font-medium text-gray-700">Phone</label>
                         <input v-model="staffForm.staff_phone" type="text" id="staffPhone" required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            placeholder="Enter product name" />
+                            placeholder="Enter Phone" />
                     </div>
                     <div class="mb-4">
                         <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                        <select v-model="staffForm.status" id="status" required
+                        <select v-model="staffForm.staff_status" id="status" required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                             <option value="Active">Active</option>
                             <option value="Inactive">Inactive</option>
@@ -299,7 +300,7 @@ const deleteStaff = (staff) => {
                     </div>
                     <div class="mb-4">
                         <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                        <select v-model="staffForm.status" id="status"
+                        <select v-model="staffForm.staff_status" id="status"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                             <option value="Active">Active</option>
                             <option value="Inactive">Inactive</option>

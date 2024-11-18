@@ -16,6 +16,7 @@ class Cart extends Model
         'product_inventory_id',
         'package_id',
         'specials_id',
+        'staff_id',
         'qty',
         'price',
     ];
@@ -40,5 +41,10 @@ class Cart extends Model
     public function specials()
     {
         return $this->belongsTo(SpecialsModel::class, 'specials_id', 'specials_id');
+    }
+
+    public function staff()
+    {
+        return $this->belongsTo(User::class, 'staff_id');
     }
 }

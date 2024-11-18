@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('staff_id');
             $table->string('staff_name');
             $table->string('staff_phone');
-            $table->string('status');
+            $table->string('staff_status')->default('Active');
             $table->timestamps();
         });
     }
