@@ -165,20 +165,15 @@ class TransactionController extends Controller
 
     public function saveCustomerDetails(Request $request)
     {
-
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:15',
             'vehicle_plate' => 'required|string|max:10',
         ]);
-
-
         $customerDetails = TemporaryCustomerDetail::updateOrCreate(
             ['cashier_id' => Auth::id()],
             $validated
         );
-
-
         return redirect()->back()->with([
             'success' => 'Customer details saved successfully!',
             'customerDetails' => $customerDetails
@@ -192,91 +187,103 @@ class TransactionController extends Controller
         $transaction = Transactions::findOrFail($id);
         $transaction->status = $request->status;
         $transaction->save();
-
         return redirect()->back()->with('success', 'Transaction status updated successfully.');
     }
     public function destroyCart(Request $request)
     {
         $cart = Cart::find($request->cart_id);
-
         if ($cart) {
             $cart->delete();
             return redirect()->back()->with('success', 'Item removed successfully');
         }
-
         return redirect()->back()->with('error', 'Item not found');
     }
 
     public function store(Request $request)
     {
-        $carts = Cart::where('cashier_id', Auth::user()->id)->get();
-        $carts_total = 0;
-
-        foreach ($carts as $cart) {
-            if ($cart->product_inventory_id && $cart->products) {
-                $carts_total += $cart->products->product_price * $cart->qty;
-            }
-            if ($cart->package_id && $cart->package) {
-                $carts_total += $cart->package->package_price * $cart->qty;
-            }
+        $customerDetails = TemporaryCustomerDetail::where('cashier_id', Auth::id())->first();
+        if (!$customerDetails) {
+            return response()->json(['error' => 'Customer details are missing!'], 400);
         }
 
-        $status = $request->status ?? ($request->cash >= $carts_total ? 'Paid' : 'Pending');
+        $carts = Cart::with(['products', 'package.products', 'specials.products'])
+            ->where('cashier_id', Auth::id())
+            ->get();
+
+        if ($carts->isEmpty()) {
+            return response()->json(['error' => 'Cart is empty!'], 400);
+        }
+
+        $carts_total = $carts->reduce(function ($total, $cart) {
+            if ($cart->product_inventory_id && $cart->products) {
+                $total += $cart->products->product_price * $cart->qty;
+            }
+            if ($cart->package_id && $cart->package) {
+                $total += $cart->package->package_price * $cart->qty;
+            }
+            if ($cart->specials_id && $cart->specials) {
+                $total += $cart->specials->price * $cart->qty;
+            }
+            return $total;
+        }, 0);
+
+
+        $status = $request->cash >= $carts_total ? 'Paid' : 'Pending';
         $invoice = 'GRNSDE-' . Str::upper(Str::random(10));
 
         $transaction = Transactions::create([
-            'cashier_id' => Auth::user()->id,
+            'cashier_id' => Auth::id(),
             'invoice' => $invoice,
-            'customer_name' => $request->customer_name,
-            'customer_phone' => $request->customer_phone,
-            'vehicle_type' => $request->vehicle_type,
-            'vehicle_plate' => $request->vehicle_plate,
+            'customer_name' => $customerDetails->name,
+            'customer_phone' => $customerDetails->phone,
+            'vehicle_plate' => $customerDetails->vehicle_plate,
             'cash' => $request->cash,
-            'change' => $request->cash - $carts_total,
+            'change' => max($request->cash - $carts_total, 0),
             'grand_total' => $carts_total,
             'status' => $status,
         ]);
 
-        if ($status === 'Paid') {
-            foreach ($carts as $cart) {
-                if ($cart->product_inventory_id && $cart->products) {
-                    $cart->products->decrement('product_quantity', $cart->qty);
-                }
-
-                if ($cart->package_id && $cart->package) {
-                    foreach ($cart->package->products as $product) {
-                        $productQtyInPackage = $product->pivot->quantity; // Quantity of the product in this package
-                        $product->decrement('product_quantity', $cart->qty * $productQtyInPackage); // Adjust based on cart qty
-                    }
-                }
-
-                $transaction->details()->create([
-                    'transaction_id' => $transaction->id,
-                    'product_inventory_id' => $cart->product_inventory_id,
-                    'package_id' => $cart->package_id,
-                    'qty' => $cart->qty,
-                    'product_price' => $cart->product_inventory_id && $cart->products ? $cart->products->product_price : null,
-                    'package_price' => $cart->package_id && $cart->package ? $cart->package->package_price : null,
-                ]);
-
-                $product_price = $cart->product_inventory_id && $cart->products ? $cart->products->product_price * $cart->qty : 0;
-                $package_price = $cart->package_id && $cart->package ? $cart->package->package_price * $cart->qty : 0;
-                $profit = $product_price + $package_price;
-
-                $transaction->profits()->create([
-                    'transaction_id' => $transaction->id,
-                    'total' => $profit,
-                ]);
+        foreach ($carts as $cart) {
+            if ($cart->product_inventory_id && $cart->products) {
+                $cart->products->decrement('product_quantity', $cart->qty);
             }
+
+            if ($cart->package_id && $cart->package) {
+                foreach ($cart->package->products as $product) {
+                    $productQtyInPackage = $product->pivot->quantity;
+                    $product->decrement('product_quantity', $cart->qty * $productQtyInPackage);
+                }
+            }
+
+            if ($cart->specials_id && $cart->specials) {
+                foreach ($cart->specials->products as $product) {
+                    $productQtyInPackage = $product->pivot->quantity;
+                    $product->decrement('product_quantity', $cart->qty * $productQtyInPackage);
+                }
+            }
+
+            $transaction->details()->create([
+                'transaction_id' => $transaction->id,
+                'product_inventory_id' => $cart->product_inventory_id,
+                'specials_id' => $cart->specials_id,
+                'package_id' => $cart->package_id,
+                'qty' => $cart->qty,
+                'product_price' => $cart->product_inventory_id && $cart->products ? $cart->products->product_price : null,
+                'package_price' => $cart->package_id && $cart->package ? $cart->package->package_price : null,
+                'price' => $cart->specials_id && $cart->specials ? $cart->specials->price : null,
+            ]);
         }
 
-        Cart::where('cashier_id', Auth::user()->id)->delete();
+        Cart::where('cashier_id', Auth::id())->delete();
 
         return response()->json([
             'success' => true,
-            'data' => $transaction
+            'message' => 'Transaction completed successfully!',
+            'transaction_id' => $transaction->id,
         ]);
     }
+
+
 
 
     public function print(Request $request)

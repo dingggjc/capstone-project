@@ -19,6 +19,8 @@ class TransactionDetail extends Model
         'qty',
         'product_price',
         'package_price',
+        'specials_id',
+        'price',
     ];
 
 
@@ -37,5 +39,10 @@ class TransactionDetail extends Model
     public function package()
     {
         return $this->belongsTo(PackageModel::class, 'package_id');
+    }
+
+    public function specials()
+    {
+        return $this->belongsTo(specialsModel::class, 'specials_id');
     }
 }

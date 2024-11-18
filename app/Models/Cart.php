@@ -37,8 +37,8 @@ class Cart extends Model
     {
         return $this->belongsTo(PackageModel::class, 'package_id');
     }
-    public function special()
+    public function specials()
     {
-        return $this->belongsTo(specialsModel::class, 'specials_id'); // Correct reference
+        return $this->belongsTo(SpecialsModel::class, 'specials_id', 'specials_id');
     }
 }

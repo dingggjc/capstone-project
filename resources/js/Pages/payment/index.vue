@@ -3,6 +3,7 @@ import { Head, useForm, usePage } from '@inertiajs/vue3';
 import { initFlowbite } from "flowbite";
 import { ref, computed, onMounted } from "vue";
 import { ElNotification } from 'element-plus';
+
 onMounted(() => {
     initFlowbite();
 });
@@ -78,6 +79,54 @@ const props = defineProps({
 
 });
 
+const submitTransaction = () => {
+    if (carts.length === 0) {
+        ElNotification({
+            title: 'Error',
+            message: 'Your cart is empty. Please add items before completing the transaction.',
+            type: 'error',
+        });
+        return;
+    }
+
+    if (inputAmount.value < cartsTotal.value) {
+        ElNotification({
+            title: 'Error',
+            message: `Insufficient payment. Please provide at least ₱${cartsTotal.value}.`,
+            type: 'error',
+        });
+        return;
+    }
+
+    axios
+        .post(route('transaction.store'), {
+            cash: inputAmount.value,
+            change: change.value,
+            carts_total: cartsTotal.value,
+            customer_name: customerform.name,
+            customer_phone: customerform.phone,
+            vehicle_plate: customerform.vehicle_plate,
+        })
+        .then((response) => {
+            ElNotification({
+                title: 'Success',
+                message: response.data.message || 'Transaction completed successfully!',
+                type: 'success',
+            });
+
+            // Reload the page or redirect to another route
+            window.location.href = route('transaction.index');
+        })
+        .catch((error) => {
+            console.error('Transaction Error:', error.response?.data || error);
+            ElNotification({
+                title: 'Error',
+                message: error.response?.data?.error || 'Failed to complete transaction.',
+                type: 'error',
+            });
+        });
+};
+
 </script>
 
 
@@ -107,7 +156,7 @@ const props = defineProps({
 
                     <button type="button" data-modal-target="billingInformationModal"
                         data-modal-toggle="billingInformationModal"
-                        class="text-base font-medium text-primary-700 hover:underline dark:text-primary-500">Edit</button>
+                        class="text-base font-medium text-indigo-700 hover:underline dark:text-indigo-500">Edit</button>
                 </div>
 
                 <div class="mt-6 sm:mt-8">
@@ -129,7 +178,7 @@ const props = defineProps({
                                         </div>
                                     </td>
 
-                                    <td class="p-4 text-base font-normal text-gray-900 dark:text-white"> <span
+                                    <td class="p-4 text-base font-normal   text-gray-900 dark:text-white"> <span
                                             v-if="cartItem.product_inventory_id">x{{ cartItem.qty || 0 }}</span></td>
 
                                     <td class="p-4 text-right text-base font-bold text-gray-900 dark:text-white">
@@ -175,13 +224,13 @@ const props = defineProps({
                         </div>
                         <div class="gap-4 sm:flex sm:items-center">
                             <button type="button"
-                                class="w-full rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">
-                                Return to Shopping
+                                class="w-full rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-indigo-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">
+                                Return
                             </button>
 
-                            <button type="submit"
-                                class="mt-4 flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 sm:mt-0">
-                                Send the order
+                            <button type="submit" @click.prevent="submitTransaction"
+                                class="mt-4 flex w-full items-center justify-center rounded-lg bg-indigo-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800 sm:mt-0">
+                                Complete transaction
                             </button>
                         </div>
                     </div>
@@ -282,9 +331,9 @@ const props = defineProps({
                     </div>
                     <div class="border-t border-gray-200 pt-4 dark:border-gray-700 md:pt-5">
                         <button type="submit"
-                            class="me-2 inline-flex items-center rounded-lg bg-primary-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Update</button>
+                            class="me-2 inline-flex items-center rounded-lg bg-indigo-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">Update</button>
                         <button type="button" data-modal-toggle="billingInformationModal"
-                            class="me-2 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">Cancel</button>
+                            class="me-2 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-indigo-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">Cancel</button>
                     </div>
                 </form>
             </div>

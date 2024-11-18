@@ -16,11 +16,15 @@ return new class extends Migration
             $table->decimal('product_price', 10, 2)->nullable();
             $table->unsignedBigInteger('package_id')->nullable();
             $table->decimal('package_price', 10, 2)->nullable();
+            $table->unsignedBigInteger('specials_id')->nullable();
+            $table->decimal('price', 10, 2)->nullable();
+
 
             $table->timestamps();
             $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('cascade');
             $table->foreign('product_inventory_id')->references('product_inventory_id')->on('product_inventory')->onDelete('cascade');
             $table->foreign('package_id')->references('package_id')->on('t_package')->onDelete('cascade');
+            $table->foreign('specials_id')->references('specials_id')->on('specials')->onDelete('cascade');
         });
     }
 
