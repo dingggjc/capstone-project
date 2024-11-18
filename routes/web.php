@@ -129,7 +129,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/others/{id}', [otherServicesController::class, 'update'])->name('others.update');
 
     //manage payment
-    Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
+    Route::get('/payment', [TransactionController::class, 'paymentIndex'])->name('payment.index');
 });
 
 

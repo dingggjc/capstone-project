@@ -44,7 +44,7 @@ class TransactionController extends Controller
                 ->where('cashier_id', Auth::user()->id)
                 ->latest()->get();
         }
-        return Inertia::render('Transaction/Index', [
+        return Inertia::render('Transaction/Index',  [
             'carts' => $carts,
             'carts_total' => $carts->sum('price'),
             'products' => $products,
@@ -59,30 +59,6 @@ class TransactionController extends Controller
 
         ]);
     }
-
-    public function saveCustomerDetails(Request $request)
-    {
-
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:15',
-            'vehicle_plate' => 'required|string|max:10',
-        ]);
-
-
-        $customerDetails = TemporaryCustomerDetail::updateOrCreate(
-            ['cashier_id' => Auth::id()],
-            $validated
-        );
-
-
-        return redirect()->back()->with([
-            'success' => 'Customer details saved successfully!',
-            'customerDetails' => $customerDetails
-        ]);
-    }
-
-
 
     public function addToCart(Request $request)
     {
@@ -154,6 +130,59 @@ class TransactionController extends Controller
         }
 
         return redirect()->back()->with('error', 'Item could not be found!');
+    }
+
+
+    public function paymentIndex()
+    {
+        $products = Products::all();
+        $packages = PackageModel::all();
+        $carts = Cart::with('products', 'package')->where('cashier_id', Auth::user()->id)->latest()->get();
+        $carts_total = $carts->sum('price');
+        $transactions = Transactions::with(['cashier', 'details.product', 'details.package'])
+            ->where('cashier_id', Auth::user()->id)
+            ->latest()
+            ->get();
+        $category = CategoryModel::all();
+        $specials = specialsModel::all();
+        $others = otherServicesModel::all();
+        $customerDetails = TemporaryCustomerDetail::where('cashier_id', Auth::id())->first();
+
+        return Inertia::render('payment/index', [
+            'products' => $products,
+            'packages' => $packages,
+            'carts_total' => $carts_total,
+            'carts' => $carts,
+            'transactions' => $transactions,
+            'category' => $category,
+            'specials' => $specials,
+            'others' => $others,
+            'customerDetails' => $customerDetails,
+        ]);
+    }
+
+
+
+    public function saveCustomerDetails(Request $request)
+    {
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:15',
+            'vehicle_plate' => 'required|string|max:10',
+        ]);
+
+
+        $customerDetails = TemporaryCustomerDetail::updateOrCreate(
+            ['cashier_id' => Auth::id()],
+            $validated
+        );
+
+
+        return redirect()->back()->with([
+            'success' => 'Customer details saved successfully!',
+            'customerDetails' => $customerDetails
+        ]);
     }
 
 
