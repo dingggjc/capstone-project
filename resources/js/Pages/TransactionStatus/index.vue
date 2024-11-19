@@ -39,7 +39,7 @@ const handleStatusChange = (status) => {
 };
 
 const search = () => {
-    router.get(route('transaction.report'), { query: searchQuery.value }, { preserveState: true });
+    router.get(route('TransactionStatus.index'), { query: searchQuery.value }, { preserveState: true });
 };
 
 
@@ -49,7 +49,7 @@ const search = () => {
 
 <template>
 
-    <Head title="Transaction Report" />
+    <Head title="Transaction Status" />
     <AuthenticatedLayout>
 
         <section class=" p-3 sm:p-5 mt-20  antialiased">
@@ -59,7 +59,7 @@ const search = () => {
                     <div
                         class="flex flex-col bg-indigo-100  md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
                         <div class="w-full md:w-1/2">
-                            <p class="text-2xl mb-3 ml-4  text-gray-900 dark:text-white">Transaction Report</p>
+                            <p class="text-2xl mb-3 ml-4  text-gray-900 dark:text-white">Transaction Status</p>
                         </div>
                         <div
                             class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
@@ -93,14 +93,9 @@ const search = () => {
                                 <tr>
                                     <th scope="col" class="px-8 py-3"> Customer Name</th>
                                     <th scope="col" class="px-8 py-3">Invoice</th>
-                                    <th scope="col" class="px-8 py-3">Product</th>
-                                    <th scope="col" class="px-8 py-3">Package</th>
+                                    <th scope="col" class="px-8 py-3">Car Plate</th>
                                     <th scope="col" class="px-8 py-3">Transaction Date</th>
-                                    <th scope="col" class="px-8 py-3">Total</th>
-                                    <th scope="col" class="px-8 py-3">Change</th>
-                                    <th scope="col" class="text-center">Actions</th>
-
-
+                                    <th scope="col" class="px-8 py-3">Status</th>
                                 </tr>
                             </thead>
                             <tbody v-if="transactions && transactions.length">
@@ -112,57 +107,32 @@ const search = () => {
                                             transaction.customer_name }}
                                     </th>
                                     <td class="px-8 py-3">{{ transaction.invoice }}</td>
-                                    <td class="px-8 py-3">
-                                        <ul>
-                                            <li
-                                                v-if="transaction.details && transaction.details.some(detail => detail.product)">
-                                                <span v-for="detail in transaction.details" :key="detail.id">
-                                                    <span v-if="detail.product">
-                                                        {{ detail.product.product_name }}
-                                                    </span>
-                                                </span>
-                                            </li>
-                                            <li v-else>No Product Selected</li>
-                                        </ul>
-                                    </td>
-
-                                    <td class="px-8 py-3">
-                                        <ul>
-                                            <li
-                                                v-if="transaction.details && transaction.details.some(detail => detail.package)">
-                                                <span v-for="detail in transaction.details" :key="detail.id">
-                                                    <span v-if="detail.package">
-                                                        {{ detail.package.package_name }}
-                                                    </span>
-                                                </span>
-                                            </li>
-                                            <li v-else>No Package Selected</li>
-                                        </ul>
-                                    </td>
+                                    <td class="px-8 py-3"> {{
+                                        transaction.vehicle_plate }} </td>
                                     <td class="px-8 py-3">{{ new
                                         Date(transaction.created_at).toLocaleDateString('en-US', {
                                             year: 'numeric',
                                             month: 'long',
                                             day: 'numeric'
                                         }) }}</td>
-                                    <td class="px-8 py-3">{{ transaction.grand_total }}</td>
-                                    <td class="px-8 py-3">{{ transaction.change }}</td>
-                                    <td class="px-8 py-3"> <button class="rounded-full bg-indigo-300 p-2"
-                                            @click="$inertia.get(route('transactions.print'), { invoice: transaction.invoice })">
-                                            <svg class="w-6 h-6 text-indigo-800 dark:indigo-white" aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
-                                                viewBox="0 0 24 24">
-                                                <path stroke="currentColor" stroke-linejoin="round" stroke-width="2"
-                                                    d="M16.444 18H19a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h2.556M17 11V5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v6h10ZM7 15h10v4a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-4Z" />
-                                            </svg>
-
-                                        </button></td>
+                                    <td class="px-8 py-3">
+                                        <span
+                                            :class="transaction.status === 'Paid'
+                                                ? 'inline-flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300'
+                                                : 'inline-flex items-center bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300'">
+                                            <span :class="transaction.status === 'Paid'
+                                                ? 'w-2 h-2 me-1 bg-green-500 rounded-full'
+                                                : 'w-2 h-2 me-1 bg-red-500 rounded-full'"></span>
+                                            {{ transaction.status }}
+                                        </span>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
+
         </section>
     </AuthenticatedLayout>
 </template>

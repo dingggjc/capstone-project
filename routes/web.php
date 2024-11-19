@@ -15,6 +15,7 @@ use App\Http\Controllers\StaffController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\specialsController;
 use App\Http\Controllers\otherServicesController;
+use App\Http\Controllers\TransactionStatusController;
 use App\Http\Controllers\PaymentController;
 use Inertia\Inertia;
 
@@ -109,6 +110,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/staff/store', [StaffController::class, 'store'])->name('staff.store');
     Route::delete('/staff/{id}', [StaffController::class, 'destroy'])->name('staff.destroy');
     Route::put('/staff/{id}', [StaffController::class, 'update'])->name('staff.update');
+    Route::post('/staff/update-status', [StaffController::class, 'updateStatus'])->name('staff.updateStatus');
 
     //cmanage category
     Route::get('/category', [CategoryController::class, 'index'])->name('category.index');
@@ -131,7 +133,9 @@ Route::middleware('auth')->group(function () {
     //manage payment
     Route::get('/payment', [TransactionController::class, 'paymentIndex'])->name('payment.index');
 
-    Route::post('/staff/update-status', [StaffController::class, 'updateStatus'])->name('staff.updateStatus');
+    //manage TransactionStatus
+    Route::get('/transaction-status', [TransactionStatusController::class, 'index'])->name('TransactionStatus.index');
+    Route::get('/transaction-search', [TransactionStatusController::class, 'search'])->name('TransactionStatus.search');
 });
 
 
