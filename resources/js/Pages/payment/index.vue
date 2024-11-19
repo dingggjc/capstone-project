@@ -76,6 +76,10 @@ const props = defineProps({
         type: Array,
         required: true,
     },
+    staff: {
+        type: Array,
+        required: true,
+    },
 
 });
 
@@ -155,6 +159,7 @@ const clearTransactionData = () => {
     <Head title="Payment" />
 
     <section class="bg-gray-200   py-8 antialiased dark:bg-gray-900 mt-20">
+
         <form action="#"
             class="  rounded-lg max-w-2xl mx-auto shadow-xl border border-gray-200 bg-white pt-8 my-20 pb-8 p-4 dark:border-gray-700 dark:bg-gray-800 sm:p-6">
             <div class="mx-auto max-w-3xl">
@@ -170,13 +175,17 @@ const clearTransactionData = () => {
                             }} {{ customerDetails.phone }}</dd>
                         <dd class="mt-1 text-base font-normal text-gray-500 dark:text-gray-400"> Car plate - {{
                             customerDetails.vehicle_plate }}</dd>
-
-
                     </dl>
-
                     <button type="button" data-modal-target="billingInformationModal"
                         data-modal-toggle="billingInformationModal"
                         class="text-base font-medium text-indigo-700 hover:underline dark:text-indigo-500">Edit</button>
+
+                    <dl v-for="(staffId, index) in [...new Set(carts.map(item => item.staff_id).filter(id => id))]">
+                        <dt class="text-base font-medium text-gray-900 dark:text-white">Assigned staff</dt>
+                        <dd class="mt-1 text-base font-normal text-gray-500 dark:text-gray-400"> {{ staff.find(s =>
+                            s.staff_id === staffId)?.staff_name || 'No staff found'
+                            }} </dd>
+                    </dl>
                 </div>
 
                 <div class="mt-6 sm:mt-8">

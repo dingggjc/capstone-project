@@ -148,6 +148,7 @@ class TransactionController extends Controller
         $specials = specialsModel::all();
         $others = otherServicesModel::all();
         $customerDetails = TemporaryCustomerDetail::where('cashier_id', Auth::id())->first();
+        $staff = StaffModel::all();
 
         return Inertia::render('payment/index', [
             'products' => $products,
@@ -159,6 +160,7 @@ class TransactionController extends Controller
             'specials' => $specials,
             'others' => $others,
             'customerDetails' => $customerDetails,
+            'staff' => $staff,
         ]);
     }
 
@@ -200,13 +202,13 @@ class TransactionController extends Controller
     }
 
 
-    public function updateStatus(Request $request, $id)
-    {
-        $transaction = Transactions::findOrFail($id);
-        $transaction->status = $request->status;
-        $transaction->save();
-        return redirect()->back()->with('success', 'Transaction status updated successfully.');
-    }
+    // public function updateStatus(Request $request, $id)
+    // {
+    //     $transaction = Transactions::findOrFail($id);
+    //     $transaction->status = $request->status;
+    //     $transaction->save();
+    //     return redirect()->back()->with('success', 'Transaction status updated successfully.');
+    // }
     public function destroyCart(Request $request)
     {
         $cart = Cart::find($request->cart_id);

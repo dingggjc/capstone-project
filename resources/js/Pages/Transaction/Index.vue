@@ -69,11 +69,36 @@ const decrementQty = (product) => {
 };
 
 const addToCart = (type, id, qty = 1) => {
-    if (type === 'product') {
-        addToCartForm.product_inventory_id = id;
-        addToCartForm.qty = qty;
+    if (type === 'staff') {
+
+        const selectedStaff = props.staff.find(staff => staff.staff_id === id);
+
+        if (selectedStaff?.staff_status !== 'Active') {
+            ElNotification({
+                title: 'Error',
+                message: 'Staff not available. Please choose another staff.',
+                type: 'error',
+            });
+            return;
+        }
+        Inertia.post(route('staff.updateStatus'), { staff_id: id, staff_status: 'Inactive' }, {
+            onSuccess: () => {
+                ElNotification({
+                    title: 'Success',
+                    message: 'Staff status updated to Inactive.',
+                    type: 'success',
+                });
+            },
+            onError: (errors) => {
+                ElNotification({
+                    title: 'Error',
+                    message: 'Failed to update staff status.',
+                    type: 'error',
+                });
+            },
+        });
     } else if (type === 'staff') {
-        addToCartForm.staff_id = id; // Set the staff ID correctly
+        addToCartForm.staff_id = id;
     }
 
 
@@ -84,7 +109,7 @@ const addToCart = (type, id, qty = 1) => {
         if (existingPackage) {
             ElNotification({
                 title: 'Warning',
-                message: 'You can only add one package to the cart.',
+                message: 'You can only add one package.',
                 type: 'warning',
             });
             return;
@@ -96,7 +121,7 @@ const addToCart = (type, id, qty = 1) => {
         if (existingSpecial) {
             ElNotification({
                 title: 'Warning',
-                message: 'You can only add one special to the cart.',
+                message: 'You can only add one special.',
                 type: 'warning',
             });
             return;
@@ -119,7 +144,7 @@ const addToCart = (type, id, qty = 1) => {
         onSuccess: () => {
             ElNotification({
                 title: 'Success',
-                message: 'Item added to cart successfully!',
+                message: 'Added',
                 type: 'success',
             });
         },
@@ -127,7 +152,7 @@ const addToCart = (type, id, qty = 1) => {
             console.error("Error Adding to Cart:", errors);
             ElNotification({
                 title: 'Error',
-                message: errors?.error || 'Failed to add item to cart.',
+                message: errors?.error || 'Failed to add',
                 type: 'error',
             });
         },
@@ -152,6 +177,60 @@ const removeFromCart = (id) => {
         },
     });
 };
+
+const removeStaffFromCart = async (staffId) => {
+    const cartItem = props.carts.find(item => item.staff_id === staffId);
+    if (!cartItem) {
+        ElNotification({
+            title: 'Error',
+            message: 'Staff not found in cart!',
+            type: 'error',
+        });
+        return;
+    }
+
+    try {
+
+        await Inertia.post(route('cart.remove'), { id: cartItem.id }, {
+            preserveState: true,
+            onSuccess: () => {
+                ElNotification({
+                    title: 'Success',
+                    message: 'Staff removed from cart!',
+                    type: 'success',
+                });
+            },
+            onError: (errors) => {
+                throw new Error('Failed to remove staff from cart.');
+            },
+        });
+
+
+        await Inertia.post(route('staff.updateStatus'), { staff_id: staffId, staff_status: 'Active' }, {
+            preserveState: true,
+            onSuccess: () => {
+                ElNotification({
+                    title: 'Success',
+                    message: 'Staff status updated to Active.',
+                    type: 'success',
+                });
+            },
+            onError: (errors) => {
+                throw new Error('Failed to update staff status.');
+            },
+        });
+    } catch (error) {
+        ElNotification({
+            title: 'Error',
+            message: error.message || 'An error occurred while processing your request.',
+            type: 'error',
+        });
+    }
+};
+
+
+
+
 
 
 
@@ -637,9 +716,8 @@ const proceedToPayment = () => {
                                         class="rounded-lg border  border-gray-200 bg-white p-2  dark:border-gray-700 dark:bg-gray-800 md:p-6">
                                         <button id="dropdownRadioButton" data-dropdown-toggle="dropdownDefaultRadio"
                                             class="text-white mb-5 bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-xs px-5 py-2 text-center inline-flex items-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
-                                            type="button">Dropdown radio <svg class="w-2.5 h-2.5 ms-3"
-                                                aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 10 6">
+                                            type="button">Filter <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                                 <path stroke="currentColor" stroke-linecap="round"
                                                     stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
                                             </svg>
@@ -726,18 +804,41 @@ const proceedToPayment = () => {
                                 </div>
                             </div>
                         </div>
+
                     </section>
 
+
                     <!-- Order Summary Column -->
-                    <section class="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
+                    <section class="  bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
+
                         <div class="space-y-6">
+
                             <div
                                 class="rounded-lg border border-gray-200 bg-white pt-8 my-20 pb-8 p-4 dark:border-gray-700 dark:bg-gray-800 sm:p-6">
-                                <p class="text-xl font-semibold text-gray-900 dark:text-white">Summary</p>
+                                <p class="text-xl font-semibold text-gray-900 mb-2 dark:text-white">Assigned Staff</p>
+                                <div v-for="(staffId, index) in [...new Set(carts.map(item => item.staff_id).filter(id => id))]"
+                                    :key="index" class="flex items-center text-gray-500 justify-between mb-2 gap-4">
+
+                                    {{ staff.find(s => s.staff_id === staffId)?.staff_name || 'No staff found'
+                                    }}
+
+                                    <dt class="text-sm font-normal text-gray-500 dark:text-gray-400">
+
+                                    </dt>
+
+
+                                    <dd class="text-sm font-medium text-gray-900 dark:text-white">
+                                        <button @click="removeStaffFromCart(staffId)" type="button"
+                                            class="inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500">
+                                            Remove
+                                        </button>
+                                    </dd>
+                                </div>
+                                <p class="text-xl font-semibold text-gray-900 mt-5 dark:text-white">Summary</p>
 
                                 <div class="space-y-4 pt-4 pb-4">
                                     <!-- Loop through cart items -->
-                                    <div v-for="cartItem in carts" :key="cartItem.id"
+                                    <div v-for="cartItem in carts.filter(item => !item.staff_id)" :key="cartItem.id"
                                         class="flex items-center justify-between gap-4">
                                         <!-- Remove button -->
                                         <button @click="removeFromCart(cartItem.id)" type="button"
@@ -787,6 +888,7 @@ const proceedToPayment = () => {
                             </div>
                         </div>
                     </section>
+
 
                 </div>
             </div>

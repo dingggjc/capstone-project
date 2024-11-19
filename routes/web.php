@@ -130,6 +130,8 @@ Route::middleware('auth')->group(function () {
 
     //manage payment
     Route::get('/payment', [TransactionController::class, 'paymentIndex'])->name('payment.index');
+
+    Route::post('/staff/update-status', [StaffController::class, 'updateStatus'])->name('staff.updateStatus');
 });
 
 

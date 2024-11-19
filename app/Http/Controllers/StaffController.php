@@ -33,6 +33,19 @@ class StaffController extends Controller
         return redirect()->back()->with('success', 'Staff added successfully!');
     }
 
+    public function updateStatus(Request $request)
+    {
+
+        $validated = $request->validate([
+            'staff_id' => 'required|exists:staff,staff_id',
+            'staff_status' => 'required|string|in:Active,Inactive',
+        ]);
+
+        $staff = StaffModel::findOrFail($validated['staff_id']);
+        $staff->update(['staff_status' => $validated['staff_status']]);
+        return redirect()->back()->with('success', 'Staff status updated successfully!');
+    }
+
     public function destroy($id)
     {
         $staff = StaffModel::find($id);
