@@ -127,7 +127,8 @@ const submitTransaction = () => {
                 cancelButtonText: 'Close',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    router.get(route('transactions.print'), { invoice });
+                    const printUrl = route('transactions.print', { invoice });
+                    window.open(printUrl, '_blank', 'noopener,noreferrer');
                     setTimeout(() => {
                         location.reload();
                     }, 500);
