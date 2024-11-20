@@ -51,11 +51,10 @@ const openEditSpecialModal = (special) => {
     specialForm.price = special.price;
     specialForm.category_id = special.category_id;
 
-    // Check if special.products is defined and is an array
     specialForm.products = Array.isArray(special.products)
         ? special.products.map(product => ({
             product_id: product.product_inventory_id,
-            quantity: product.pivot?.quantity || 1, // Handle missing pivot or quantity gracefully
+            quantity: product.pivot?.quantity || 1,
         }))
         : [];
 
@@ -262,7 +261,7 @@ const deleteSpecial = (special) => {
                                     <td class="px-8 py-3">
                                         <ul>
                                             <li v-for="product in special.products" :key="product.product_inventory_id">
-                                                {{ product.product_name }} (x{{ product.pivot.quantity }})
+                                                {{ product.product_name }}
                                             </li>
                                         </ul>
                                     </td>

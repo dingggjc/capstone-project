@@ -12,7 +12,7 @@ class TransactionReportController extends Controller
     {
         $query = $request->input('query');
 
-        $transactions = Transactions::with(['cashier', 'details.product', 'details.package'])
+        $transactions = Transactions::with(['cashier', 'details.product', 'details.package', 'details.specials'])
             ->when($query, function ($queryBuilder) use ($query) {
                 $queryBuilder->whereHas('cashier', function ($cashierQuery) use ($query) {
                     $cashierQuery->where('name', 'LIKE', "%{$query}%");

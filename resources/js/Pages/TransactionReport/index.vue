@@ -17,7 +17,8 @@ const props = defineProps({
     carts_total: Number,
     carts: Array,
     transactions: Array,
-    searchQuery: String
+    searchQuery: String,
+    specials: Array
 });
 const searchQuery = ref(props.searchQuery || '');
 const selectedStatus = ref('Pending');
@@ -95,8 +96,10 @@ const search = () => {
                                     <th scope="col" class="px-8 py-3">Invoice</th>
                                     <th scope="col" class="px-8 py-3">Product</th>
                                     <th scope="col" class="px-8 py-3">Package</th>
+                                    <th scope="col" class="px-8 py-3">Specials</th>
                                     <th scope="col" class="px-8 py-3">Transaction Date</th>
                                     <th scope="col" class="px-8 py-3">Total</th>
+                                    <th scope="col" class="px-8 py-3">Cash</th>
                                     <th scope="col" class="px-8 py-3">Change</th>
                                     <th scope="col" class="text-center">Actions</th>
 
@@ -139,6 +142,19 @@ const search = () => {
                                             <li v-else>No Package Selected</li>
                                         </ul>
                                     </td>
+                                    <td class="px-8 py-3">
+                                        <ul>
+                                            <li
+                                                v-if="transaction.details && transaction.details.some(detail => detail.specials)">
+                                                <span v-for="detail in transaction.details" :key="detail.id">
+                                                    <span v-if="detail.specials">
+                                                        {{ detail.specials.name }}
+                                                    </span>
+                                                </span>
+                                            </li>
+                                            <li v-else>No Specials Selected</li>
+                                        </ul>
+                                    </td>
                                     <td class="px-8 py-3">{{ new
                                         Date(transaction.created_at).toLocaleDateString('en-US', {
                                             year: 'numeric',
@@ -146,6 +162,7 @@ const search = () => {
                                             day: 'numeric'
                                         }) }}</td>
                                     <td class="px-8 py-3">{{ transaction.grand_total }}</td>
+                                    <td class="px-8 py-3">{{ transaction.cash }}</td>
                                     <td class="px-8 py-3">{{ transaction.change }}</td>
                                     <td class="px-8 py-3"> <button class="rounded-full bg-indigo-300 p-2"
                                             @click="$inertia.get(route('transactions.print'), { invoice: transaction.invoice })">

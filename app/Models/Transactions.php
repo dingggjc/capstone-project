@@ -33,12 +33,12 @@ class Transactions extends Model
     }
     public function details()
     {
-        return $this->hasMany(TransactionDetail::class, 'transaction_id'); // Specify the foreign key
+        return $this->hasMany(TransactionDetail::class, 'transaction_id');
     }
 
     public function profits()
     {
-        return $this->hasMany(Profit::class, 'transaction_id'); // Explicitly set 'transaction_id'
+        return $this->hasMany(Profit::class, 'transaction_id');
     }
 
     protected function createdAt(): Attribute
