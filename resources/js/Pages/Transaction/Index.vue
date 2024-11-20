@@ -6,6 +6,7 @@ import { initFlowbite } from 'flowbite';
 import { Inertia } from '@inertiajs/inertia';
 import { ElDrawer, ElButton, ElNotification } from 'element-plus';
 import NavLink from '@/Components/NavLink.vue';
+import drawer from '@/Pages/Transaction/drawer.vue';
 
 
 onMounted(() => {
@@ -14,7 +15,8 @@ onMounted(() => {
     document.getElementById(savedTab).click();
 });
 
-// const drawer = ref(false)
+const drawerVisible = ref(false);
+
 
 
 const customerDetails = usePage().props.customerDetails || { name: '', phone: '', vehicle_plate: '' };
@@ -134,7 +136,7 @@ const addToCart = (type, id, qty = 1) => {
         addToCartForm.package_id = null;
         addToCartForm.specials_id = null;
     } else if (type === 'staff') {
-        addToCartForm.staff_id = id; // Staff-specific logic
+        addToCartForm.staff_id = id;
     } else {
         console.error("Invalid type provided to addToCart:", type);
         return;
@@ -230,7 +232,13 @@ const removeStaffFromCart = async (staffId) => {
 
 
 
+const handleMouseOver = (event) => {
+    event.target.style.backgroundColor = '#4338ca';
+};
 
+const handleMouseOut = (event) => {
+    event.target.style.backgroundColor = '#4f46e5';
+};
 
 
 
@@ -364,40 +372,18 @@ const proceedToPayment = () => {
                                     <div
                                         class="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 md:p-6">
 
-                                        <!-- //drawer for recent customer
-                                        <el-button type="primary" style="margin-left: 16px" @click="drawer = true">
-                                            Open
-                                        </el-button>
-
-                                        <el-drawer v-model="drawer" title="I am the title" :with-header="false"
-                                            direction="ltr">
-                                            <span>Hi there!</span>
-                                        </el-drawer> -->
 
 
+                                        <div class="mb-5">
+                                            <el-button type="primary"
+                                                style="margin: 0; background-color: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 8px; transition: background-color 0.3s ease;"
+                                                @click="drawerVisible = true" @mouseover="handleMouseOver"
+                                                @mouseout="handleMouseOut">
+                                                Click for repeated customer
+                                            </el-button>
 
-                                        <form class="mb-5">
-                                            <label for="default-search"
-                                                class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
-                                            <div class="relative">
-                                                <div
-                                                    class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400"
-                                                        aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none" viewBox="0 0 20 20">
-                                                        <path stroke="currentColor" stroke-linecap="round"
-                                                            stroke-linejoin="round" stroke-width="2"
-                                                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                                                    </svg>
-                                                </div>
-                                                <input type="search" id="default-search"
-                                                    class="block w-full p-2.5 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
-                                                    placeholder="Search for plates for recent customer" required />
-
-                                            </div>
-                                        </form>
-
-
+                                        </div>
+                                        <drawer v-model="drawerVisible" />
                                         <form @submit.prevent="submitCustomerForm"
                                             class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <!-- First Input Field -->
