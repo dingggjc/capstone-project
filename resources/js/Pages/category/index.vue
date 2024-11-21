@@ -214,7 +214,6 @@ const resetFormData = () => {
                                     </th>
                                     <td class="px-8 py-3">{{ category.category_description }} </td>
                                     <td class="px-8 py-3">
-                                    <td class="px-8 py-3">
                                         <span v-if="category.examples && category.examples.length > 0">
                                             <span v-for="example in category.examples" :key="example.id"
                                                 class="inline-block mr-2 px-2 py-1 bg-indigo-100 text-indigo-700 rounded">
@@ -222,7 +221,6 @@ const resetFormData = () => {
                                             </span>
                                         </span>
                                         <span v-else class="text-gray-500">No examples available</span>
-                                    </td>
                                     </td>
                                     <td class=" py-3 flex items-center justify-center space-x-2">
 
@@ -253,12 +251,6 @@ const resetFormData = () => {
                     </div>
                 </div>
             </div>
-
-
-
-
-
-
             <el-dialog v-model="showAddCategoryModal" title="Add Product" width="30%">
                 <form @submit.prevent="handleAddCategory">
                     <div class="mb-4">
@@ -288,7 +280,8 @@ const resetFormData = () => {
                             <li v-for="(example, index) in categoryForm.examples" :key="index"
                                 class="flex items-center space-x-2">
                                 {{ example }}
-                                <button @click="removeExample(index)" class="text-red-600">Remove</button>
+                                <button @click="removeExample(index)"
+                                    class="text-red-600 flex justify-end">Remove</button>
                             </li>
                         </ul>
                     </div>
@@ -306,8 +299,6 @@ const resetFormData = () => {
                     </div>
                 </form>
             </el-dialog>
-
-
             <el-dialog v-model="showEditCategoryModal" title="Edit Product" width="30%">
                 <form @submit.prevent="handleEditCategory">
                     <div class="mb-4">

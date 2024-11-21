@@ -13,8 +13,6 @@ class CategoryController extends Controller
     {
         $categories = CategoryModel::with('examples')->get();
 
-
-
         return Inertia::render('category/index', [
             'category' => $categories,
         ]);

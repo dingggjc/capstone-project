@@ -24,7 +24,7 @@ class TransactionController extends Controller
     {
         $products = Products::all();
         $packages = PackageModel::all();
-        $category = CategoryModel::all();
+        $category = CategoryModel::with('examples')->get();
         $specials = specialsModel::all();
         $others = otherServicesModel::all();
         $staff = StaffModel::all();
