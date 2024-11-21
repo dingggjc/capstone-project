@@ -14,12 +14,11 @@ class CreateProductInventoryTable extends Migration
     public function up()
     {
         Schema::create('product_inventory', function (Blueprint $table) {
-            $table->id('product_inventory_id'); // Primary Key
-            $table->string('product_name');
+            $table->id('product_inventory_id');
             $table->text('product_description')->nullable();
             $table->decimal('product_price', 8, 2);
-            $table->decimal('product_quantity',  8); // Format: (8,2) => 999,999.99
-            $table->timestamps(); // Adds 'created_at' and 'updated_at' columns
+            $table->decimal('product_quantity',  8);
+            $table->timestamps();
         });
     }
 

@@ -17,8 +17,21 @@ const categoryForm = useForm({
     category_id: '',
     category_name: '',
     category_description: '',
-    category_example: ''
+    examples: []
 });
+
+const newExample = ref('');
+
+const addExample = () => {
+    if (newExample.value.trim()) {
+        categoryForm.examples.push(newExample.value.trim());
+        newExample.value = '';
+    }
+};
+
+const removeExample = (index) => {
+    categoryForm.examples.splice(index, 1);
+};
 
 
 
@@ -36,9 +49,10 @@ const openEditCategoryModal = (category) => {
     categoryForm.category_id = category.category_id;
     categoryForm.category_name = category.category_name;
     categoryForm.category_description = category.category_description;
-    categoryForm.category_example = category.category_example;
+    categoryForm.examples = category.examples.map(example => example.example_name);
     showEditCategoryModal.value = true;
 };
+
 const closeEditCategoryModal = () => {
     showEditCategoryModal.value = false;
     resetFormData();
@@ -92,10 +106,10 @@ const handleAddCategory = () => {
                 text: 'There was an error adding the Category.',
                 confirmButtonText: 'OK',
             });
-        }
-    })
+        },
+    });
+};
 
-}
 
 const deleteCategory = (category) => {
     Swal.fire({
@@ -199,7 +213,17 @@ const resetFormData = () => {
                                         {{ category.category_name }}
                                     </th>
                                     <td class="px-8 py-3">{{ category.category_description }} </td>
-                                    <td class="px-8 py-3">{{ category.category_example }}</td>
+                                    <td class="px-8 py-3">
+                                    <td class="px-8 py-3">
+                                        <span v-if="category.examples && category.examples.length > 0">
+                                            <span v-for="example in category.examples" :key="example.id"
+                                                class="inline-block mr-2 px-2 py-1 bg-indigo-100 text-indigo-700 rounded">
+                                                {{ example.example_name }}
+                                            </span>
+                                        </span>
+                                        <span v-else class="text-gray-500">No examples available</span>
+                                    </td>
+                                    </td>
                                     <td class=" py-3 flex items-center justify-center space-x-2">
 
                                         <button type="button" @click="openEditCategoryModal(category)"
@@ -251,11 +275,24 @@ const resetFormData = () => {
                             placeholder="Enter description" rows="4"></textarea>
                     </div>
                     <div class="mb-4">
-                        <label for="categoryExample" class="block text-sm font-medium text-gray-700">Example</label>
-                        <input v-model="categoryForm.category_example" type="text" id="categoryExample" required
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            placeholder="Enter Example name" />
+                        <label for="categoryExamples" class="block text-sm font-medium text-gray-700">Car Types</label>
+                        <div class="flex items-center space-x-2">
+                            <input v-model="newExample" type="text" id="categoryExamples" placeholder="Enter car type"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+                            <button type="button" @click="addExample"
+                                class="bg-indigo-600 text-white px-2 py-1 rounded">
+                                Add
+                            </button>
+                        </div>
+                        <ul class="mt-2">
+                            <li v-for="(example, index) in categoryForm.examples" :key="index"
+                                class="flex items-center space-x-2">
+                                {{ example }}
+                                <button @click="removeExample(index)" class="text-red-600">Remove</button>
+                            </li>
+                        </ul>
                     </div>
+
 
                     <div class="flex justify-end">
                         <button type="button" @click="closeAddCategoryModal"
@@ -287,11 +324,24 @@ const resetFormData = () => {
                             placeholder="Enter description" rows="4"></textarea>
                     </div>
                     <div class="mb-4">
-                        <label for="categoryExample" class="block text-sm font-medium text-gray-700">Category
-                            Name</label>
-                        <input v-model="categoryForm.category_example" type="text" id="categoryExample"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            placeholder="Enter Example name" />
+                        <label for="categoryExamples" class="block text-sm font-medium text-gray-700">Car Types</label>
+                        <div class="flex items-center space-x-2">
+                            <input v-model="newExample" type="text" id="categoryExamples" placeholder="Enter car type"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+                            <button type="button" @click="addExample"
+                                class="bg-indigo-600 text-white px-2 py-1 rounded">
+                                Add
+                            </button>
+                        </div>
+                        <ul class="mt-2">
+                            <li v-for="(example, index) in categoryForm.examples" :key="index"
+                                class="flex items-center space-x-2">
+                                <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded">
+                                    {{ example }}
+                                </span>
+                                <button @click="removeExample(index)" class="text-red-600">Remove</button>
+                            </li>
+                        </ul>
                     </div>
                     <div class="flex justify-end">
                         <button type="button" @click="closeAddCategoryModal"

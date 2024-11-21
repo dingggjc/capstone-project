@@ -11,11 +11,12 @@ class CategoryController extends Controller
 
     public function index()
     {
-        $category = CategoryModel::all();
+        $categories = CategoryModel::with('examples')->get();
+
 
 
         return Inertia::render('category/index', [
-            'category' => $category,
+            'category' => $categories,
         ]);
     }
 
@@ -24,41 +25,60 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'category_name' => 'required|string|max:255',
             'category_description' => 'required|string',
-            'category_example' => 'required|string',
+            'examples' => 'required|array',
+            'examples.*' => 'required|string',
         ]);
-        CategoryModel::create([
+
+
+        $category = CategoryModel::create([
             'category_name' => $validated['category_name'],
             'category_description' => $validated['category_description'],
-            'category_example' => $validated['category_example'],
         ]);
+
+
+        foreach ($validated['examples'] as $example) {
+            $category->examples()->create([
+                'example_name' => $example,
+            ]);
+        }
+
         return redirect()->back()->with('success', 'Category added successfully!');
     }
 
-    public function destroy($id)
-    {
-        $category = CategoryModel::find($id);
-        if ($category) {
-            $category->delete();
-            return redirect()->back()->with('success', 'Category deleted successfully!');
-        }
-    }
 
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
             'category_name' => 'required|string|max:255',
             'category_description' => 'required|string',
-            'category_example' => 'required|string',
+            'examples' => 'required|array',
+            'examples.*' => 'required|string',
         ]);
 
-        $category = CategoryModel::find($id);
-        if ($category) {
-            $category->update([
-                'category_name' => $validated['category_name'],
-                'category_description' => $validated['category_description'],
-                'category_example' => $validated['category_example'],
+
+        $category = CategoryModel::findOrFail($id);
+        $category->update([
+            'category_name' => $validated['category_name'],
+            'category_description' => $validated['category_description'],
+        ]);
+
+
+        $category->examples()->delete();
+
+        foreach ($validated['examples'] as $example) {
+            $category->examples()->create([
+                'example_name' => $example,
             ]);
-            return redirect()->back()->with('success', 'Category updated successfully!');
         }
+
+        return redirect()->back()->with('success', 'Category updated successfully!');
+    }
+
+    public function destroy($id)
+    {
+        $category = CategoryModel::findOrFail($id);
+        $category->delete();
+
+        return redirect()->back()->with('success', 'Category deleted successfully!');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\CategoryExample;
 use Illuminate\Database\Eloquent\Model;
 
 class CategoryModel extends Model
@@ -12,7 +13,6 @@ class CategoryModel extends Model
     protected $fillable = [
         'category_name',
         'category_description',
-        'category_example'
     ];
 
     public function packages()
@@ -23,5 +23,9 @@ class CategoryModel extends Model
     public function specials()
     {
         return $this->hasMany(specialsModel::class, 'specials_id', 'specials');
+    }
+    public function examples()
+    {
+        return $this->hasMany(CategoryExample::class, 'category_id', 'category_id');
     }
 }
