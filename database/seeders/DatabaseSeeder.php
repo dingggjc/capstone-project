@@ -37,5 +37,12 @@ class DatabaseSeeder extends Seeder
             ]);
             $cashierUser->assignRole('cashier');
         }
+
+        $this->call([
+            CategoriesTableSeeder::class,
+            CategoryExampleSeeder::class,
+            CategoryExampleSeeder::class,
+            ProductInventorySeeder::class,
+        ]);
     }
 }
