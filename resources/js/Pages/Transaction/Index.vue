@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { Head, useForm, usePage, router } from '@inertiajs/vue3';
 import { onMounted, ref, computed } from 'vue';
 import { initFlowbite } from 'flowbite';
 import { Inertia } from '@inertiajs/inertia';
@@ -17,11 +17,31 @@ onMounted(() => {
 
 const drawerVisible = ref(false);
 
+const searchQuery = ref('');
+const filteredCategories = computed(() => {
+    if (!searchQuery.value.trim()) {
+        return props.category;
+    }
+    const query = searchQuery.value.toLowerCase();
+
+    return props.category.map(cat => {
+        const filteredExamples = cat.examples.filter(example =>
+            example.example_name.toLowerCase().includes(query)
+        );
+        const matchesCategoryName = cat.category_name.toLowerCase().includes(query);
+        return {
+            ...cat,
+            examples: matchesCategoryName ? cat.examples : filteredExamples,
+        };
+    }).filter(cat => cat.examples.length > 0 || cat.category_name.toLowerCase().includes(query));
+});
+
+
+
+
 
 
 const customerDetails = usePage().props.customerDetails || { name: '', phone: '', vehicle_plate: '' };
-
-
 const customerform = useForm({
     name: customerDetails.name,
     phone: customerDetails.phone,
@@ -493,13 +513,14 @@ const proceedToPayment = () => {
                                                                 </svg>
                                                             </div>
                                                             <input type="text" id="input-group-search"
+                                                                v-model="searchQuery" @input="search"
                                                                 class="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
                                                                 placeholder="Search for vehicle type">
                                                         </div>
                                                     </div>
                                                     <ul class="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200"
                                                         aria-labelledby="dropdownSearchButton">
-                                                        <li v-for="cat in category" :key="cat.category_id">
+                                                        <li v-for="cat in filteredCategories" :key="cat.category_id">
                                                             <div class="font-bold text-gray-900 dark:text-white">{{
                                                                 cat.category_name }}</div>
                                                             <ul>

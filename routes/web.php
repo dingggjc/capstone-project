@@ -90,6 +90,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/customer-details', [TransactionController::class, 'saveCustomerDetails'])->name('customer.details.save');
     Route::post('/cart/add', [TransactionController::class, 'addToCart'])->name('cart.add');
     Route::post('/cart/remove', [TransactionController::class, 'removeFromCart'])->name('cart.remove');
+    Route::get('/categories/search', [CategoryController::class, 'search'])->name('category.search');
 });
 
 

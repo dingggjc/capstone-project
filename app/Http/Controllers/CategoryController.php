@@ -17,6 +17,23 @@ class CategoryController extends Controller
             'category' => $categories,
         ]);
     }
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+
+
+        $categories = CategoryModel::where('category_name', 'LIKE', '%' . $query . '%')
+            ->orWhereHas('examples', function ($q) use ($query) {
+                $q->where('example_name', 'LIKE', '%' . $query . '%');
+            })
+            ->with(['examples' => function ($q) use ($query) {
+                $q->where('example_name', 'LIKE', '%' . $query . '%');
+            }])
+            ->get();
+
+        return response()->json($categories);
+    }
+
 
     public function store(Request $request)
     {
