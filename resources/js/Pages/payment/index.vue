@@ -3,7 +3,6 @@ import { Head, useForm, usePage, router } from '@inertiajs/vue3';
 import { initFlowbite } from "flowbite";
 import { ref, computed, onMounted, } from "vue";
 import { ElNotification } from 'element-plus';
-import Swal from 'sweetalert2';
 onMounted(() => {
     initFlowbite();
 });
@@ -117,23 +116,12 @@ const submitTransaction = () => {
             if (!invoice) {
                 throw new Error('Invoice not available in response data.');
             }
+            const printUrl = route('transactions.print', { invoice });
+            window.open(printUrl, '_blank', 'noopener,noreferrer');
+            setTimeout(() => {
+                location.reload();
+            }, 500);
 
-            Swal.fire({
-                icon: 'success',
-                title: 'Transaction Complete!',
-                text: response.data.message || 'The transaction was completed successfully. Would you like to print the receipt?',
-                showCancelButton: true,
-                confirmButtonText: 'Print Now',
-                cancelButtonText: 'Close',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const printUrl = route('transactions.print', { invoice });
-                    window.open(printUrl, '_blank', 'noopener,noreferrer');
-                    setTimeout(() => {
-                        location.reload();
-                    }, 500);
-                }
-            });
             clearTransactionData();
         })
         .catch((error) => {

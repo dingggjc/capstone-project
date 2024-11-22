@@ -555,7 +555,8 @@ const isDropdownVisible = ref(false);
                                                                             name="example-radio" @change="() => {
                                                                                 saveCategorySelection(cat.category_id);
                                                                                 isDropdownVisible = false;
-                                                                            }" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                                                            }"
+                                                                            class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                                                                         <label :for="'example-' + example.id"
                                                                             class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">
                                                                             {{ example.example_name }}
@@ -595,11 +596,6 @@ const isDropdownVisible = ref(false);
                                                         class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
                                                         {{ category.find(cat => cat.category_id ===
                                                             pkg.category_id)?.category_name || 'No category assigned' }}
-                                                    </h1>
-                                                    <h1
-                                                        class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
-                                                        {{ category.find(cat => cat.category_id ===
-                                                            pkg.category_id)?.category_example || 'No example available' }}
                                                     </h1>
 
                                                     <a href="#"

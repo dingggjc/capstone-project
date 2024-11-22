@@ -295,10 +295,9 @@ class TransactionController extends Controller
             ]);
         }
 
-        // Clear carts
+
         Cart::where('cashier_id', Auth::id())->delete();
 
-        // Clear temporary customer details
         TemporaryCustomerDetail::where('cashier_id', Auth::id())->delete();
 
         return response()->json([
