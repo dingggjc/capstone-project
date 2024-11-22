@@ -17,6 +17,7 @@ onMounted(() => {
 
 const drawerVisible = ref(false);
 
+
 const searchQuery = ref('');
 const filteredCategories = computed(() => {
     if (!searchQuery.value.trim()) {
@@ -36,6 +37,30 @@ const filteredCategories = computed(() => {
     }).filter(cat => cat.examples.length > 0 || cat.category_name.toLowerCase().includes(query));
 });
 
+const selectedCategoryId = ref(null)
+
+const filteredPackages = computed(() => {
+    if (!selectedCategoryId.value) {
+        return props.packages;
+    }
+    return props.packages.filter(pkg => pkg.category_id === selectedCategoryId.value);
+});
+
+const filteredSpecials = computed(() => {
+    if (!selectedCategoryId.value) {
+        return props.specials;
+    }
+    return props.specials.filter(special => special.category_id === selectedCategoryId.value);
+});
+
+const saveCategorySelection = (categoryId) => {
+    selectedCategoryId.value = categoryId;
+    ElNotification({
+        title: "Success",
+        message: "Category saved successfully!",
+        type: "success",
+    });
+};
 
 
 
@@ -530,6 +555,7 @@ const proceedToPayment = () => {
                                                                         <input :id="'example-' + example.id"
                                                                             type="radio" :value="example.example_name"
                                                                             name="example-radio"
+                                                                            @change="saveCategorySelection(cat.category_id)"
                                                                             class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                                                                         <label :for="'example-' + example.id"
                                                                             class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">
@@ -559,7 +585,7 @@ const proceedToPayment = () => {
                                     style="max-height: 400px; overflow-y: auto;">
                                     <div
                                         class="rounded-lg border  border-gray-200 bg-white p-2  dark:border-gray-700 dark:bg-gray-800 md:p-6">
-                                        <div v-for="pkg in packages" :key="pkg.package_id"
+                                        <div v-for="pkg in filteredPackages" :key="pkg.package_id"
                                             class="rounded-lg border border-gray-200 bg-white p-4 mb-4 dark:border-gray-700 dark:bg-gray-800 md:p-6">
                                             <div class="flex items-center justify-between">
                                                 <div>
@@ -608,7 +634,7 @@ const proceedToPayment = () => {
                                 <!-- specials -->
                                 <div class="hidden dark:bg-gray-800" id="settings" role="tabpanel"
                                     aria-labelledby="settings-tab" style="max-height: 400px; overflow-y: auto;">
-                                    <div v-for="special in specials" :key="special.specials_id"
+                                    <div v-for="special in filteredSpecials" :key="special.specials_id"
                                         class="rounded-lg border border-gray-200 bg-white p-4 mb-4 dark:border-gray-700 dark:bg-gray-800 md:p-6">
                                         <div class="flex items-center justify-between">
                                             <div>
