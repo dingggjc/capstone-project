@@ -9,6 +9,7 @@ import NavLink from '@/Components/NavLink.vue';
 import drawer from '@/Pages/Transaction/drawer.vue';
 
 
+
 onMounted(() => {
     initFlowbite();
     const savedTab = localStorage.getItem('activeTab') || 'profile-tab';
@@ -577,9 +578,6 @@ const isDropdownVisible = ref(false);
                                                 <button type="submit">Save</button>
                                             </div>
                                         </form>
-
-
-
                                     </div>
 
                                 </div>

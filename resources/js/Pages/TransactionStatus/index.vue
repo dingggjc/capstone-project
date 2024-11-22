@@ -5,6 +5,7 @@ import { onMounted, defineProps, ref, computed } from 'vue';
 import { initFlowbite } from 'flowbite';
 import Swal from 'sweetalert2';
 
+
 onMounted(() => {
     initFlowbite();
 
@@ -172,6 +173,7 @@ const search = () => {
                                 </tr>
                             </tbody>
                         </table>
+
                     </div>
                 </div>
             </div>

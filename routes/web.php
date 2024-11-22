@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SmsController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductsController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\specialsController;
 use App\Http\Controllers\otherServicesController;
 use App\Http\Controllers\TransactionStatusController;
 use App\Http\Controllers\PaymentController;
+
 use Inertia\Inertia;
 
 // Landing page
@@ -139,6 +141,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/transaction-status', [TransactionStatusController::class, 'index'])->name('TransactionStatus.index');
     Route::get('/transaction-search', [TransactionStatusController::class, 'search'])->name('TransactionStatus.search');
 });
+
+//twillio
+Route::get('/sendsms', [SmsController::class, 'sendSms']);
+
 
 
 
