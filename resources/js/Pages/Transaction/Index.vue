@@ -69,6 +69,7 @@ const customerform = useForm({
 });
 
 
+const customerSaved = ref(false);
 
 const submitCustomerForm = () => {
     customerform.post(route('customer.details.save'), {
@@ -78,6 +79,7 @@ const submitCustomerForm = () => {
                 message: 'Customer saved successfully!',
                 type: 'success',
             });
+            customerSaved.value = true;
         },
         onError: (errors) => {
             ElNotification({
@@ -337,7 +339,7 @@ const isFormValid = computed(() => {
         customerform.vehicle_plate.trim() !== "";
     const hasCartItems = props.carts.length > 0;
 
-    return hasCustomerDetails && hasCartItems;
+    return customerSaved.value && hasCustomerDetails && hasCartItems;
 });
 
 const proceedToPayment = () => {
@@ -674,8 +676,8 @@ const isDropdownVisible = ref(false);
                                 </div>
                                 <!-- add ons -->
                                 <div class="hidden dark:bg-gray-800" id="contacts" role="tabpanel"
-                                    aria-labelledby="contacts-tab">
-                                    <div v-for="product in products" :key="product.product_inventory_id">
+                                    aria-labelledby="contacts-tab" style="max-height: 400px; overflow-y: auto;">
+                                    <div v-for="product in products" :key="product.product_inventory_id" class="  ">
                                         <div
                                             class="rounded-lg border mb-4 border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 md:p-6">
                                             <div

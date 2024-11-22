@@ -91,6 +91,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/cart/add', [TransactionController::class, 'addToCart'])->name('cart.add');
     Route::post('/cart/remove', [TransactionController::class, 'removeFromCart'])->name('cart.remove');
     Route::get('/categories/search', [CategoryController::class, 'search'])->name('category.search');
+    Route::post('/transactions/{id}/update-status', [TransactionController::class, 'updateStatus']);
 });
 
 

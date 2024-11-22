@@ -202,13 +202,13 @@ class TransactionController extends Controller
     }
 
 
-    // public function updateStatus(Request $request, $id)
-    // {
-    //     $transaction = Transactions::findOrFail($id);
-    //     $transaction->status = $request->status;
-    //     $transaction->save();
-    //     return redirect()->back()->with('success', 'Transaction status updated successfully.');
-    // }
+    public function updateStatus(Request $request, $id)
+    {
+        $transaction = Transactions::findOrFail($id);
+        $transaction->status = $request->status;
+        $transaction->save();
+        return redirect()->back()->with('success', 'Transaction status updated successfully.');
+    }
     public function destroyCart(Request $request)
     {
         $cart = Cart::find($request->cart_id);
@@ -248,7 +248,7 @@ class TransactionController extends Controller
         }, 0);
 
 
-        $status = $request->cash >= $carts_total ? 'Paid' : 'Pending';
+        $status = 'Ongoing';
         $invoice = 'GRNSDE-' . Str::upper(Str::random(10));
 
         $transaction = Transactions::create([
