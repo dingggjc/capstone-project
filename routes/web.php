@@ -18,6 +18,7 @@ use App\Http\Controllers\specialsController;
 use App\Http\Controllers\otherServicesController;
 use App\Http\Controllers\TransactionStatusController;
 use App\Http\Controllers\SendSMSController;
+use App\Http\Controllers\DrawerController;
 
 use Inertia\Inertia;
 
@@ -145,6 +146,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/send-sms', [SendSMSController::class, 'index'])->name('send.sms');
     Route::post('/send-sms', [SendSMSController::class, 'sendSMS'])->name('send.sms.submit');
     Route::post('/transactions/{id}/send-sms', [TransactionController::class, 'sendSms']);
+
+    //drawer
+    Route::get('/transaction/drawer', [DrawerController::class, 'index'])->name('transaction.drawer');
+    Route::get('/transactions', [DrawerController::class, 'getTransactions']);
 });
 
 

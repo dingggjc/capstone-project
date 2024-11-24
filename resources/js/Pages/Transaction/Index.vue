@@ -358,6 +358,7 @@ const proceedToPayment = () => {
 
 
 const isDropdownVisible = ref(false);
+
 </script>
 
 <template>
@@ -428,7 +429,7 @@ const isDropdownVisible = ref(false);
                                             </el-button>
 
                                         </div>
-                                        <drawer v-model="drawerVisible" />
+                                        <drawer v-model="drawerVisible" :transactions="transactions" />
                                         <form @submit.prevent="submitCustomerForm"
                                             class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <!-- First Input Field -->
