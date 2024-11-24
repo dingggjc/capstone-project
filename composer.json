@@ -9,7 +9,10 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "djunehor/laravel-sms": "^2.2",
+        "guzzlehttp/guzzle": "^7.9",
         "inertiajs/inertia-laravel": "^1.0",
+        "infobip/infobip-api-php-client": "^5.0.0",
         "laravel/framework": "^11.9",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",

@@ -15,6 +15,12 @@ use App\Models\StaffModel;
 use Illuminate\Support\Str;
 use App\Models\Transactions;
 use App\Models\TemporaryCustomerDetail;
+use Infobip\Configuration;
+use Infobip\ApiException;
+use Infobip\Model\SmsAdvancedTextualRequest;
+use Infobip\Model\SmsDestination;
+use Infobip\Model\SmsTextualMessage;
+use Infobip\Api\SmsApi;
 
 
 class TransactionController extends Controller
@@ -173,6 +179,13 @@ class TransactionController extends Controller
             'phone' => 'required|string|max:15',
             'vehicle_plate' => 'required|string|max:10',
         ]);
+
+        $phone = $validated['phone'];
+        if (substr($phone, 0, 1) === '0') {
+            $phone = '+63' . substr($phone, 1);
+        }
+        $validated['phone'] = $phone;
+
         $customerDetails = TemporaryCustomerDetail::updateOrCreate(
             ['cashier_id' => Auth::id()],
             $validated
@@ -309,6 +322,40 @@ class TransactionController extends Controller
     }
 
 
+    public function sendSMS($id)
+    {
+        $transaction = Transactions::findOrFail($id);
+
+        if (!$transaction->customer_phone) {
+            return response()->json(['message' => 'Phone number not available for this transaction.'], 400);
+        }
+
+        // Infobip SMS Setup
+        $configuration = new Configuration(
+            host: env('INFOBIP_HOST'),
+            apiKey: env('INFOBIP_API_KEY')
+        );
+
+        $smsApi = new SmsApi(config: $configuration);
+        $customerName = $transaction->customer_name;
+        $messageText = "Hey $customerName! Your car is ready for pickup. It’s just been washed and looks great! Stop by anytime to get it. See you soon!";
+        $message = new SmsTextualMessage(
+            destinations: [
+                new SmsDestination(to: $transaction->customer_phone)
+            ],
+            from: 'YourService',
+            text: $messageText
+        );
+
+        $smsRequest = new SmsAdvancedTextualRequest(messages: [$message]);
+
+        try {
+            $smsApi->sendSmsMessage($smsRequest);
+            return response()->json(['message' => 'SMS sent successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to send SMS. ' . $e->getMessage()], 500);
+        }
+    }
 
 
     public function print(Request $request)

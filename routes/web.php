@@ -17,7 +17,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\specialsController;
 use App\Http\Controllers\otherServicesController;
 use App\Http\Controllers\TransactionStatusController;
-use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\SendSMSController;
 
 use Inertia\Inertia;
 
@@ -140,10 +140,14 @@ Route::middleware('auth')->group(function () {
     //manage TransactionStatus
     Route::get('/transaction-status', [TransactionStatusController::class, 'index'])->name('TransactionStatus.index');
     Route::get('/transaction-search', [TransactionStatusController::class, 'search'])->name('TransactionStatus.search');
+
+    //sms
+    Route::get('/send-sms', [SendSMSController::class, 'index'])->name('send.sms');
+    Route::post('/send-sms', [SendSMSController::class, 'sendSMS'])->name('send.sms.submit');
+    Route::post('/transactions/{id}/send-sms', [TransactionController::class, 'sendSms']);
 });
 
-//twillio
-Route::get('/sendsms', [SmsController::class, 'sendSms']);
+
 
 
 

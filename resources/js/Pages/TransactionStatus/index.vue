@@ -24,6 +24,7 @@ const searchQuery = ref(props.searchQuery || '');
 const selectedStatus = ref('Ongoing');
 const isStatusClicked = ref(false);
 
+
 const notifyCustomer = (transactionId) => {
     Swal.fire({
         title: 'Are you sure?',
@@ -35,18 +36,43 @@ const notifyCustomer = (transactionId) => {
         confirmButtonText: 'Yes, notify!'
     }).then((result) => {
         if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Processing...',
+                text: 'Please wait while we notify the customer.',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+
             axios.post(`/transactions/${transactionId}/update-status`, { status: 'Completed' })
                 .then((response) => {
-                    Swal.fire(
-                        'Notified!',
-                        'The customer has been notified.',
-                        'success'
-                    );
+                    const transaction = props.transactions.find(t => t.id === transactionId);
+                    if (transaction) {
+                        transaction.status = 'Completed';
+                    }
 
-
-                    router.reload();
+                    axios.post(`/transactions/${transactionId}/send-sms`)
+                        .then(() => {
+                            console.log('SMS sent successfully.');
+                            Swal.fire(
+                                'Notified!',
+                                'The customer has been notified.',
+                                'success'
+                            );
+                        })
+                        .catch((smsError) => {
+                            console.error('Failed to send SMS:', smsError);
+                            Swal.fire(
+                                'Notification Sent!',
+                                'The status was updated, but SMS notification failed.',
+                                'warning'
+                            );
+                        });
                 })
                 .catch((error) => {
+                    console.error('Failed to update status:', error);
                     Swal.fire(
                         'Error!',
                         'There was an issue updating the status.',
@@ -56,6 +82,7 @@ const notifyCustomer = (transactionId) => {
         }
     });
 };
+
 
 const filteredTransactions = computed(() => {
     if (!isStatusClicked.value) {
@@ -94,6 +121,7 @@ const search = () => {
                         <div class="w-full md:w-1/2">
                             <p class="text-2xl mb-3 ml-4  text-gray-900 dark:text-white">Transaction Status</p>
                         </div>
+
                         <div
                             class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
 
