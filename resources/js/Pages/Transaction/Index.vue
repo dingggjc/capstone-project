@@ -670,7 +670,10 @@ const clearCartAndCustomerDetails = () => {
                                                 </div>
                                             </div>
                                             <div class="col-span-2 flex justify-end">
-                                                <button type="submit">Save</button>
+                                                <button type="submit"
+                                                    class="text-white bg-indigo-700 hover:bg-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mb-2 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-900">Save
+                                                    customer details</button>
+
                                             </div>
                                         </form>
                                     </div>
@@ -1019,18 +1022,18 @@ const clearCartAndCustomerDetails = () => {
                                 </div>
 
                                 <!-- Proceed to Payment Button -->
-                                <NavLink v-if="isFormValid" :href="route('payment.index')"
-                                    class="flex w-full items-center justify-center rounded-lg bg-indigo-700 py-2.5 text-sm font-medium text-white hover:bg-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
+                                <button v-if="isFormValid" :href="route('payment.index')"
+                                    class="flex w-full mb-4  items-center justify-center rounded-lg bg-indigo-700 py-2.5 text-sm font-medium text-white hover:bg-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
                                     Proceed to Payment
-                                </NavLink>
+                                </button>
                                 <button v-else :disabled="true" @click="proceedToPayment"
                                     class="flex mb-4 w-full items-center justify-center rounded-lg bg-gray-500 py-2.5 text-sm font-medium text-white cursor-not-allowed">
                                     Proceed to Payment
                                 </button>
-                                <button @click="clearCartAndCustomerDetails"
-                                    class="flex w-full items-center justify-center rounded-lg bg-red-700 py-2.5 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
-                                    Clear Cart and Customer Details
-                                </button>
+
+                                <button type="button" @click="clearCartAndCustomerDetails"
+                                    class="text-red-700 flex w-full items-center justify-center  hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Clear
+                                    Transaction</button>
                             </div>
                         </div>
                     </section>

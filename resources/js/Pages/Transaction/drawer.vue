@@ -131,28 +131,42 @@ const transactionsForSelectedPlate = computed(() => {
 
             <!-- Transactions List -->
             <div class="col-span-2">
+                <div class="shrink-0 flex items-center mb-5 space-x-2">
+                    <span class="text-2xl font-bold">Recent Transactions</span>
+                </div>
                 <div v-for="transaction in transactionsForSelectedPlate" :key="transaction.id"
                     class="rounded-lg border border-gray-200 bg-white p-4 mb-4 dark:border-gray-700 dark:bg-gray-800">
-                    <h3 class="text-sm font-medium text-gray-600 dark:text-white">
-                        <strong>Date:</strong> {{ transaction.date }}
-                    </h3>
-                    <h3 class="text-sm font-medium text-gray-600 dark:text-white">
-                        <strong>Package:</strong> {{ transaction.package?.package_name || 'N/A' }}
-                    </h3>
-                    <h3 class="text-sm font-medium text-gray-600 dark:text-white">
-                        <strong>Specials:</strong> {{ transaction.specials?.name || 'N/A' }}
-                    </h3>
-                    <h3 class="text-sm font-medium text-gray-600 dark:text-white">
-                        <strong>Quantity:</strong> {{ transaction.qty }}
-                    </h3>
-                    <div class="flex justify-end mt-2">
-                        <button type="button" @click="$emit('use-transaction', transaction)"
+                    <h1 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                        <strong>Date:</strong> {{ new
+                            Date(transaction.created_at).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            }) }}
+                    </h1>
+                    <div v-for="(detail, index) in transaction.details" :key="index" class="detail-card">
+                        <!-- Package -->
+                        <h3 v-if="detail.package" class="text-sm py-1 font-medium text-gray-600 dark:text-white">
+                            <strong>Package:</strong> {{ detail.package.package_name }}
+                        </h3>
+                        <!-- Specials -->
+                        <h3 v-if="detail.specials" class="text-sm font-medium py-1  text-gray-600 dark:text-white">
+                            <strong>Specials:</strong> {{ detail.specials.name }}
+                        </h3>
+                        <!-- Product -->
+                        <h3 v-if="detail.product" class="text-sm font-medium py-1  text-gray-600 dark:text-white">
+                            <strong>Product:</strong> {{ detail.product.product_name }}
+                        </h3>
+                    </div>
+                    <div class="col-span-2 flex justify-end">
+                        <button type="button" @click="$emit('use-transaction', selectedPlate)"
                             class="text-white bg-indigo-700 hover:bg-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-300 font-medium rounded-full text-sm px-5 py-2 text-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
                             Add
                         </button>
                     </div>
                 </div>
             </div>
+
         </div>
     </el-drawer>
 </template>

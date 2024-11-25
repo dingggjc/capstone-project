@@ -43,14 +43,24 @@ class TransactionController extends Controller
 
         if (Auth::user()->role === 'admin') {
 
-            $transactions = Transactions::with('cashier')->latest()->get();
+            $transactions = Transactions::with([
+                'cashier',
+                'details.product',
+                'details.package',
+                'details.specials'
+            ])->latest()->get();
         } else {
 
-            $transactions = Transactions::with(['cashier', 'details.product', 'details.package'])
-                ->where('cashier_id', Auth::user()->id)
+            $transactions = Transactions::with([
+                'cashier',
+                'details.product',
+                'details.package',
+                'details.specials'
+            ])->where('cashier_id', Auth::user()->id)
                 ->latest()->get();
         }
-        return Inertia::render('Transaction/Index',  [
+
+        return Inertia::render('Transaction/Index', [
             'carts' => $carts,
             'carts_total' => $carts->sum('price'),
             'products' => $products,
@@ -61,8 +71,6 @@ class TransactionController extends Controller
             'others' => $others,
             'staff' => $staff,
             'customerDetails' => $customerDetails,
-
-
         ]);
     }
 
