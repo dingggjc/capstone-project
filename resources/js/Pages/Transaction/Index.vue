@@ -1,12 +1,14 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, useForm, usePage, router } from '@inertiajs/vue3';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
 import { onMounted, ref, computed } from 'vue';
 import { initFlowbite } from 'flowbite';
 import { Inertia } from '@inertiajs/inertia';
-import { ElDrawer, ElButton, ElNotification } from 'element-plus';
+import { ElButton, ElNotification } from 'element-plus';
 import NavLink from '@/Components/NavLink.vue';
 import drawer from '@/Pages/Transaction/drawer.vue';
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
 
 
 
@@ -41,22 +43,20 @@ const filteredCategories = computed(() => {
 const selectedCategoryId = ref(null)
 
 const filteredPackages = computed(() => {
-    if (!selectedCategoryId.value) {
-        return props.packages;
+    if (!selectedVehicleType.value) {
+        return [];
     }
-    return props.packages.filter(pkg => pkg.category_id === selectedCategoryId.value);
+    return props.packages.filter(pkg => pkg.category_id === selectedVehicleType.value.id);
 });
+
 
 const filteredSpecials = computed(() => {
-    if (!selectedCategoryId.value) {
-        return props.specials;
+    if (!selectedVehicleType.value) {
+        return [];
     }
-    return props.specials.filter(special => special.category_id === selectedCategoryId.value);
+    return props.specials.filter(special => special.category_id === selectedVehicleType.value.id);
 });
 
-const saveCategorySelection = (categoryId) => {
-    selectedCategoryId.value = categoryId;
-};
 
 
 
@@ -359,6 +359,17 @@ const proceedToPayment = () => {
 
 const isDropdownVisible = ref(false);
 
+const selectedVehicleType = ref(null);
+
+const vehicleTypeOptions = computed(() =>
+    props.category.flatMap(cat =>
+        cat.examples.map(example => ({
+            id: cat.category_id,
+            example_name: `${example.example_name} (${cat.category_name})`,
+        }))
+    )
+);
+
 </script>
 
 <template>
@@ -508,20 +519,15 @@ const isDropdownVisible = ref(false);
                                                 <label for="Vehicle-plate"
                                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Vehicle
                                                     Type</label>
-                                                <button id="dropdownSearchButton" data-dropdown-toggle="dropdownSearch"
-                                                    @click="isDropdownVisible = !isDropdownVisible"
-                                                    data-dropdown-placement="bottom"
-                                                    class="text-gray-500 mb-5 w-full bg-gray-200 hover:bg-grey-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 rounded-lg font-medium text-sm px-5 py-2 text-center inline-flex items-center justify-between dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
-                                                    type="button">
-                                                    Click me
-                                                    <svg class="w-2.5 h-2.5" aria-hidden="true"
-                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                        viewBox="0 0 10 6">
-                                                        <path stroke="currentColor" stroke-linecap="round"
-                                                            stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
-                                                    </svg>
-                                                </button>
 
+                                                <label for="default-search"
+                                                    class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+                                                <v-select type="search" id="search-plate" :options="vehicleTypeOptions"
+                                                    :getOptionKey="option => option.id" label="example_name"
+                                                    v-model="selectedVehicleType" placeholder="Select a vehicle type"
+                                                    @input="saveCategorySelection"
+                                                    class="  w-auto h-10  p-2.5 ps-10 text-sm mb-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
+                                                    required />
                                                 <!-- Dropdown menu -->
                                                 <div id="dropdownSearch" v-show="isDropdownVisible"
                                                     class="z-10 hidden bg-white rounded-lg shadow w-80 dark:bg-gray-700 ">
