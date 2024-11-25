@@ -2,6 +2,9 @@
 import { ElDrawer } from 'element-plus';
 import { ref, computed } from 'vue';
 import { onMounted } from 'vue';
+import vSelect from 'vue-select'
+import "vue-select/dist/vue-select.css";
+import axios from 'axios';
 
 const props = defineProps({
     transactions: {
@@ -24,19 +27,39 @@ const filteredTransactions = computed(() => {
         transaction.vehicle_plate.toLowerCase().includes(searchQuery.value.toLowerCase())
     );
 });
+
+
+
+const selectedPlate = ref(null);
+
+
 </script>
+<style>
+.v-select {
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 0;
+}
+
+.v-select .vs__dropdown-toggle {
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+
+}
+</style>
 <template>
 
     <el-drawer v-model="drawer" title="Recent Customers" direction="ltr" size="35%">
         <div class="sticky top-0 z-10 block">
             <label for="default-search"
                 class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
-            <input type="search" id="search-plate" v-model="searchQuery"
-                class="  w-full  p-2.5 ps-10 text-sm mb-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
+            <v-select type="search" id="search-plate" :options="props.transactions" v-model="selectedPlate"
+                label="vehicle_plate"
+                class="  w-auto  p-2.5 ps-10 text-sm mb-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
                 placeholder="Search for plates for recent customer" required />
         </div>
-        <div v-for="transaction in filteredTransactions" :key="transaction.id"
-            class="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-y-auto">
+        <div v-if="selectedPlate" class="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-y-auto">
             <!-- First Input Field -->
             <div>
                 <label for="name-1" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
@@ -49,7 +72,7 @@ const filteredTransactions = computed(() => {
                                 d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z" />
                         </svg>
                     </span>
-                    <input type="text" id="name-1" disabled :value="transaction.customer_name"
+                    <input type="text" id="name-1" disabled :value="selectedPlate.customer_name"
                         class="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 block flex-1 min-w-0 w-full text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
                         placeholder="Input name">
                 </div>
@@ -69,7 +92,7 @@ const filteredTransactions = computed(() => {
                                 d="M7.978 4a2.553 2.553 0 0 0-1.926.877C4.233 6.7 3.699 8.751 4.153 10.814c.44 1.995 1.778 3.893 3.456 5.572 1.68 1.679 3.577 3.018 5.57 3.459 2.062.456 4.115-.073 5.94-1.885a2.556 2.556 0 0 0 .001-3.861l-1.21-1.21a2.689 2.689 0 0 0-3.802 0l-.617.618a.806.806 0 0 1-1.14 0l-1.854-1.855a.807.807 0 0 1 0-1.14l.618-.62a2.692 2.692 0 0 0 0-3.803l-1.21-1.211A2.555 2.555 0 0 0 7.978 4Z" />
                         </svg>
                     </span>
-                    <input type="text" id="phone" disabled :value="transaction.customer_phone"
+                    <input type="text" id="phone" disabled :value="selectedPlate.customer_phone"
                         class="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 block flex-1 min-w-0 w-full text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
                         placeholder="Input number">
                 </div>
@@ -91,51 +114,31 @@ const filteredTransactions = computed(() => {
                         </svg>
 
                     </span>
-                    <input type="text" id="Vehicle-plate" disabled :value="transaction.vehicle_plate"
+                    <input type="text" id="Vehicle-plate" :value="selectedPlate.vehicle_plate"
                         class="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 block flex-1 min-w-0 w-full text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
                         placeholder="Vehicle-plate">
                 </div>
-                <p class="text-red-500 text-xs mt-1"></p>
             </div>
-            <div
+            <div v-if="selectedPlate.details.length"
                 class="rounded-lg border border-gray-200 bg-white col-span-2 p-4  dark:border-gray-700 dark:bg-gray-800 md:p-6">
                 <div class="flex items-center justify-between ">
-                    <div>
-                        <h1 v-if="transaction.details && transaction.details.some(detail => detail.package)"
+                    <div v-for="detail in selectedPlate.details" :key="detail.id">
+                        <h1 v-if="detail.package"
                             class="text-sm font-medium text-gray-600 hover:underline dark:text-white">
-                            <span v-for="detail in transaction.details" :key="detail.id">
-                                <span v-if="detail.package">
-                                    {{ detail.package.package_name }}
-                                </span>
-                            </span>
+                            <strong>Name:</strong> {{ detail.package.package_name }}
                         </h1>
-                        <h1 v-if="transaction.details && transaction.details.some(detail => detail.specials)"
+                        <h1 v-if="detail.specials"
                             class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
-                            <span v-for="detail in transaction.details" :key="detail.id">
-                                <span v-if="detail.specials">
-                                    {{ detail.specials.name }}
-                                </span>
-                            </span>
+                            <strong>Name:</strong> {{ detail.specials.name }}
                         </h1>
-                        <h1 v-if="transaction.details && transaction.details.some(detail => detail.specials)"
-                            class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
-                            <span v-for="detail in transaction.details" :key="detail.id">
-                                <span v-if="detail.specials">
-                                    {{ detail.specials.name }}
-                                </span>
-                            </span>
+                        <h1 class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
+                            <strong>Product:</strong> {{ detail.product?.product_name || 'N/A' }}
                         </h1>
-                        <h1 v-if="transaction.details && transaction.details.some(detail => detail.product)"
-                            class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
-                            <span v-for="detail in transaction.details" :key="detail.id">
-                                <span v-if="detail.product">
-                                    {{ detail.product.product_name }}
-                                </span>
-                            </span>
+                        <h1 class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
+                            <strong>Quantity:</strong> {{ detail.qty }}
                         </h1>
 
                         <a href="#" class="text-sm font-medium text-gray-600 hover:underline dark:text-white">
-                            asdad
                         </a>
                     </div>
                 </div>
