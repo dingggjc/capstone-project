@@ -25,8 +25,6 @@ export default defineConfig({
             "@inertiajs/inertia",
             "@inertiajs/inertia-vue3",
             "axios",
-            "pdfmake/build/pdfmake",
-            "pdfmake/build/vfs_fonts",
         ],
     },
     resolve: {
