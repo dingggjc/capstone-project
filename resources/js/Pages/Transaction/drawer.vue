@@ -2,9 +2,8 @@
 import { ElDrawer } from 'element-plus';
 import { ref, computed } from 'vue';
 import { onMounted } from 'vue';
-import vSelect from 'vue-select'
-import "vue-select/dist/vue-select.css";
-import axios from 'axios';
+import vSelect from 'vue-select';
+import 'vue-select/dist/vue-select.css';
 
 const props = defineProps({
     transactions: {
@@ -13,27 +12,35 @@ const props = defineProps({
     },
 });
 
-
 onMounted(() => {
-    console.log("Received transactions:", props.transactions);
+    console.log('Received transactions:', props.transactions);
 });
-const drawer = ref(false)
 
+const drawer = ref(false);
 
 const searchQuery = ref('');
-
-const filteredTransactions = computed(() => {
-    return props.transactions.filter(transaction =>
-        transaction.vehicle_plate.toLowerCase().includes(searchQuery.value.toLowerCase())
-    );
-});
-
-
-
 const selectedPlate = ref(null);
 
 
+const uniquePlates = computed(() => {
+    const seen = new Set();
+    return props.transactions.filter((transaction) => {
+        if (seen.has(transaction.vehicle_plate)) return false;
+        seen.add(transaction.vehicle_plate);
+        return true;
+    });
+});
+
+
+const transactionsForSelectedPlate = computed(() => {
+    if (!selectedPlate.value) return [];
+    return props.transactions.filter(
+        (transaction) => transaction.vehicle_plate === selectedPlate.value.vehicle_plate
+    );
+});
+
 </script>
+
 <style>
 .v-select {
     border: 1px solid #d1d5db;
@@ -45,22 +52,23 @@ const selectedPlate = ref(null);
     border: none;
     box-shadow: none;
     background-color: transparent;
-
 }
 </style>
-<template>
 
+<template>
     <el-drawer v-model="drawer" title="Recent Customers" direction="ltr" size="35%">
         <div class="sticky top-0 z-10 block">
-            <label for="default-search"
-                class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
-            <v-select type="search" id="search-plate" :options="props.transactions" v-model="selectedPlate"
-                label="vehicle_plate"
-                class="  w-auto  p-2.5 ps-10 text-sm mb-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
+            <!-- Dropdown -->
+            <label for="search-plate" class="mb-2 text-sm font-medium text-gray-900 dark:text-white">Search</label>
+            <v-select id="search-plate" :options="uniquePlates" v-model="selectedPlate" label="vehicle_plate"
+                class="w-auto p-2.5 ps-10 text-sm mb-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
                 placeholder="Search for plates for recent customer" required />
         </div>
+
+        <!-- Display Transactions -->
+
         <div v-if="selectedPlate" class="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-y-auto">
-            <!-- First Input Field -->
+
             <div>
                 <label for="name-1" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
                 <div class="flex">
@@ -119,38 +127,32 @@ const selectedPlate = ref(null);
                         placeholder="Vehicle-plate">
                 </div>
             </div>
-            <div v-if="selectedPlate.details.length"
-                class="rounded-lg border border-gray-200 bg-white col-span-2 p-4  dark:border-gray-700 dark:bg-gray-800 md:p-6">
-                <div class="flex items-center justify-between ">
-                    <div v-for="detail in selectedPlate.details" :key="detail.id">
-                        <h1 v-if="detail.package"
-                            class="text-sm font-medium text-gray-600 hover:underline dark:text-white">
-                            <strong>Name:</strong> {{ detail.package.package_name }}
-                        </h1>
-                        <h1 v-if="detail.specials"
-                            class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
-                            <strong>Name:</strong> {{ detail.specials.name }}
-                        </h1>
-                        <h1 class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
-                            <strong>Product:</strong> {{ detail.product?.product_name || 'N/A' }}
-                        </h1>
-                        <h1 class="text-sm font-medium text-gray-600 pb-0 hover:underline dark:text-white">
-                            <strong>Quantity:</strong> {{ detail.qty }}
-                        </h1>
 
-                        <a href="#" class="text-sm font-medium text-gray-600 hover:underline dark:text-white">
-                        </a>
+
+            <!-- Transactions List -->
+            <div class="col-span-2">
+                <div v-for="transaction in transactionsForSelectedPlate" :key="transaction.id"
+                    class="rounded-lg border border-gray-200 bg-white p-4 mb-4 dark:border-gray-700 dark:bg-gray-800">
+                    <h3 class="text-sm font-medium text-gray-600 dark:text-white">
+                        <strong>Date:</strong> {{ transaction.date }}
+                    </h3>
+                    <h3 class="text-sm font-medium text-gray-600 dark:text-white">
+                        <strong>Package:</strong> {{ transaction.package?.package_name || 'N/A' }}
+                    </h3>
+                    <h3 class="text-sm font-medium text-gray-600 dark:text-white">
+                        <strong>Specials:</strong> {{ transaction.specials?.name || 'N/A' }}
+                    </h3>
+                    <h3 class="text-sm font-medium text-gray-600 dark:text-white">
+                        <strong>Quantity:</strong> {{ transaction.qty }}
+                    </h3>
+                    <div class="flex justify-end mt-2">
+                        <button type="button" @click="$emit('use-transaction', transaction)"
+                            class="text-white bg-indigo-700 hover:bg-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-300 font-medium rounded-full text-sm px-5 py-2 text-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
+                            Add
+                        </button>
                     </div>
                 </div>
             </div>
-            <div class="col-span-2 flex justify-end">
-                <button type="button" @click="$emit('use-transaction', selectedPlate)"
-                    class="text-white bg-indigo-700 hover:bg-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-300 font-medium rounded-full text-sm px-5 py-2 text-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
-                    Add
-                </button>
-            </div>
-            <div />
         </div>
-
     </el-drawer>
 </template>
