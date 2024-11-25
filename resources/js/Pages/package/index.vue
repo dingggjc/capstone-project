@@ -279,8 +279,8 @@ const resetFormData = () => {
                                     <th scope="col" class="px-8 py-3">Description</th>
                                     <th scope="col" class="px-8 py-3">Category</th>
                                     <th scope="col" class="px-8 py-3">Product</th>
+                                    <th scope="col" class="px-8 py-3">Volume (mL)</th>
                                     <th scope="col" class="px-8 py-3">Price</th>
-                                    <th scope="col" class="px-8 py-3">Date Added</th>
                                     <th scope="col" class="text-center">Actions</th>
 
 
@@ -306,11 +306,16 @@ const resetFormData = () => {
                                             </li>
                                         </ul>
                                     </td>
+                                    <td class="px-8 py-3">
+                                        <ul>
+                                            <li v-for="product in pkg.products || []" :key="product.product_id">
+                                                {{ product.pivot.quantity }} ML
+                                            </li>
+                                        </ul>
+                                    </td>
+
+
                                     <td class="px-8 py-3">{{ pkg.package_price }}</td>
-                                    <td class="px-8 py-3"> {{ new Date(pkg.created_at).toLocaleDateString('en-US', {
-                                        year: 'numeric',
-                                        month: 'long', day: 'numeric'
-                                    }) }}</td>
                                     <td class=" py-3 flex items-center justify-center space-x-2">
 
                                         <button type="button" @click="openEditPackageModal(pkg)"
@@ -383,11 +388,7 @@ const resetFormData = () => {
                                 {{ category.category_name }}
                             </option>
                         </select>
-
-
-
                     </div>
-
                     <div class="mb-4">
                         <label class="block text-sm font-medium">Products</label>
                         <div v-for="(product, index) in packageForm.products" :key="index"
@@ -399,10 +400,12 @@ const resetFormData = () => {
                                 <option v-for="item in products" :key="item.product_inventory_id"
                                     :value="item.product_inventory_id">
                                     {{ item.product_name }} ({{ parseInt(item.product_quantity) }} left)
-
                                 </option>
-
                             </select>
+
+                            <input type="number" v-model="product.quantity" min="1"
+                                @input="checkProductStock(product, index)"
+                                class="w-24 mr-2 border border-gray-300 rounded-md" />
                             <button type="button" @click="removeProductFromPackage(index)"
                                 class="text-red-600">Remove</button>
                         </div>

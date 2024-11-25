@@ -1022,10 +1022,10 @@ const clearCartAndCustomerDetails = () => {
                                 </div>
 
                                 <!-- Proceed to Payment Button -->
-                                <button v-if="isFormValid" :href="route('payment.index')"
+                                <NavLink v-if="isFormValid" :href="route('payment.index')"
                                     class="flex w-full mb-4  items-center justify-center rounded-lg bg-indigo-700 py-2.5 text-sm font-medium text-white hover:bg-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
                                     Proceed to Payment
-                                </button>
+                                </NavLink>
                                 <button v-else :disabled="true" @click="proceedToPayment"
                                     class="flex mb-4 w-full items-center justify-center rounded-lg bg-gray-500 py-2.5 text-sm font-medium text-white cursor-not-allowed">
                                     Proceed to Payment
