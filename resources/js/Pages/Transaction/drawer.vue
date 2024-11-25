@@ -144,7 +144,7 @@ const selectedPlate = ref(null);
                 </div>
             </div>
             <div class="col-span-2 flex justify-end">
-                <button type="button"
+                <button type="button" @click="$emit('use-transaction', selectedPlate)"
                     class="text-white bg-indigo-700 hover:bg-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-300 font-medium rounded-full text-sm px-5 py-2 text-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
                     Add
                 </button>

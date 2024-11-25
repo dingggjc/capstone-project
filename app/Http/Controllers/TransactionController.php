@@ -323,6 +323,17 @@ class TransactionController extends Controller
             'invoice' => $transaction->invoice,
         ]);
     }
+    public function clearCartAndCustomerDetails()
+    {
+        $cashierId = Auth::id();
+
+        Cart::where('cashier_id', $cashierId)->delete();
+
+
+        TemporaryCustomerDetail::where('cashier_id', $cashierId)->delete();
+
+        return redirect()->back()->with('success', 'Cart and customer details cleared successfully.');
+    }
 
 
     public function sendSMS($id)

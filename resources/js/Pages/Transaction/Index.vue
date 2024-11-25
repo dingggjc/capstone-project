@@ -9,7 +9,7 @@ import NavLink from '@/Components/NavLink.vue';
 import drawer from '@/Pages/Transaction/drawer.vue';
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
-
+import Swal from 'sweetalert2';
 
 
 onMounted(() => {
@@ -348,11 +348,13 @@ const isFormValid = computed(() => {
     const hasCustomerDetails =
         customerform.name.trim() !== "" &&
         customerform.phone.trim() !== "" &&
-        customerform.vehicle_plate.trim() !== "";
+        customerform.vehicle_plate.trim() !== "" &&
+        customerform.vehicle_type.trim() !== "";
     const hasCartItems = props.carts.length > 0;
 
-    return customerSaved.value && hasCustomerDetails && hasCartItems;
+    return hasCustomerDetails && hasCartItems;
 });
+
 
 const proceedToPayment = () => {
     if (!isFormValid.value) {
@@ -380,6 +382,81 @@ const vehicleTypeOptions = computed(() =>
         }))
     )
 );
+
+const populateFormWithTransaction = (transaction) => {
+    customerform.name = transaction.customer_name;
+    customerform.phone = transaction.customer_phone;
+    customerform.vehicle_plate = transaction.vehicle_plate;
+    customerform.vehicle_type = transaction.vehicle_type;
+
+    selectedVehicleType.value = vehicleTypeOptions.value.find(
+        option => option.example_name === transaction.vehicle_type
+    );
+
+    customerform.post(route('customer.details.save'), {
+        onSuccess: () => {
+            ElNotification({
+                title: 'Success',
+                message: 'Customer details saved automatically!',
+                type: 'success',
+            });
+            customerSaved.value = true;
+        },
+        onError: (errors) => {
+            ElNotification({
+                title: 'Error',
+                message: 'Failed to save customer details.',
+                type: 'error',
+            });
+            console.error(errors);
+        },
+    });
+
+    drawerVisible.value = false
+
+    transaction.details.forEach(detail => {
+        addToCart(
+            detail.product_inventory_id ? 'product' :
+                detail.package_id ? 'package' : 'special',
+            detail.product_inventory_id || detail.package_id || detail.specials_id,
+            detail.qty
+        );
+    });
+};
+
+const clearCartAndCustomerDetails = () => {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This will clear the cart and customer details!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, clear it!',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Inertia.post(route('transaction.clearCartAndCustomerDetails'), {}, {
+                onSuccess: () => {
+                    Swal.fire(
+                        'Cleared!',
+                        'Cart and customer details have been cleared successfully.',
+                        'success'
+                    );
+                },
+                onError: (errors) => {
+                    Swal.fire(
+                        'Error!',
+                        'Failed to clear cart and customer details. Please try again.',
+                        'error'
+                    );
+                    console.error(errors);
+                },
+            });
+        }
+    });
+};
+
+
 
 </script>
 
@@ -451,7 +528,8 @@ const vehicleTypeOptions = computed(() =>
                                             </el-button>
 
                                         </div>
-                                        <drawer v-model="drawerVisible" :transactions="transactions" />
+                                        <drawer v-model="drawerVisible" :transactions="transactions"
+                                            @use-transaction="populateFormWithTransaction" />
                                         <form @submit.prevent="submitCustomerForm"
                                             class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <!-- First Input Field -->
@@ -946,8 +1024,12 @@ const vehicleTypeOptions = computed(() =>
                                     Proceed to Payment
                                 </NavLink>
                                 <button v-else :disabled="true" @click="proceedToPayment"
-                                    class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2.5 text-sm font-medium text-white cursor-not-allowed">
+                                    class="flex mb-4 w-full items-center justify-center rounded-lg bg-gray-500 py-2.5 text-sm font-medium text-white cursor-not-allowed">
                                     Proceed to Payment
+                                </button>
+                                <button @click="clearCartAndCustomerDetails"
+                                    class="flex w-full items-center justify-center rounded-lg bg-red-700 py-2.5 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                                    Clear Cart and Customer Details
                                 </button>
                             </div>
                         </div>

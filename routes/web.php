@@ -95,6 +95,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/cart/remove', [TransactionController::class, 'removeFromCart'])->name('cart.remove');
     Route::get('/categories/search', [CategoryController::class, 'search'])->name('category.search');
     Route::post('/transactions/{id}/update-status', [TransactionController::class, 'updateStatus']);
+    Route::post('/transaction/clear', [TransactionController::class, 'clearCartAndCustomerDetails'])->name('transaction.clearCartAndCustomerDetails');
 });
 
 
