@@ -174,10 +174,12 @@ class TransactionController extends Controller
 
     public function saveCustomerDetails(Request $request)
     {
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:15',
             'vehicle_plate' => 'required|string|max:10',
+            'vehicle_type' => 'required|string|max:255',
         ]);
 
         $phone = $validated['phone'];
@@ -270,6 +272,7 @@ class TransactionController extends Controller
             'customer_name' => $customerDetails->name,
             'customer_phone' => $customerDetails->phone,
             'vehicle_plate' => $customerDetails->vehicle_plate,
+            'vehicle_type' => $customerDetails->vehicle_type,
             'cash' => $request->cash,
             'change' => max($request->cash - $carts_total, 0),
             'grand_total' => $carts_total,

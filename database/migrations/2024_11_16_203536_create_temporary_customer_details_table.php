@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('name')->nullable();
             $table->string('phone')->nullable();
             $table->string('vehicle_plate')->nullable();
+            $table->string('vehicle_type')->nullable();
             $table->timestamps();
 
             $table->foreign('cashier_id')->references('id')->on('users')->onDelete('cascade');

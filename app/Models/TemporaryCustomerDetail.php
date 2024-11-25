@@ -14,5 +14,6 @@ class TemporaryCustomerDetail extends Model
         'name',
         'phone',
         'vehicle_plate',
+        'vehicle_type'
     ];
 }

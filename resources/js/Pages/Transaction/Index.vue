@@ -67,12 +67,23 @@ const customerform = useForm({
     name: customerDetails.name,
     phone: customerDetails.phone,
     vehicle_plate: customerDetails.vehicle_plate,
+    vehicle_type: '',
+
 });
+
+const saveCategorySelection = () => {
+    if (selectedVehicleType.value) {
+        customerform.vehicle_type = selectedVehicleType.value.example_name;
+    } else {
+        customerform.vehicle_type = '';
+    }
+};
 
 
 const customerSaved = ref(false);
 
 const submitCustomerForm = () => {
+    saveCategorySelection();
     customerform.post(route('customer.details.save'), {
         onSuccess: () => {
             ElNotification({
@@ -523,8 +534,7 @@ const vehicleTypeOptions = computed(() =>
                                                 <label for="default-search"
                                                     class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
                                                 <v-select type="search" id="search-plate" :options="vehicleTypeOptions"
-                                                    :getOptionKey="option => option.id" label="example_name"
-                                                    v-model="selectedVehicleType" placeholder="Select a vehicle type"
+                                                    label="example_name" v-model="selectedVehicleType"
                                                     @input="saveCategorySelection"
                                                     class="  w-auto h-10  p-2.5 ps-10 text-sm mb-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
                                                     required />
