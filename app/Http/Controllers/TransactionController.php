@@ -225,17 +225,13 @@ class TransactionController extends Controller
     }
 
 
-    public function updateStaffStatus(Request $request)
+    public function updateStatus(Request $request, $id)
     {
-        $validated = $request->validate([
-            'staff_id' => 'required|exists:staff,staff_id',
-            'staff_status' => 'required|string',
-        ]);
-
-        StaffModel::where('staff_id', $validated['staff_id'])->update(['staff_status' => $validated['staff_status']]);
-        return response()->json(['success' => true]);
+        $transaction = Transactions::findOrFail($id);
+        $transaction->status = $request->status;
+        $transaction->save();
+        return redirect()->back()->with('success', 'Transaction status updated successfully.');
     }
-
     public function destroyCart(Request $request)
     {
         $cart = Cart::find($request->cart_id);
