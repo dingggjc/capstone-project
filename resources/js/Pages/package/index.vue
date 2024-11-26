@@ -389,6 +389,8 @@ const resetFormData = () => {
                             </option>
                         </select>
                     </div>
+
+
                     <div class="mb-4">
                         <label class="block text-sm font-medium">Products</label>
                         <div v-for="(product, index) in packageForm.products" :key="index"
@@ -515,10 +517,10 @@ const resetFormData = () => {
                                     :value="item.product_inventory_id">
                                     {{ item.product_name }} ({{ parseInt(item.product_quantity) }} left)
                                 </option>
-
                             </select>
 
-
+                            <input type="number" v-model="product.quantity" min="1"
+                                class="w-24 border border-gray-300 rounded-lg p-2.5 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
 
                             <button type="button" @click="removeProductFromPackage(index)"
                                 class="text-red-600 font-medium hover:text-red-700 transition ml-2">Remove</button>
