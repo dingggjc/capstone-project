@@ -32,6 +32,12 @@ class CategoriesTableSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'category_name' => 'OTHER SERVICES',
+                'category_description' => 'Motorcycle, Big Bikes, RE/TVS/Piaggio, Multicab',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

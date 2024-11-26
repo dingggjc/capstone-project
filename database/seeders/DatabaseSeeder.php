@@ -42,6 +42,9 @@ class DatabaseSeeder extends Seeder
             CategoriesTableSeeder::class,
             CategoryExampleSeeder::class,
             ProductInventorySeeder::class,
+            PackageSeeder::class,
+            SpecialsSeeder::class,
+            StaffSeeder::class,
         ]);
     }
 }

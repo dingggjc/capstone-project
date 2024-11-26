@@ -51,6 +51,12 @@ class CategoryExampleSeeder extends Seeder
                     'Raptor',
                     'Hummer',
                 ],
+                'OTHER SERVICES' => [
+                    'Motorcycle',
+                    'Big Bikes',
+                    'RE/TVS/Piaggio',
+                    'Multicab',
+                ],
                 default => [],
             };
 
