@@ -147,6 +147,8 @@ Route::middleware('auth')->group(function () {
     //drawer
     Route::get('/transaction/drawer', [DrawerController::class, 'index'])->name('transaction.drawer');
     Route::get('/transactions', [DrawerController::class, 'getTransactions']);
+
+    Route::get('/api/top-packages', [DashboardController::class, 'getTopPackages']);
 });
 
 

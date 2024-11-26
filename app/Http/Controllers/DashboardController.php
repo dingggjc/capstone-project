@@ -9,6 +9,7 @@ use App\Models\Transactions;
 use App\Models\TransactionDetail;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -57,5 +58,33 @@ class DashboardController extends Controller
             'top_selling_products' => $topSellingProducts,
             'top_selling_packages' => $topSellingPackages, // Pass total stock to Vue component
         ]);
+    }
+
+
+    public function getTopPackages(Request $request)
+    {
+        $range = $request->query('range', 'today'); // Default to today
+        $query = TransactionDetail::select(
+            'package_id',
+            DB::raw('SUM(qty) as total_qty'),
+            DB::raw('SUM(qty * package_price) as total_sales')
+        )
+            ->with('package')
+            ->whereNotNull('package_id');
+
+        if ($range === 'today') {
+            $query->whereDate('created_at', Carbon::today());
+        } elseif ($range === 'yesterday') {
+            $query->whereDate('created_at', Carbon::yesterday());
+        } elseif ($range === 'last7days') {
+            $query->whereBetween('created_at', [Carbon::now()->subDays(7), Carbon::now()]);
+        }
+
+        $topSellingPackages = $query->groupBy('package_id')
+            ->orderByDesc('total_qty')
+            ->take(5)
+            ->get();
+
+        return response()->json($topSellingPackages);
     }
 }

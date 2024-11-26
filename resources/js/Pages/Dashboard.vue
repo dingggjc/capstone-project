@@ -71,7 +71,7 @@ onMounted(() => {
             </div>
 
             <!-- Cards Section: Two Columns Layout -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                 <!-- Card 1 -->
 
                 <div class="rounded-lg  border-gray-300  dark:border-gray-600 p-4 h-full">
@@ -123,39 +123,6 @@ onMounted(() => {
                         <div class="mt-auto text-right">
 
                             <NavLink :href="route('transaction.report')">
-                                <a class="cursor-pointer underline text-sm pt-5 text-indigo-700 dark:text-gray-400">See
-                                    details</a>
-                            </NavLink>
-                        </div>
-                    </div>
-                </div>
-
-
-
-                <!-- Card 3 -->
-                <div class="rounded-lg border-gray-300 dark:border-gray-600 p-4 h-full">
-                    <div
-                        class="block bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 cursor-pointer dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 h-full p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <h4 class="text-2xl    tracking-tight text-gray-700 dark:text-white">
-                                Product Stock
-                            </h4>
-                            <div class="rounded-full bg-indigo-200 p-3 inline-flex items-center justify-center">
-                                <svg class="w-7 h-7 text-indigo-800 dark:text-white" aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
-                                    viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="1.5"
-                                        d="M10 21v-9m3-4H7.5a2.5 2.5 0 1 1 0-5c1.5 0 2.875 1.25 3.875 2.5M14 21v-9m-9 0h14v8a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-8ZM4 8h16a1 1 0 0 1 1 1v3H3V9a1 1 0 0 1 1-1Zm12.155-5c-3 0-5.5 5-5.5 5h5.5a2.5 2.5 0 0 0 0-5Z" />
-                                </svg>
-                            </div>
-                        </div>
-
-                        <p class="text-4xl text-indigo-900 dark:text-white">{{ total_product_stock }}</p>
-
-                        <div class="mt-auto text-right">
-
-                            <NavLink :href="route('productIndex')">
                                 <a class="cursor-pointer underline text-sm pt-5 text-indigo-700 dark:text-gray-400">See
                                     details</a>
                             </NavLink>
