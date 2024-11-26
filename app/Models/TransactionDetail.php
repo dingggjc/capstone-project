@@ -15,6 +15,7 @@ class TransactionDetail extends Model
     protected $fillable = [
         'transaction_id',
         'product_inventory_id',
+        'staff_id',
         'package_id',
         'qty',
         'product_price',
@@ -44,5 +45,9 @@ class TransactionDetail extends Model
     public function specials()
     {
         return $this->belongsTo(specialsModel::class, 'specials_id');
+    }
+    public function staff()
+    {
+        return $this->belongsTo(StaffModel::class, 'staff_id');
     }
 }

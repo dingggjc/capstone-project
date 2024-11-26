@@ -39,6 +39,22 @@ const transactionsForSelectedPlate = computed(() => {
     );
 });
 
+
+function deduplicateDetails(details) {
+    const seen = new Set();
+    return details.filter((detail) => {
+        const uniqueKey =
+            detail.package?.package_name ||
+            detail.specials?.name ||
+            detail.product?.product_name;
+        if (seen.has(uniqueKey)) {
+            return false;
+        }
+        seen.add(uniqueKey);
+        return true;
+    });
+}
+
 </script>
 
 <style>
@@ -144,7 +160,8 @@ const transactionsForSelectedPlate = computed(() => {
                                 day: 'numeric'
                             }) }}
                     </h1>
-                    <div v-for="(detail, index) in transaction.details" :key="index" class="detail-card">
+                    <div v-for="(detail, index) in deduplicateDetails(transaction.details)" :key="index"
+                        class="detail-card">
                         <!-- Package -->
                         <h3 v-if="detail.package" class="text-sm py-1 font-medium text-gray-600 dark:text-white">
                             <strong>Package:</strong> {{ detail.package.package_name }}

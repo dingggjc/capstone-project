@@ -17,12 +17,12 @@ class StaffSeeder extends Seeder
             [
                 'staff_name' => 'Will Smith',
                 'staff_phone' => '1234567890',
-                'staff_status' => 'active',
+                'staff_status' => 'Active',
             ],
             [
                 'staff_name' => 'Jaden Smith',
                 'staff_phone' => '0987654321',
-                'staff_status' => 'active',
+                'staff_status' => 'Active',
             ]
         ]);
     }

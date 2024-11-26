@@ -14,4 +14,9 @@ class StaffModel extends Model
         "staff_phone",
         "staff_status",
     ];
+
+    public function transactionDetails()
+    {
+        return $this->hasMany(TransactionDetail::class, 'staff_id', 'staff_id');
+    }
 }

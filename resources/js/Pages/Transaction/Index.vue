@@ -126,7 +126,6 @@ const decrementQty = (product) => {
 
 const addToCart = (type, id, qty = 1) => {
     if (type === 'staff') {
-
         const selectedStaff = props.staff.find(staff => staff.staff_id === id);
 
         if (selectedStaff?.staff_status !== 'Active') {
@@ -137,26 +136,8 @@ const addToCart = (type, id, qty = 1) => {
             });
             return;
         }
-        Inertia.post(route('staff.updateStatus'), { staff_id: id, staff_status: 'Inactive' }, {
-            onSuccess: () => {
-                ElNotification({
-                    title: 'Success',
-                    message: 'Staff status updated to Inactive.',
-                    type: 'success',
-                });
-            },
-            onError: (errors) => {
-                ElNotification({
-                    title: 'Error',
-                    message: 'Failed to update staff status.',
-                    type: 'error',
-                });
-            },
-        });
-    } else if (type === 'staff') {
         addToCartForm.staff_id = id;
     }
-
 
     const existingPackage = addToCartForm.package_id;
     const existingSpecial = addToCartForm.specials_id;
@@ -261,20 +242,6 @@ const removeStaffFromCart = async (staffId) => {
             },
         });
 
-
-        await Inertia.post(route('staff.updateStatus'), { staff_id: staffId, staff_status: 'Active' }, {
-            preserveState: true,
-            onSuccess: () => {
-                ElNotification({
-                    title: 'Success',
-                    message: 'Staff status updated to Active.',
-                    type: 'success',
-                });
-            },
-            onError: (errors) => {
-                throw new Error('Failed to update staff status.');
-            },
-        });
     } catch (error) {
         ElNotification({
             title: 'Error',
@@ -356,7 +323,7 @@ const isFormValid = computed(() => {
 });
 
 
-const proceedToPayment = () => {
+const proceedToPayment = async () => {
     if (!isFormValid.value) {
         ElNotification({
             title: "Error",
@@ -366,8 +333,34 @@ const proceedToPayment = () => {
         return;
     }
 
-    Inertia.get(route("payment.index"));
+    try {
+        const staffIds = [...new Set(props.carts.map(item => item.staff_id).filter(id => id))];
+        for (const staffId of staffIds) {
+            Inertia.post(route('staff.updateStatus'), { staff_id: staffId, staff_status: 'Inactive' }, {
+                preserveState: true,
+                onSuccess: () => {
+                    console.log(`Successfully updated status for staff ID ${staffId}`);
+                },
+                onError: (errors) => {
+                    console.error(`Failed to update status for staff ID ${staffId}`, errors);
+                    throw new Error(`Failed to update status for staff ID ${staffId}`);
+                },
+            });
+        }
+        // Redirect to the payment page
+        Inertia.get(route("payment.index"));
+    } catch (error) {
+        ElNotification({
+            title: "Error",
+            message: error.message || "An error occurred while updating staff statuses.",
+            type: "error",
+        });
+        console.error("Error in proceedToPayment:", error);
+    }
 };
+
+
+
 
 
 const isDropdownVisible = ref(false);

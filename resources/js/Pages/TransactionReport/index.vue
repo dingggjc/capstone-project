@@ -94,6 +94,7 @@ const search = () => {
                                 <tr>
                                     <th scope="col" class="px-8 py-3"> Customer Name</th>
                                     <th scope="col" class="px-8 py-3">Invoice</th>
+                                    <th scope="col" class="px-8 py-3">Assigned Staff</th>
                                     <th scope="col" class="px-8 py-3">Product</th>
                                     <th scope="col" class="px-8 py-3">Package</th>
                                     <th scope="col" class="px-8 py-3">Specials</th>
@@ -117,6 +118,20 @@ const search = () => {
                                     <td class="px-8 py-3">{{ transaction.invoice }}</td>
                                     <td class="px-8 py-3">
                                         <ul>
+                                            <li v-if="transaction.details">
+                                                <span v-for="detail in transaction.details" :key="detail.id">
+                                                    <span v-if="detail.staff">
+                                                        {{ detail.staff.staff_name }}
+                                                    </span>
+                                                    <span v-else>No Staff Assigned</span>
+                                                </span>
+                                            </li>
+                                            <li v-else>No Details Available</li>
+                                        </ul>
+                                    </td>
+
+                                    <td class="px-8 py-3">
+                                        <ul>
                                             <li
                                                 v-if="transaction.details && transaction.details.some(detail => detail.product)">
                                                 <span v-for="detail in transaction.details" :key="detail.id">
@@ -128,6 +143,8 @@ const search = () => {
                                             <li v-else>No Product Selected</li>
                                         </ul>
                                     </td>
+
+
 
                                     <td class="px-8 py-3">
                                         <ul>

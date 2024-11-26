@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('transaction_details', function (Blueprint $table) {
             $table->id('id');
             $table->unsignedBigInteger('transaction_id');
+            $table->unsignedBigInteger('staff_id')->nullable();
             $table->unsignedBigInteger('product_inventory_id')->nullable();
             $table->integer('qty');
             $table->decimal('product_price', 10, 2)->nullable();
@@ -25,6 +26,7 @@ return new class extends Migration
             $table->foreign('product_inventory_id')->references('product_inventory_id')->on('product_inventory')->onDelete('cascade');
             $table->foreign('package_id')->references('package_id')->on('t_package')->onDelete('cascade');
             $table->foreign('specials_id')->references('specials_id')->on('specials')->onDelete('cascade');
+            $table->foreign('staff_id')->references('staff_id')->on('staff')->onDelete('cascade');
         });
     }
 
