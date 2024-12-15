@@ -59,43 +59,54 @@ const totalAmount = computed(() => {
 });
 
 function generatePDF() {
+    // Format the date range
+    const formattedStartDate = startDate.value
+        ? new Date(startDate.value).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+        : 'N/A';
+    const formattedEndDate = endDate.value
+        ? new Date(endDate.value).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+        : 'N/A';
+
+    // Table headers
     const headers = [
-        { text: 'Date', style: 'tableHeader' },
-        { text: 'Invoice', style: 'tableHeader' },
-        { text: 'Cashier', style: 'tableHeader' },
-        { text: 'Customer', style: 'tableHeader' },
-        { text: 'Total', style: 'tableHeader' }
+        { text: 'Date', style: 'tableHeader', alignment: 'left' },
+        { text: 'Invoice', style: 'tableHeader', alignment: 'left' },
+        { text: 'Customer', style: 'tableHeader', alignment: 'left' },
+        { text: 'Total', style: 'tableHeader', alignment: 'left' }
     ];
 
+    // Table body
     const body = filteredTransactions.value.map(transaction => [
-        new Date(transaction.created_at).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        }),
-        transaction.invoice,
-        transaction.cashier ? transaction.cashier.name : 'N/A',
-        transaction.customer_name || 'N/A',
-        transaction.grand_total.toString()
+        { text: new Date(transaction.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), margin: [5, 5, 5, 5] },
+        { text: transaction.invoice, margin: [5, 5, 5, 5] },
+        { text: transaction.customer_name || 'N/A', margin: [5, 5, 5, 5] },
+        { text: transaction.grand_total.toString(), margin: [5, 5, 5, 5] }
     ]);
 
-    body.unshift(headers);
+    body.unshift(headers.map(header => ({ ...header, margin: [5, 5, 5, 5] })));
     body.push([
-        { text: 'Grand Total', colSpan: 4, alignment: 'right', style: 'tableHeader' },
-        {}, {}, {},
-        { text: totalAmount.value.toString(), alignment: 'right', style: 'tableHeader' }
+        { text: 'Grand Total', colSpan: 3, alignment: 'right', style: 'tableHeader', margin: [5, 5, 5, 5] },
+        {}, {},
+        { text: totalAmount.value.toString(), alignment: 'right', style: 'tableHeader', margin: [5, 5, 5, 5] }
     ]);
 
+    // Document definition
     const docDefinition = {
         pageSize: 'A4',
         pageMargins: [40, 60, 40, 60],
         content: [
-            { text: 'Transaction Report', style: 'header', alignment: 'center' },
+            { text: 'Sales Report', style: 'header', alignment: 'center' },
+            {
+                text: `Date Range: ${formattedStartDate} to ${formattedEndDate}`,
+                style: 'subHeader',
+                alignment: 'center',
+                margin: [0, 0, 0, 10]
+            },
             {
                 style: 'tableStyle',
                 table: {
                     headerRows: 1,
-                    widths: ['auto', '*', '*', '*', 'auto'],
+                    widths: ['auto', '*', '*', 'auto'],
                     body: body
                 },
                 layout: {
@@ -111,14 +122,19 @@ function generatePDF() {
             header: {
                 fontSize: 18,
                 bold: true,
-                marginBottom: 20
+                marginBottom: 10
+            },
+            subHeader: {
+                fontSize: 12,
+                italics: true,
+                marginBottom: 10
             },
             tableHeader: {
                 bold: true,
                 fontSize: 12,
                 color: '#000000',
                 alignment: 'center',
-                margin: [0, 5]
+                margin: [5, 5, 5, 5]
             },
             tableStyle: {
                 margin: [0, 5, 0, 15]
@@ -132,6 +148,8 @@ function generatePDF() {
 
     pdfMake.createPdf(docDefinition).download('transaction-report.pdf');
 }
+
+
 </script>
 
 
